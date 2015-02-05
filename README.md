@@ -1,9 +1,9 @@
-Cozy - Java ORM
+Cozy - Java ORM（VERSION:0.1）
 ===============
 
 Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM。
 
-目前仍处于开发阶段，但api已基本稳定
+目前仍处于开发阶段，但api已基本稳定(Cozy的设计及代码写得烂，请轻喷！)
 
 **Cozy设计初衷:**
 * 熟悉java的反射和ORM的原理
