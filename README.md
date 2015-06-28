@@ -40,13 +40,13 @@ Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言
 下载编译好的[Cozy.jar](http://git.oschina.net/Comdex/Cozy/attach_files/download?i=8667&u=http%3A%2F%2Ffiles.git.oschina.net%2Fgroup1%2FM00%2F00%2F58%2FcHwGbFTTFfyARqEUAAsEnafV3gA953.jar%3Ftoken%3D0bceb01b170df63ea3a98763df2e1aa2%26ts%3D1423121123%26filename%3Dcozy0.1.jar)包在eclipse中导入使用就OK
 
 ### Cozy API使用注释
-[Ormer接口](http://git.oschina.net/Comdex/Cozy/blob/master/src/com/reflectsky/cozy/Ormer.java)
+[Ormer接口](src/com/reflectsky/cozy/Ormer.java)
 
-[QuerySet接口](http://git.oschina.net/Comdex/Cozy/blob/master/src/com/reflectsky/cozy/QuerySet.java)
+[QuerySet接口](src/com/reflectsky/cozy/QuerySet.java)
 
-[RawPreparer接口](http://git.oschina.net/Comdex/Cozy/blob/master/src/com/reflectsky/cozy/RawPreparer.java)
+[RawPreparer接口](src/com/reflectsky/cozy/RawPreparer.java)
 
-[RawSet接口](http://git.oschina.net/Comdex/Cozy/blob/master/src/com/reflectsky/cozy/RawSet.java)
+[RawSet接口](src/com/reflectsky/cozy/RawSet.java)
 
 ### 简单示例
 先上个简单的实体类，约定优于配置，采取默认配置，实体类无须做配置，不强制要求有setter,getter方法
