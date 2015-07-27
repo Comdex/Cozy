@@ -1,6 +1,8 @@
 package com.reflectsky.cozy.apiimpl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import sun.org.mozilla.javascript.internal.ast.ContinueStatement;
+
 import com.reflectsky.cozy.Ormer;
 import com.reflectsky.cozy.QuerySet;
 import com.reflectsky.cozy.RawSet;
@@ -17,6 +21,7 @@ import com.reflectsky.cozy.core.FieldInfo;
 import com.reflectsky.cozy.core.OperateSet;
 import com.reflectsky.cozy.core.OrmManager;
 import com.reflectsky.cozy.core.TableInfo;
+
 
 /**
  * MySQL的ORM实现
@@ -197,8 +202,67 @@ public class MySQLOrmImpl implements Ormer{
 				}
 				
 			}
+			
+			Class<?> clazz = obj.getClass();
+			try {
+				Method mtd = clazz.getMethod("beforeInsert");
+				mtd.invoke(obj);
+			} catch (NoSuchMethodException e1) {
+				// TODO 自动生成的 catch 块
+				
+			} catch (SecurityException e1) {
+				// TODO 自动生成的 catch 块
+				e1.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			
+			
 			try {
 				pstmt.executeUpdate();
+			} catch (SQLException e1) {
+				// TODO 自动生成的 catch 块
+				e1.printStackTrace();
+			}
+			
+			
+			try {
+				Method mtd = clazz.getMethod("afterInsert");
+				mtd.invoke(obj);
+			} catch (NoSuchMethodException e1) {
+				// TODO 自动生成的 catch 块
+				
+			} catch (SecurityException e1) {
+				// TODO 自动生成的 catch 块
+				e1.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO 自动生成的 catch 块
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			
+			
+			
+
+			try {
 				if(!oSet.getAutoKeyName().equals("")){
 					ResultSet rs = pstmt.getGeneratedKeys();
 					if(rs.next()){
