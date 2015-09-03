@@ -45,6 +45,13 @@ public interface Ormer {
 	public int delete(Object obj);
 	
 	/**
+	 *是否开启回调方法支持
+	 * @author Comdex
+	 * @param isOpen 布尔值,true为开启
+	 */
+	public void openCallback(boolean isOpen);
+	
+	/**
 	 *根据传入的sql语句和占位符的参数(如果有)返回原生SQL查询对象RawSet
 	 * @author Comdex
 	 * @param sql 普通sql语句或含有占位符的sql语句
