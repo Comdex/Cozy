@@ -11,7 +11,7 @@ public interface RawSet {
 	/**
 	 *执行原生SQL命令
 	 * @author Comdex
-	 * @return 受影响记录条数，返回-1代表执行失败 
+	 * @return 受影响记录条数，返回0代表执行失败 
 	 */
 	public int exec();
 	

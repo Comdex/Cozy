@@ -30,8 +30,9 @@ import com.reflectsky.cozy.core.TableInfo;
 public class MySQLOrmImpl implements Ormer{
 	private Connection conn = null;
 	private OrmManager oManager = null;
-	//默认不开启回调支持
-	private boolean isOpenCallback = false; 
+	//默认不存在回调对象
+	private Object callbackobj = null;
+	
 		
 	public MySQLOrmImpl(Connection conn,OrmManager oManager){
 		this.conn = conn;
@@ -46,8 +47,10 @@ public class MySQLOrmImpl implements Ormer{
 		// TODO 自动生成的方法存根
 		OperateSet oSet = generateReadOperateSet(obj, fieldnames);
 		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		boolean isOk = false;
 		if(oSet == null){
-			return false;
+			return isOk;
 		}
 		
 		try {
@@ -56,7 +59,8 @@ public class MySQLOrmImpl implements Ormer{
 			ormDebug(oSet);
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		
 		if(pstmt != null){
@@ -68,43 +72,46 @@ public class MySQLOrmImpl implements Ormer{
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					
 				}
 				
 			}
 			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("beforeRead",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("beforeRead")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-	
 			}
 			
 			try {
-				ResultSet rs = pstmt.executeQuery();
+				rs = pstmt.executeQuery();
 				//获取查询结果的值
 				Vector<Object> values = new Vector<Object>();
 				if(fieldnames.length !=0 ){
@@ -134,16 +141,21 @@ public class MySQLOrmImpl implements Ormer{
 							field.set(obj, values.get(i));
 						} catch (NoSuchFieldException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (SecurityException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (Exception e) {
 							// TODO: handle exception
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						}
 					}
-					return true;
+					this.oManager.closeRs(rs);
+					this.oManager.closeStmt(pstmt);
+					return isOk;
 				}else {
 					//获取该对象所有字段名
 					Vector<String> fields = new Vector<String>();
@@ -164,10 +176,12 @@ public class MySQLOrmImpl implements Ormer{
 							field = obj.getClass().getDeclaredField(fins.get(i).getFieldName());
 						} catch (NoSuchFieldException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (SecurityException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						}
 						field.setAccessible(true);
 						try {
@@ -175,53 +189,68 @@ public class MySQLOrmImpl implements Ormer{
 							
 						} catch (IllegalArgumentException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (IllegalAccessException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						}
 					}
-					rs.close();
-					pstmt.close();
+					this.oManager.closeRs(rs);
+					this.oManager.closeStmt(pstmt);
 					
-					if(isOpenCallback){
-						//用于回调的注入参数Ormer
-						Ormer ormer = this.oManager.NewOrm();
-						Class<?> clazz = obj.getClass();
-						try {
-							Method mtd = clazz.getDeclaredMethod("afterRead",Ormer.class);
-							mtd.setAccessible(true);
-							mtd.invoke(obj,ormer);
-						} catch (NoSuchMethodException e1) {
-							// TODO 自动生成的 catch 块
-							//e1.printStackTrace();
-						} catch (SecurityException e1) {
-							// TODO 自动生成的 catch 块
-							e1.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO 自动生成的 catch 块
-							e.printStackTrace();
-						} catch (Exception e) {
-							// TODO: handle exception
-							e.printStackTrace();
+					if(callbackobj != null){
+						Class<?> clazz = callbackobj.getClass();
+						Method[] mtds = clazz.getDeclaredMethods();
+						for(Method mtd:mtds){
+							if(mtd.getName().equals("afterRead")){
+								Class<?>[] params = mtd.getParameterTypes();
+								if(params.length == 2){
+									if(params[0]==obj.getClass() && params[1]==Ormer.class){
+										//用于回调的注入参数Ormer
+										Ormer ormer = this.oManager.NewOrm();
+										mtd.setAccessible(true);
+										try {
+											mtd.invoke(callbackobj, obj, ormer);
+										} catch (IllegalAccessException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										} catch (IllegalArgumentException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										} catch (InvocationTargetException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										}
+									}
+								}
+							}
 						}
-			
 					}
-					return true;
+	
+					this.oManager.closeRs(rs);
+					this.oManager.closeStmt(pstmt);
+					return isOk;
 				}
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 			
 		}
-		return false;
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		
+		return isOk;
 		
 	}
 	
@@ -235,9 +264,11 @@ public class MySQLOrmImpl implements Ormer{
 		// TODO 自动生成的方法存根
 		OperateSet oSet = generateInsertOperateSet(obj);
 		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		long count = -1;
 		if(oSet == null){
 			
-			return -1;
+			return count;
 		}
 		
 		try {
@@ -248,7 +279,8 @@ public class MySQLOrmImpl implements Ormer{
 		
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		
 		if(pstmt != null){
@@ -260,43 +292,43 @@ public class MySQLOrmImpl implements Ormer{
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					
 				}
 				
 			}
 			
 			//如果开启方法回调支持功能
-			if(isOpenCallback){
-				
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("beforeInsert",Ormer.class);
-					//放弃安全性检查
-					mtd.setAccessible(true);
-					//自动注入Ormer参数
-					mtd.invoke(obj, ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("beforeInsert")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-				
 			}
 			
 			
@@ -305,47 +337,14 @@ public class MySQLOrmImpl implements Ormer{
 				pstmt.executeUpdate();
 			} catch (SQLException e1) {
 				// TODO 自动生成的 catch 块
-				e1.printStackTrace();
+				this.oManager.deBugInfo(e1.getMessage());
+
 			}
-			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("afterInsert",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
-				
-			}
-			
-			
-			
-			
 			
 
 			try {
 				if(!oSet.getAutoKeyName().equals("")){
-					ResultSet rs = pstmt.getGeneratedKeys();
+					rs = pstmt.getGeneratedKeys();
 					if(rs.next()){
 						long autoId = rs.getLong(1);
 						Field field = null;
@@ -353,10 +352,12 @@ public class MySQLOrmImpl implements Ormer{
 							field = obj.getClass().getDeclaredField(oSet.getAutoKeyName());
 						} catch (NoSuchFieldException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (SecurityException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						}
 						field.setAccessible(true);
 						try {
@@ -368,32 +369,72 @@ public class MySQLOrmImpl implements Ormer{
 								field.set(obj, (int)autoId);
 							}
 							
-							rs.close();
-							pstmt.close();
+							this.oManager.closeRs(rs);
+							this.oManager.closeStmt(pstmt);
+							count = autoId;
 							
-							return (long)autoId;
+							if(callbackobj != null){
+								Class<?> clazz = callbackobj.getClass();
+								Method[] mtds = clazz.getDeclaredMethods();
+								for(Method mtd:mtds){
+									if(mtd.getName().equals("afterInsert")){
+										Class<?>[] params = mtd.getParameterTypes();
+										if(params.length == 2){
+											if(params[0]==obj.getClass() && params[1]==Ormer.class){
+												//用于回调的注入参数Ormer
+												Ormer ormer = this.oManager.NewOrm();
+												mtd.setAccessible(true);
+												try {
+													mtd.invoke(callbackobj, obj, ormer);
+												} catch (IllegalAccessException e) {
+													// TODO 自动生成的 catch 块
+													this.oManager.deBugInfo(e.getMessage());
+													
+												} catch (IllegalArgumentException e) {
+													// TODO 自动生成的 catch 块
+													this.oManager.deBugInfo(e.getMessage());
+													
+												} catch (InvocationTargetException e) {
+													// TODO 自动生成的 catch 块
+													this.oManager.deBugInfo(e.getMessage());
+													
+												}
+											}
+										}
+									}
+								}
+							}
+							
+							
+							this.oManager.closeStmt(pstmt);
+							return count;
 						} catch (IllegalArgumentException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						} catch (IllegalAccessException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							
 						}
 					}
+								
 					
 				}else{
-					return -1;
+					
+					this.oManager.closeStmt(pstmt);
+					return count;
 				}
 				
 				
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 			
 		}
-		
-		return -1;
+		return count;
 	}
 	
 
@@ -407,7 +448,7 @@ public class MySQLOrmImpl implements Ormer{
 		PreparedStatement pstmt = null;
 		int count = -1;
 		if(oSet == null){
-			return -1;
+			return count;
 		}
 		
 		try {
@@ -416,7 +457,8 @@ public class MySQLOrmImpl implements Ormer{
 			ormDebug(oSet);
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		
 		if(pstmt != null){
@@ -428,79 +470,87 @@ public class MySQLOrmImpl implements Ormer{
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					
 				}
 				
 			}
 			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("beforeUpdate",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("beforeUpdate")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-				
 			}
 			
 			try {
 				count = pstmt.executeUpdate();
-				pstmt.close();
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("afterUpdate",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("afterUpdate")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-	
 			}
 			
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
 		}
 		return count;
 		
@@ -516,7 +566,7 @@ public class MySQLOrmImpl implements Ormer{
 		PreparedStatement pstmt = null;
 		int count = -1;
 		if(oSet == null){
-			return -1;
+			return count;
 		}
 		
 		try {
@@ -526,7 +576,8 @@ public class MySQLOrmImpl implements Ormer{
 			
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		
 		if(pstmt != null){
@@ -538,80 +589,88 @@ public class MySQLOrmImpl implements Ormer{
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					
 				}
 				
 			}
 			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("beforeDelete",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("afterUpdate")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-	
 			}
 			
 			try {
 				count = pstmt.executeUpdate();
-				pstmt.close();
+				
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 			
-			if(isOpenCallback){
-				//用于回调的注入参数Ormer
-				Ormer ormer = this.oManager.NewOrm();
-				Class<?> clazz = obj.getClass();
-				try {
-					Method mtd = clazz.getDeclaredMethod("afterDelete",Ormer.class);
-					mtd.setAccessible(true);
-					mtd.invoke(obj,ormer);
-				} catch (NoSuchMethodException e1) {
-					// TODO 自动生成的 catch 块
-					//e1.printStackTrace();
-				} catch (SecurityException e1) {
-					// TODO 自动生成的 catch 块
-					e1.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("afterUpdate")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==obj.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, obj, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
 				}
-	
 			}
 		}
-		
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
 		return count;
 	}
 
@@ -626,7 +685,7 @@ public class MySQLOrmImpl implements Ormer{
 			conn.setAutoCommit(false);
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
 		}
 		
 	}
@@ -643,7 +702,7 @@ public class MySQLOrmImpl implements Ormer{
 			return true;
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
 			return false;
 		}
 	}
@@ -665,7 +724,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
 		}
 	}
 
@@ -737,10 +796,12 @@ public class MySQLOrmImpl implements Ormer{
 				field = obj.getClass().getDeclaredField(fin.getFieldName());
 			} catch (NoSuchFieldException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (SecurityException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			field.setAccessible(true);
 			
@@ -748,10 +809,12 @@ public class MySQLOrmImpl implements Ormer{
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 		}
 		
@@ -814,10 +877,12 @@ public class MySQLOrmImpl implements Ormer{
 					field = obj.getClass().getDeclaredField(fin.getFieldName());
 				} catch (NoSuchFieldException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				} catch (SecurityException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				}
 				field.setAccessible(true);
 				
@@ -825,10 +890,12 @@ public class MySQLOrmImpl implements Ormer{
 					param.add(field.get(obj));
 				} catch (IllegalArgumentException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				} catch (IllegalAccessException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				}
 			}
 			
@@ -857,10 +924,12 @@ public class MySQLOrmImpl implements Ormer{
 					field = obj.getClass().getDeclaredField(fin.getFieldName());
 				} catch (NoSuchFieldException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				} catch (SecurityException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				}
 				field.setAccessible(true);
 				
@@ -868,10 +937,12 @@ public class MySQLOrmImpl implements Ormer{
 					param.add(field.get(obj));
 				} catch (IllegalArgumentException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				} catch (IllegalAccessException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				}
 			}
 			
@@ -925,20 +996,24 @@ public class MySQLOrmImpl implements Ormer{
 				 fie.setAccessible(true);
 			} catch (NoSuchFieldException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (SecurityException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			if(fie != null){
 				try {
 					param.add(fie.get(obj));
 				} catch (IllegalArgumentException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				} catch (IllegalAccessException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
 				}
 			}
 			
@@ -1003,10 +1078,12 @@ public class MySQLOrmImpl implements Ormer{
 							field = obj.getClass().getDeclaredField(fin.getFieldName());
 						} catch (NoSuchFieldException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							return null;
 						} catch (SecurityException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							return null;
 						}
 						field.setAccessible(true);
 						
@@ -1014,10 +1091,12 @@ public class MySQLOrmImpl implements Ormer{
 							param.add(field.get(obj));
 						} catch (IllegalArgumentException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							return null;
 						} catch (IllegalAccessException e) {
 							// TODO 自动生成的 catch 块
-							e.printStackTrace();
+							this.oManager.deBugInfo(e.getMessage());
+							return null;
 						}
 					}
 				}
@@ -1037,10 +1116,12 @@ public class MySQLOrmImpl implements Ormer{
 				field = obj.getClass().getDeclaredField(autoKeyName);
 			} catch (NoSuchFieldException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (SecurityException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			field.setAccessible(true);
 			
@@ -1048,10 +1129,12 @@ public class MySQLOrmImpl implements Ormer{
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			
 			if(strWhere.equals("")){
@@ -1079,10 +1162,12 @@ public class MySQLOrmImpl implements Ormer{
 						field = obj.getClass().getDeclaredField(fin.getFieldName());
 					} catch (NoSuchFieldException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
+						return null;
 					} catch (SecurityException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
+						return null;
 					}
 					field.setAccessible(true);
 					
@@ -1090,10 +1175,12 @@ public class MySQLOrmImpl implements Ormer{
 						param.add(field.get(obj));
 					} catch (IllegalArgumentException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
+						return null;
 					} catch (IllegalAccessException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
+						return null;
 					}
 					continue;
 				}
@@ -1106,10 +1193,12 @@ public class MySQLOrmImpl implements Ormer{
 				field = obj.getClass().getDeclaredField(autoKeyName);
 			} catch (NoSuchFieldException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (SecurityException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			field.setAccessible(true);
 			
@@ -1117,10 +1206,12 @@ public class MySQLOrmImpl implements Ormer{
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			} catch (IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			
             strField = strField.substring(0, strField.length()-1);
@@ -1148,7 +1239,8 @@ public class MySQLOrmImpl implements Ormer{
 				return rawSet;
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 			
 		}else {
@@ -1162,10 +1254,10 @@ public class MySQLOrmImpl implements Ormer{
 				return rawSet;
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
 			}
 		}
-		return null;
 	}
 	
 	public QuerySet queryTable(String tableName){
@@ -1182,9 +1274,9 @@ public class MySQLOrmImpl implements Ormer{
 			return conn.createStatement();
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	/* （非 Javadoc）
@@ -1197,15 +1289,15 @@ public class MySQLOrmImpl implements Ormer{
 			return conn.prepareStatement(sql);
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 
 	@Override
-	public void openCallback(boolean isOpen) {
+	public void addCallback(Object obj) {
 		// TODO 自动生成的方法存根
-		this.isOpenCallback = isOpen;
+		this.callbackobj = obj;
 	}
 	
 }

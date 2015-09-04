@@ -29,7 +29,7 @@ public interface QuerySet {
 	/**
 	 *计算符合条件的数据库记录条数
 	 * @author Comdex
-	 * @return long 数据库记录条数
+	 * @return long 数据库记录条数,-1为执行失败
 	 */
 	public long count();
 	

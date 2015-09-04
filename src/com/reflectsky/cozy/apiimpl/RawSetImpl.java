@@ -43,40 +43,35 @@ public class RawSetImpl implements RawSet{
 	@Override
 	public int exec() {
 		// TODO 自动生成的方法存根
-		//传入的是preparestatment
-		if(stmt != null){
-			if(stmt instanceof PreparedStatement){
-				PreparedStatement pstmt = (PreparedStatement)stmt;
-				for(int i=0 ; i<params.size() ; i++){
-					try {
+		int count = 0;
+		try {
+			
+			//传入的是preparestatment
+			if(stmt != null){
+				if(stmt instanceof PreparedStatement){
+					PreparedStatement pstmt = (PreparedStatement)stmt;
+					for(int i=0 ; i<params.size() ; i++){
 						pstmt.setObject(i+1, params.get(i));
-					} catch (SQLException e) {
-						// TODO 自动生成的 catch 块
-						e.printStackTrace();
 					}
-				}
-				try {
-					int affected = pstmt.executeUpdate();
-					pstmt.close();
-					return affected;
-				} catch (SQLException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				}
-			}else {
-				if(!strSql.equals("")){
-					try {
-						int affected = stmt.executeUpdate(strSql);
-						stmt.close();
-						return affected;
-					} catch (SQLException e) {
-						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+					
+					count = pstmt.executeUpdate();
+				
+					return count;
+					
+				}else {
+					if(!strSql.equals("")){
+						count = stmt.executeUpdate(strSql);
+						
+						return count;
 					}
 				}
 			}
+				
+		}catch(Exception e){
+			this.oManager.deBugInfo(e.getMessage());
 		}
-		return -1;
+		
+		return count;
 	}
 
 	@Override
@@ -106,7 +101,8 @@ public class RawSetImpl implements RawSet{
 						pstmt.setObject(i+1, params.get(i));
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
+	
 					}
 				}
 				try {
@@ -118,29 +114,34 @@ public class RawSetImpl implements RawSet{
 								field = obj.getClass().getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
+								
 							} catch (SecurityException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
+								
 							}
 							field.setAccessible(true);
 							try {
 								field.set(obj, rs.getObject(fin.getColumnName()));
 							} catch (IllegalArgumentException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
+								
 							} catch (IllegalAccessException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
+								
 							}
 						}
 					}
 					rs.close();
-					pstmt.close();
+					
 					return true;
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
+					return false;
 				}
 				
 				
@@ -155,29 +156,29 @@ public class RawSetImpl implements RawSet{
 									field = obj.getClass().getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								}
 								field.setAccessible(true);
 								try {
 									field.set(obj, rs.getObject(fin.getColumnName()));
 								} catch (IllegalArgumentException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								}
 							}
 						}
 						rs.close();
-						stmt.close();
+					
 						return true;
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
 					}
 					
 				}
@@ -214,7 +215,7 @@ public class RawSetImpl implements RawSet{
 						pstmt.setObject(i+1, params.get(i));
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
 					}
 				}
 				try {
@@ -226,10 +227,10 @@ public class RawSetImpl implements RawSet{
 							obj = clazz.newInstance();
 						} catch (InstantiationException e1) {
 							// TODO 自动生成的 catch 块
-							e1.printStackTrace();
+							this.oManager.deBugInfo(e1.getMessage());
 						} catch (IllegalAccessException e1) {
 							// TODO 自动生成的 catch 块
-							e1.printStackTrace();
+							this.oManager.deBugInfo(e1.getMessage());
 						}
 						for(FieldInfo fin : fins){
 							Field field = null;
@@ -237,31 +238,31 @@ public class RawSetImpl implements RawSet{
 								field = clazz.getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
 							} catch (SecurityException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
 							}
 							field.setAccessible(true);
 							try {
 								field.set(obj, rs.getObject(fin.getColumnName()));
 							} catch (IllegalArgumentException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
 							} catch (IllegalAccessException e) {
 								// TODO 自动生成的 catch 块
-								e.printStackTrace();
+								this.oManager.deBugInfo(e.getMessage());
 							}
 						}
 						list.add(obj);
 					}
 					
 					rs.close();
-					pstmt.close();
+			
 					return list.size();
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					e.printStackTrace();
+					this.oManager.deBugInfo(e.getMessage());
 				}
 				
 				
@@ -276,10 +277,10 @@ public class RawSetImpl implements RawSet{
 								obj = clazz.newInstance();
 							} catch (InstantiationException e1) {
 								// TODO 自动生成的 catch 块
-								e1.printStackTrace();
+								this.oManager.deBugInfo(e1.getMessage());
 							} catch (IllegalAccessException e1) {
 								// TODO 自动生成的 catch 块
-								e1.printStackTrace();
+								this.oManager.deBugInfo(e1.getMessage());
 							}
 							for(FieldInfo fin : fins){
 								Field field = null;
@@ -287,31 +288,31 @@ public class RawSetImpl implements RawSet{
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								}
 								field.setAccessible(true);
 								try {
 									field.set(obj, rs.getObject(fin.getColumnName()));
 								} catch (IllegalArgumentException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								}
 							}
 							list.add(obj);
 						}
 						
 						rs.close();
-						stmt.close();
+						
 						return list.size();
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
 					}
 					
 				}
@@ -355,7 +356,7 @@ public class RawSetImpl implements RawSet{
 						}
 						
 						rs.close();
-						stmt.close();
+					
 						
 						if(map.size() == 0){
 							return -1;
@@ -364,7 +365,7 @@ public class RawSetImpl implements RawSet{
 						}
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
 					}
 					
 				}
@@ -399,28 +400,27 @@ public class RawSetImpl implements RawSet{
 									field.set(obj, rs.getObject(name[i]));
 								} catch (NoSuchFieldException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalArgumentException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
 								}
 								
 							}
 						}
 						
 						rs.close();
-						stmt.close();
-						
+				
 						return i;
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						e.printStackTrace();
+						this.oManager.deBugInfo(e.getMessage());
 					}
 					
 				}
@@ -437,7 +437,7 @@ public class RawSetImpl implements RawSet{
 		}
 		if(stmt instanceof PreparedStatement){
 			PreparedStatement pstmt = (PreparedStatement)stmt;
-			RawPreparer rap = new RawPreparerImpl(pstmt);
+			RawPreparer rap = new RawPreparerImpl(pstmt,this.oManager);
 			return rap;
 		}
 		return null;

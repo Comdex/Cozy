@@ -104,24 +104,28 @@ public class QuerySetImpl implements QuerySet {
 	public long count() {
 		// TODO 自动生成的方法存根
 		String sql = "select count(*) from " + tableName + " ";
+		long count = -1;
+		PreparedStatement pstmt1 = null;
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
 			sql = sql + strWhere + " ;";
 		    try {
-				PreparedStatement pstmt = conn.prepareStatement(sql);
+		    	pstmt1 = conn.prepareStatement(sql);
 				for(int i=0 ; i<params.size() ; i++){
-					pstmt.setObject(i+1, params.get(i));
+					pstmt1.setObject(i+1, params.get(i));
 				}
 				oManager.deBugInfo(sql);
-				ResultSet rs = pstmt.executeQuery();
+				ResultSet rs = pstmt1.executeQuery();
 				if(rs.next()){
-					return rs.getLong(1);
+					count = rs.getLong(1);
+					
 				}
 				
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+	
 			}
 		}
 		oManager.deBugInfo(sql);
@@ -130,24 +134,36 @@ public class QuerySetImpl implements QuerySet {
 			pstmt = conn.prepareStatement(sql);
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		ResultSet rs = null;
 		try {
 			rs = pstmt.executeQuery();
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			
 		}
 		try {
 			if(rs.next()){
-				return rs.getLong(1);
+				count = rs.getLong(1);
+
 			}
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
 		}
-		return -1;
+		if(pstmt1 != null){
+			this.oManager.closeStmt(pstmt1);
+		}
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		return count;
 	}
 
 	/* @author Comdex
@@ -157,26 +173,38 @@ public class QuerySetImpl implements QuerySet {
 	public boolean exist() {
 		// TODO 自动生成的方法存根
 		String sql = "select * from " + tableName + " ";
+		boolean isExist = false;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
 			sql = sql + strWhere + " ;";
+			
 		    try {
-				PreparedStatement pstmt = conn.prepareStatement(sql);
+		    	pstmt = conn.prepareStatement(sql);
 				for(int i=0 ; i<params.size() ; i++){
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
 				oManager.deBugInfo(sql);
 				
-				ResultSet rs = pstmt.executeQuery();
-				return rs.next();
+				rs = pstmt.executeQuery();
+				isExist = rs.next();
+				
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 		}
-		return false;
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		return isExist;
 	}
 
 	/* @author Comdex
@@ -186,25 +214,31 @@ public class QuerySetImpl implements QuerySet {
 	public long delete() {
 		// TODO 自动生成的方法存根
 		String sql = "delete from " + tableName + " ";
+		long count = 0;
+		PreparedStatement pstmt = null;
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
 			sql = sql + strWhere + " ;";
 		    try {
-				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt = conn.prepareStatement(sql);
 				for(int i=0 ; i<params.size() ; i++){
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
 				oManager.deBugInfo(sql);
-				
-				return pstmt.executeUpdate();
+				count = pstmt.executeUpdate();
+			
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 		}
-		return 0;
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		return count;
 	}
 
 	/* @author Comdex
@@ -214,6 +248,9 @@ public class QuerySetImpl implements QuerySet {
 	public boolean one(Object bean, String... ps) {
 		// TODO 自动生成的方法存根
 		String sql = "select * from " + tableName + " "; 
+		boolean isOk = false;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
@@ -224,15 +261,16 @@ public class QuerySetImpl implements QuerySet {
 				sql = sql + " " + strOrderBy;
 			}
 			sql += " ;";
+			
 		    try {
-				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt = conn.prepareStatement(sql);
 				for(int i=0 ; i<params.size() ; i++){
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
 				oManager.deBugInfo(sql);
 				
-				ResultSet rs = pstmt.executeQuery();
+				rs = pstmt.executeQuery();
 				
 				Class clazz = bean.getClass();
 				TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
@@ -248,10 +286,12 @@ public class QuerySetImpl implements QuerySet {
 										field = clazz.getDeclaredField(fin.getFieldName());
 									} catch (NoSuchFieldException e) {
 										// TODO 自动生成的 catch 块
-										e.printStackTrace();
+										this.oManager.deBugInfo(e.getMessage());
+										
 									} catch (SecurityException e) {
 										// TODO 自动生成的 catch 块
-										e.printStackTrace();
+										this.oManager.deBugInfo(e.getMessage());
+										
 									}
 									field.setAccessible(true);
 									field.set(bean, rs.getObject(s));
@@ -266,24 +306,31 @@ public class QuerySetImpl implements QuerySet {
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
+									
 								} catch (SecurityException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
+									
 								}
 								field.setAccessible(true);
 								field.set(bean, rs.getObject(fin.getColumnName()));
 							}
 						}
 					}
-					
-				return true;
+				
 			} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
 			}
 		}
-		return false;
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		return isOk ;
 	}
 
 	/* @author Comdex
@@ -292,7 +339,10 @@ public class QuerySetImpl implements QuerySet {
 	@Override
 	public long all(List list,Class clazz, String... ps) {
 		// TODO 自动生成的方法存根
+		long count = 0;
 		String sql = "select * from " + tableName + " "; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
@@ -304,14 +354,14 @@ public class QuerySetImpl implements QuerySet {
 			}
 			sql += " ;";
 		    try {
-				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt = conn.prepareStatement(sql);
 				for(int i=0 ; i<params.size() ; i++){
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
 				oManager.deBugInfo(sql);
 				
-				ResultSet rs = pstmt.executeQuery();
+				rs = pstmt.executeQuery();
 				
 				TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
 				Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
@@ -328,10 +378,12 @@ public class QuerySetImpl implements QuerySet {
 										field = clazz.getDeclaredField(fin.getFieldName());
 									} catch (NoSuchFieldException e) {
 										// TODO 自动生成的 catch 块
-										e.printStackTrace();
+										this.oManager.deBugInfo(e.getMessage());
+										
 									} catch (SecurityException e) {
 										// TODO 自动生成的 catch 块
-										e.printStackTrace();
+										this.oManager.deBugInfo(e.getMessage());
+										
 									}
 									field.setAccessible(true);
 									field.set(bean, rs.getObject(s));
@@ -346,10 +398,12 @@ public class QuerySetImpl implements QuerySet {
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
+									
 								} catch (SecurityException e) {
 									// TODO 自动生成的 catch 块
-									e.printStackTrace();
+									this.oManager.deBugInfo(e.getMessage());
+									
 								}
 								field.setAccessible(true);
 								field.set(bean, rs.getObject(fin.getColumnName()));
@@ -358,17 +412,25 @@ public class QuerySetImpl implements QuerySet {
 					list.add(bean);
 				}
 					
-					
-				return list.size();
+				count = list.size();
+				
 			} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			} catch (InstantiationException e1) {
 				// TODO 自动生成的 catch 块
-				e1.printStackTrace();
+				this.oManager.deBugInfo(e1.getMessage());
+				
 			}
 		}
-		return -1;
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+		return count;
 	}
 
 }

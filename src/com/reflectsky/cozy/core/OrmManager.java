@@ -3,6 +3,7 @@ package com.reflectsky.cozy.core;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -439,5 +440,25 @@ public class OrmManager {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		System.out.println(sdf.format(now) + "  " + info);
 	}
+    
+    //关闭ResultSet
+    public void closeRs(ResultSet rs){
+    	try {
+			rs.close();
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			deBugInfo(e.getMessage());
+		}
+    }
+    
+    //关闭Connection
+    public void closeStmt(Statement stmt){
+    	try {
+			stmt.close();
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			deBugInfo(e.getMessage());
+		}
+    }
 	
 }

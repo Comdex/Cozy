@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.reflectsky.cozy.RawPreparer;
+import com.reflectsky.cozy.core.OrmManager;
 
 /**
  * 原生SQL预查询接口实现
@@ -12,9 +13,11 @@ import com.reflectsky.cozy.RawPreparer;
  */
 public class RawPreparerImpl implements RawPreparer{
 	private PreparedStatement pstmt= null;
+	private OrmManager oManager = null;
 	
-	public RawPreparerImpl(PreparedStatement pstmt){
+	public RawPreparerImpl(PreparedStatement pstmt,OrmManager ormManager){
 		this.pstmt = pstmt;
+		this.oManager = ormManager;
 	}
 	
 	/* @author Comdex
@@ -23,24 +26,29 @@ public class RawPreparerImpl implements RawPreparer{
 	@Override
 	public int exec(Object... objs) {
 		// TODO 自动生成的方法存根
+		int count = 0;
 		if(pstmt == null){
-			return -1;
+			return count;
 		}
 		for(int i=0;i<objs.length;i++){
 			try {
 				pstmt.setObject(i+1, objs[i]);
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				this.oManager.deBugInfo(e.getMessage());
+				
 			}
 		}
 		try {
-			return pstmt.executeUpdate();
+			count = pstmt.executeUpdate();
+
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+		
 		}
-		return -1;
+		
+		return count;
 	}
 
 	/* @author Comdex
@@ -57,9 +65,9 @@ public class RawPreparerImpl implements RawPreparer{
 			return true;
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			this.oManager.deBugInfo(e.getMessage());
+			return false;
 		}
-		return false;
 	}
 
 }

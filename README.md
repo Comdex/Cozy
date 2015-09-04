@@ -1,9 +1,36 @@
-Cozy - Easy Java ORM（version:0.1）
+Cozy - Easy Java ORM（version:0.2）
 ===============
 
 Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM。
 
 目前仍处于开发阶段，但api已基本稳定
+
+v0.2-2015/09/04 update:
+添加CRUD回调方法支持
+更正异常处理方式
+
+回调方法示例:
+```java
+
+	//使用mysql驱动名，mysqlURL,数据库用户名，数据库密码，数据库类型创建一个OrmManager管理器，和JDBC用法差不多
+	OrmManager oManager = new OrmManager("com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1:3306/cozytest", "root", "", "mysql");
+	//当调用orm.Insert(Student)时会在插入前调用beforeInsert(Student t,Ormer orm)方法，student和orm对象由cozy自动注入
+	//注意方法名必须是如下：beforeRead,afterRead,beforeInsert,afterInsert,beforeUpdate,afterUpdate,beforeDelete,afterDelete
+	//方法的第一个参数是要回调的对象，第二个是ormer接口
+	oManager.addCallback(new Object(){
+		private void beforeInsert(Student t,Ormer orm){
+				System.out.println("before t");
+				System.out.println(t.getId()+" id before");
+				System.out.println(orm);
+			}
+		private void afterInsert(Teacher t,Ormer orm){
+			System.out.println("after t");
+			System.out.println(t.getId()+" id after");
+			System.out.println(orm);
+		}
+	});
+
+```
 
 **Cozy设计初衷:**
 * 熟悉java的反射和ORM的原理

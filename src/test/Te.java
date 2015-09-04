@@ -18,7 +18,19 @@ public class Te {
 		oman.Debug(true);
 		oman.runSyncDB();
 		Ormer orm = oman.NewOrm();
-		orm.openCallback(true);
+		//orm.openCallback(true);
+		orm.addCallback(new Object(){
+			private void beforeInsert(Student t,Ormer orm){
+				System.out.println("before t");
+				System.out.println(t.getId()+" id before");
+				System.out.println(orm);
+			}
+			private void afterInsert(Teacher t,Ormer orm){
+				System.out.println("after t");
+				System.out.println(t.getId()+" id after");
+				System.out.println(orm);
+			}
+		});
 	
 		class BB{
 			public String tname;
@@ -26,7 +38,7 @@ public class Te {
 		}
 		
 		Teacher t = new Teacher();
-		t.setTname("jb000");
+		t.setTname("»Àf445");
 		t.setNow(new Date());
 		System.out.println(orm.insert(t));
 		System.out.println("kankan:"+t.getId());
