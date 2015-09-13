@@ -80,7 +80,7 @@ public class OrmManager {
 			connPool.createPool();
 		} catch (Exception e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class OrmManager {
 			connPool.createPool();
 		} catch (Exception e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		}
 	}
 	
@@ -180,22 +180,22 @@ public class OrmManager {
 				ormUtil = (OrmUtil) obj;
 			} catch (NoSuchMethodException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} catch (SecurityException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} catch (InstantiationException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} catch (IllegalAccessException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} catch (IllegalArgumentException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} catch (InvocationTargetException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			}
 		}
 		
@@ -208,7 +208,7 @@ public class OrmManager {
 					
 				} catch (Exception e) {
 					// TODO 自动生成的 catch 块
-					System.out.println(e.getMessage());
+					deBugInfo(e.getMessage());
 					System.exit(-1);
 				}
 				if(tbinfo != null){
@@ -253,32 +253,43 @@ public class OrmManager {
 			return null;
 		}
 		try {
-			Class[] paramTypes = {Connection.class,OrmManager.class};
-			Object[] params = {connPool.getConnection(),this};
-			Constructor con = clazz.getConstructor(paramTypes);
-			Object obj = con.newInstance(params);
+			if(this.DBtype == "mongodb"){
+				/*Constructor con = clazz.getConstructor();
+				Object obj = con.newInstance();
+				java.lang.reflect.Method conMethod = clazz.getDeclaredMethod("setConnection", Object.class);
+				conMethod.invoke(obj, connPool.getConnection());
+				java.lang.reflect.Method ormMethod = clazz.getDeclaredMethod("setOrmManager", OrmManager.class);
+				ormMethod.invoke(obj, this);
+				return (Ormer)obj;*/
+			}
+			Constructor con = clazz.getConstructor();
+			Object obj = con.newInstance();
+			java.lang.reflect.Method conMethod = clazz.getDeclaredMethod("setConnection", Object.class);
+			conMethod.invoke(obj, connPool.getConnection());
+			java.lang.reflect.Method ormMethod = clazz.getDeclaredMethod("setOrmManager", OrmManager.class);
+			ormMethod.invoke(obj, this);
 			return (Ormer)obj;
 		} catch (InstantiationException e1) {
 			// TODO 自动生成的 catch 块
-			e1.printStackTrace();
+			deBugInfo(e1.getMessage());
 		} catch (IllegalAccessException e1) {
 			// TODO 自动生成的 catch 块
-			e1.printStackTrace();
+			deBugInfo(e1.getMessage());
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		} catch (NoSuchMethodException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		} catch (SecurityException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		} catch (IllegalArgumentException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		} catch (InvocationTargetException e) {
 			// TODO 自动生成的 catch 块
-			e.printStackTrace();
+			deBugInfo(e.getMessage());
 		}
 		return null;
 	}
@@ -419,7 +430,7 @@ public class OrmManager {
 				}
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
-				e.printStackTrace();
+				deBugInfo(e.getMessage());
 			} finally{
 				connPool.freeConnection(conn);
 			}
@@ -461,4 +472,7 @@ public class OrmManager {
 		}
     }
 	
+    public String getDBType(){
+    	return this.DBtype;
+    }
 }

@@ -34,9 +34,7 @@ public class MySQLOrmImpl implements Ormer{
 	private Object callbackobj = null;
 	
 		
-	public MySQLOrmImpl(Connection conn,OrmManager oManager){
-		this.conn = conn;
-		this.oManager = oManager;
+	public MySQLOrmImpl(){
 	}
 
 	/* @author Comdex
@@ -260,15 +258,16 @@ public class MySQLOrmImpl implements Ormer{
 	 * @see com.reflectsky.cozy.Ormer#insert(java.lang.Object)
 	 */
 	@Override
-	public long insert(Object obj)  {
+	public boolean insert(Object obj)  {
 		// TODO 自动生成的方法存根
 		OperateSet oSet = generateInsertOperateSet(obj);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		long count = -1;
+		boolean isOk = false;
+		
 		if(oSet == null){
 			
-			return count;
+			return isOk;
 		}
 		
 		try {
@@ -371,7 +370,6 @@ public class MySQLOrmImpl implements Ormer{
 							
 							this.oManager.closeRs(rs);
 							this.oManager.closeStmt(pstmt);
-							count = autoId;
 							
 							if(callbackobj != null){
 								Class<?> clazz = callbackobj.getClass();
@@ -407,7 +405,7 @@ public class MySQLOrmImpl implements Ormer{
 							
 							
 							this.oManager.closeStmt(pstmt);
-							return count;
+							return isOk;
 						} catch (IllegalArgumentException e) {
 							// TODO 自动生成的 catch 块
 							this.oManager.deBugInfo(e.getMessage());
@@ -423,7 +421,7 @@ public class MySQLOrmImpl implements Ormer{
 				}else{
 					
 					this.oManager.closeStmt(pstmt);
-					return count;
+					return isOk;
 				}
 				
 				
@@ -434,7 +432,7 @@ public class MySQLOrmImpl implements Ormer{
 			}
 			
 		}
-		return count;
+		return isOk;
 	}
 	
 
@@ -446,7 +444,7 @@ public class MySQLOrmImpl implements Ormer{
 		// TODO 自动生成的方法存根
 		OperateSet oSet = generateUpdateOperateSet(obj, fieldnames);
 		PreparedStatement pstmt = null;
-		int count = -1;
+		int count = 0;
 		if(oSet == null){
 			return count;
 		}
@@ -564,7 +562,7 @@ public class MySQLOrmImpl implements Ormer{
 		// TODO 自动生成的方法存根
 		OperateSet oSet = generateDeleteOperateSet(obj);
 		PreparedStatement pstmt = null;
-		int count = -1;
+		int count = 0;
 		if(oSet == null){
 			return count;
 		}
@@ -1260,8 +1258,19 @@ public class MySQLOrmImpl implements Ormer{
 		}
 	}
 	
-	public QuerySet queryTable(String tableName){
-		return new QuerySetImpl(oManager, conn, tableName);
+	public QuerySet queryTable(Object obj){
+		if(obj.getClass() == String.class){
+			return new QuerySetImpl(oManager, conn, (String)obj);
+		}else{
+			TableInfo tbinfo = this.oManager.getTableCache().getByTN(obj.getClass().getName());
+			if(tbinfo != null){
+				String tableName = tbinfo.getTableName();
+				return new QuerySetImpl(oManager, conn, tableName);
+			}else{
+				return null;
+			}
+		}
+		
 	}
 
 	/* （非 Javadoc）
@@ -1298,6 +1307,18 @@ public class MySQLOrmImpl implements Ormer{
 	public void addCallback(Object obj) {
 		// TODO 自动生成的方法存根
 		this.callbackobj = obj;
+	}
+
+	@Override
+	public void setConnection(Object conn) {
+		// TODO 自动生成的方法存根
+		this.conn = (Connection) conn;
+	}
+
+	@Override
+	public void setOrmManager(OrmManager omanager) {
+		// TODO 自动生成的方法存根
+		this.oManager = omanager;
 	}
 	
 }

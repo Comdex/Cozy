@@ -7,12 +7,31 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.reflectsky.cozy.Ormer;
 import com.reflectsky.cozy.core.OrmManager;
 
 public class Te {
 	public static void main(String[] args) {
-		OrmManager oman = new OrmManager("com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1:3306/ok", "root", "", "mysql");
+		
+		Mongo mg = new Mongo("localhost", 27017);
+		DB db = mg.getDB("dajia");
+		DBCollection collection = db.getCollection("bibi");
+		DBObject b = new BasicDBObject();
+		b.put("nihao", 123);
+		b.put("ta", "baba");
+		System.out.println(collection.save(b));
+		BasicDBObject dbo = new BasicDBObject();
+		
+		
+		
+		
+		
+		/*OrmManager oman = new OrmManager("com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1:3306/ok", "root", "", "mysql");
 		oman.RegisterModel(Teacher.class);
 		oman.Force(false);
 		oman.Debug(true);
@@ -41,7 +60,7 @@ public class Te {
 		t.setTname("»Àf445");
 		t.setNow(new Date());
 		System.out.println(orm.insert(t));
-		System.out.println("kankan:"+t.getId());
+		System.out.println("kankan:"+t.getId());*/
 		
 		//Teacher teacher = new Teacher();
 		//List<Teacher> list = new ArrayList<Teacher>();

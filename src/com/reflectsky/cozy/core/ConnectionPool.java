@@ -57,7 +57,7 @@ public class ConnectionPool {
 		if (connections != null) {
 			return; // 如果己经创建，则返回
 		}
-
+		
 		// 实例化 JDBC Driver 中指定的驱动类实例
 		Driver driver = (Driver) (Class.forName(this.jdbcDriver).newInstance());
 		//注册JDBC驱动程序
@@ -98,7 +98,7 @@ public class ConnectionPool {
 
 			} catch (SQLException e) {
 
-				System.out.println("Database Connection Pool has created failed!" + e.getMessage());
+				oManager.deBugInfo("Database Connection Pool has created failed!" + e.getMessage());
 				throw new SQLException();
 			}
 
@@ -241,7 +241,7 @@ public class ConnectionPool {
 
 					} catch (SQLException e) {
 
-						System.out.println("Database Connection Pool has created failed!" + e.getMessage());
+						oManager.deBugInfo("Database Connection Pool has created failed!" + e.getMessage());
 
 						return null;
 
@@ -284,14 +284,14 @@ public class ConnectionPool {
 
 				rs.next();
 
-				System.out.println(testTable + "：表的记录数为：" + rs.getInt(1));
+				oManager.deBugInfo(testTable + "：表的记录数为：" + rs.getInt(1));
 
 			}
 
 		} catch (SQLException e) {
 
 			// 上面抛出异常，此连接己不可用，关闭它，并返回 false;
-			e.printStackTrace();
+			oManager.deBugInfo(e.getMessage());
 			closeConnection(conn);
 			return false;
 		}
@@ -310,7 +310,7 @@ public class ConnectionPool {
 		// 确保连接池存在，如果连接没有创建（不存在），直接返回
 		if (connections == null) {
 
-			System.out.println("Connection Pool has not exist,connetion can not free!");
+			oManager.deBugInfo("Connection Pool has not exist,connetion can not free!");
 
 			return;
 
@@ -342,7 +342,7 @@ public class ConnectionPool {
 		// 确保连接池己创新存在
 		if (connections == null) {
 
-			System.out.println(" 连接池不存在，无法刷新 !");
+			oManager.deBugInfo(" 连接池不存在，无法刷新 !");
 
 			return;
 
@@ -381,7 +381,7 @@ public class ConnectionPool {
 		// 确保连接池存在，如果不存在，返回
 		if (connections == null) {
 
-			System.out.println(" Connection Pool has not exists,connection can not close!");
+			oManager.deBugInfo(" Connection Pool has not exists,connection can not close!");
 
 			return;
 
@@ -427,7 +427,7 @@ public class ConnectionPool {
 
 		} catch (SQLException e) {
 
-			System.out.println(" It has error when closing connection:" + e.getMessage());
+			oManager.deBugInfo(" It has error when closing connection:" + e.getMessage());
 		}
 
 	}
@@ -443,7 +443,7 @@ public class ConnectionPool {
 			Thread.sleep(mSeconds);
 
 		} catch (InterruptedException e) {
-
+			oManager.deBugInfo(e.getMessage());
 		}
 
 	}

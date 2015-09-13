@@ -23,7 +23,7 @@ public class TableCache {
 	public TableInfo get(String tablename){
 		return cache.get(tablename);
 	}
-	
+	//根据类型名得到tableinfo
 	public TableInfo getByTN(String typename){
 		return cacheByTN.get(typename);
 	}

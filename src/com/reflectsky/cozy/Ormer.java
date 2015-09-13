@@ -3,12 +3,15 @@ package com.reflectsky.cozy;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
+import com.reflectsky.cozy.core.OrmManager;
+
 
 /**
  * ORM接口
  * @author Comdex
  */
 public interface Ormer {
+	
 	/**
 	 *根据传入的对象查询数据库并赋值给该对象
 	 *可指定读入数据库指定的字段给该对象
@@ -23,16 +26,16 @@ public interface Ormer {
 	 *根据传入的对象向数据库插入对应的数据
 	 * @author Comdex
 	 * @param obj 传入的对象
-	 * @return long 插入数据记录的自增长ID,执行失败或对应数据表不存在自增长ID都是返回-1
+	 * @return boolean 返回false为失败
 	 */
-	public long insert(Object obj);
+	public boolean insert(Object obj);
 
 	/**
 	 *根据传入的对象及指定的数据库字段更新数据库的记录
 	 * @author Comdex
 	 * @param obj 传入的对象
 	 * @param fieldnames  与对象字段对应的数据库记录字段，可选
-	 * @return int  返回-1代表执行失败
+	 * @return int  返回0代表执行失败
 	 */
 	public int update(Object obj,String... fieldnames);
 
@@ -40,7 +43,7 @@ public interface Ormer {
 	 *根据传入的对象删除数据库指定的记录
 	 * @author Comdex
 	 * @param obj 传入的对象
-	 * @return int  返回-1代表执行失败
+	 * @return int  返回0代表执行失败
 	 */
 	public int delete(Object obj);
 	
@@ -61,12 +64,12 @@ public interface Ormer {
 	public RawSet raw(String sql,Object... params);
 	
 	/**
-	 *根据传入的数据库表名返回ORM查询对象
+	 *根据传入的数据对象或数据库表名返回ORM查询对象
 	 * @author Comdex
-	 * @param tableName 数据库表名
+	 * @param obj 数据对象或数据库表名
 	 * @return QuerySet ORM查询对象
 	 */
-	public QuerySet queryTable(String tableName);
+	public QuerySet queryTable(Object obj);
 	
 	/**
 	 *开始事务
@@ -107,4 +110,18 @@ public interface Ormer {
 	 * @author Comdex 
 	 */
 	public void close();
+	
+	/**
+	 *仅供ORM管理器注入用
+	 * @author Comdex
+	 * @param conn 需要注入的connection
+	 */
+	public void setConnection(Object conn);
+	
+	/**
+	 *仅供Orm管理器注入用
+	 * @author Comdex
+	 * @param OrmManager 需要注入的OrmManager
+	 */
+	public void setOrmManager(OrmManager omanager);
 }
