@@ -1,6 +1,11 @@
 
 package com.reflectsky.cozy.apiimpl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +24,9 @@ import com.reflectsky.cozy.core.TableInfo;
  * ORM查询接口实现
  * @author Comdex
  */
-public class QuerySetImpl implements QuerySet {
+public class QuerySetImpl implements QuerySet,Serializable {
+	
+	private static final long serialVersionUID = -3916590626146857830L;
 	private OrmManager oManager = null;
 	private Connection conn = null;
 	private String tableName = "";
@@ -31,6 +38,21 @@ public class QuerySetImpl implements QuerySet {
 		this.oManager = oManager;
 		this.conn = conn;
 		this.tableName = tableName;
+	}
+	
+	// 深复制
+	private QuerySetImpl deepClone(){
+		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		try{
+			ObjectOutputStream oo = new ObjectOutputStream(bo);
+			oo.writeObject(this);//从流里读出来
+			ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray());
+			ObjectInputStream oi = new ObjectInputStream(bi);
+			return (QuerySetImpl) (oi.readObject());
+		}catch(Exception e){
+			this.oManager.deBugInfo(e.getMessage());
+		}
+		return null;
 	}
 	
 
@@ -73,12 +95,23 @@ public class QuerySetImpl implements QuerySet {
 					params.add(ps[i]);
 				}
 				strWhere = strWhere + ") ";
+			}else if(expers[1].equalsIgnoreCase("icontains")){
+				strWhere = strWhere + " and " + expers[0] + " like " + "?";
+				params.add("%" + ps[0] + "%");
+			}else if(expers[1].equalsIgnoreCase("contains")){
+				if(this.oManager.getDBType().equalsIgnoreCase("mysql")){
+					strWhere = strWhere + " and " + expers[0] + " like BINARY " + "?";
+					params.add("%" + ps[0] + "%");
+				}else{
+					
+				}
+				
 			}
 		}else if(expers.length == 1){
 			strWhere = strWhere + " and " + expers[0] + " = " + "?";
 			params.add(ps[0]);
 		}
-		return this;
+		return deepClone();
 	}
 
 	/* @author Comdex
@@ -94,7 +127,7 @@ public class QuerySetImpl implements QuerySet {
 				strOrderBy = strOrderBy + " , " + expressions[i] + " " + "ASC";
 			}
 		}
-		return this;
+		return deepClone();
 	}
 
 	/* @author Comdex
