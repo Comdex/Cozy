@@ -40,15 +40,24 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		this.tableName = tableName;
 	}
 	
+	public QuerySetImpl(OrmManager oManager,Connection conn,String tableName,String strWhere,String strOrderBy, Vector<Object> params){
+		this.oManager = oManager;
+		this.conn = conn;
+		this.tableName = tableName;
+		this.strWhere = strWhere;
+		this.strOrderBy = strOrderBy;
+		this.params = params;
+	}
+	
 	// 深复制
-	private QuerySetImpl deepClone(){
+	private Vector<Object> deepCloneVector(Vector<Object> params){
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		try{
 			ObjectOutputStream oo = new ObjectOutputStream(bo);
-			oo.writeObject(this);//从流里读出来
+			oo.writeObject(params);//从流里读出来
 			ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray());
 			ObjectInputStream oi = new ObjectInputStream(bi);
-			return (QuerySetImpl) (oi.readObject());
+			return (Vector<Object>) (oi.readObject());
 		}catch(Exception e){
 			this.oManager.deBugInfo(e.getMessage());
 		}
@@ -63,6 +72,8 @@ public class QuerySetImpl implements QuerySet,Serializable {
 	public QuerySet filter(String expression, Object... ps) {
 		// TODO 自动生成的方法存根
 		String[] expers = expression.split("__");//split with double underline
+		String strWhere = this.strWhere;
+		Vector<Object> params = deepCloneVector(this.params);
 		if(expers.length == 2){
 			if(expers[1].equalsIgnoreCase("gt")){
 				strWhere = strWhere + " and " + expers[0] + " > " + "?";
@@ -111,7 +122,8 @@ public class QuerySetImpl implements QuerySet,Serializable {
 			strWhere = strWhere + " and " + expers[0] + " = " + "?";
 			params.add(ps[0]);
 		}
-		return deepClone();
+	
+		return new QuerySetImpl(this.oManager, this.conn, this.tableName, strWhere, this.strOrderBy, params);
 	}
 
 	/* @author Comdex
@@ -120,6 +132,8 @@ public class QuerySetImpl implements QuerySet,Serializable {
 	@Override
 	public QuerySet orderBy(String... expressions) {
 		// TODO 自动生成的方法存根
+		String strOrderBy = this.strOrderBy;
+		Vector<Object> params = deepCloneVector(this.params);
 		for(int i=0 ; i<expressions.length ; i++){
 			if(expressions[i].startsWith("-")){
 				strOrderBy = strOrderBy + " , " + expressions[i].substring(1) + " " + "DESC";
@@ -127,7 +141,7 @@ public class QuerySetImpl implements QuerySet,Serializable {
 				strOrderBy = strOrderBy + " , " + expressions[i] + " " + "ASC";
 			}
 		}
-		return deepClone();
+		return new QuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strOrderBy, params);
 	}
 
 	/* @author Comdex
