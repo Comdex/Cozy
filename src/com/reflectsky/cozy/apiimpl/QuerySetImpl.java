@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Vector;
 
@@ -49,7 +48,7 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		this.params = params;
 	}
 	
-	// 深复制
+	// 深复制参数Vector
 	private Vector<Object> deepCloneVector(Vector<Object> params){
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		try{
@@ -64,6 +63,14 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		return null;
 	}
 	
+	private String findFieldName(Vector<FieldInfo> fieldinfos, String fieldName){
+		for (FieldInfo fi : fieldinfos) {
+			if(fi.getFieldName().equals(fieldName)){
+				return fi.getColumnName();
+			}
+		}
+		return null;
+	}
 
 	/* @author Comdex
 	 * @see com.reflectsky.cozy.QuerySet#filter(java.lang.String, java.lang.Object[])
@@ -74,52 +81,127 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		String[] expers = expression.split("__");//split with double underline
 		String strWhere = this.strWhere;
 		Vector<Object> params = deepCloneVector(this.params);
+		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
 		if(expers.length == 2){
 			if(expers[1].equalsIgnoreCase("gt")){
-				strWhere = strWhere + " and " + expers[0] + " > " + "?";
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " > " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " > " + "?";
+				}
+				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("gte")){
-				strWhere = strWhere + " and " + expers[0] + " >= " + "?";
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " >= " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " >= " + "?";
+				}
+				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("lt")){
-				strWhere = strWhere + " and " + expers[0] + " < " + "?";
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " < " + "?";
+				}else{
+					strWhere = strWhere + " and " + expers[0] + " < " + "?";
+				}
+				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("lte")){
-				strWhere = strWhere + " and " + expers[0] + " <= " + "?";
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " <= " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " <= " + "?";
+				}
+				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("exact")){
-				strWhere = strWhere + " and " + expers[0] + " = " + "?";
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " = " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " = " + "?";
+				}
+				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("iexact")){
-				strWhere = strWhere + " and " + expers[0] + " like " + "?";
-				params.add(ps[0]);
-			}else if(expers[1].equalsIgnoreCase("istartswith")){
-				strWhere = strWhere + " and " + expers[0] + " like " + "?";
-				params.add(ps[0] + "%");
-			}else if(expers[1].equalsIgnoreCase("iendswith")){
-				strWhere = strWhere + " and " + expers[0] + " like " + "?";
-				params.add("%" + ps[0]);
-			}else if(expers[1].equalsIgnoreCase("in")){
-				strWhere = strWhere + " and " + expers[0] + " in (";
-				for(int i=0 ; i<ps.length ; i++){
-					strWhere = strWhere + " ? ";
-					params.add(ps[i]);
-				}
-				strWhere = strWhere + ") ";
-			}else if(expers[1].equalsIgnoreCase("icontains")){
-				strWhere = strWhere + " and " + expers[0] + " like " + "?";
-				params.add("%" + ps[0] + "%");
-			}else if(expers[1].equalsIgnoreCase("contains")){
-				if(this.oManager.getDBType().equalsIgnoreCase("mysql")){
-					strWhere = strWhere + " and " + expers[0] + " like BINARY " + "?";
-					params.add("%" + ps[0] + "%");
-				}else{
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like " + "?";
 					
 				}
 				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("istartswith")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like " + "?";
+				}
+				
+				params.add(ps[0] + "%");
+			}else if(expers[1].equalsIgnoreCase("iendswith")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like " + "?";
+				}
+				
+				params.add("%" + ps[0]);
+			}else if(expers[1].equalsIgnoreCase("in")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " in (";
+					for(int i=0 ; i<ps.length ; i++){
+						strWhere = strWhere + " ? ";
+						params.add(ps[i]);
+					}
+					strWhere = strWhere + ") ";
+				}else{
+					strWhere = strWhere + " and " + expers[0] + " in (";
+					for(int i=0 ; i<ps.length ; i++){
+						strWhere = strWhere + " ? ";
+						params.add(ps[i]);
+					}
+					strWhere = strWhere + ") ";
+				}
+				
+			}else if(expers[1].equalsIgnoreCase("icontains")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like " + "?";
+				}
+				
+				params.add("%" + ps[0] + "%");
+			}else if(expers[1].equalsIgnoreCase("contains")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like BINARY " + "?";
+				}else{
+					strWhere = strWhere + " and " + expers[0] + " like BINARY " + "?";
+				}
+					
+				params.add("%" + ps[0] + "%");
+				
 			}
 		}else if(expers.length == 1){
-			strWhere = strWhere + " and " + expers[0] + " = " + "?";
+			String columnName = findFieldName(fieldInfos, expers[0]);
+			if(columnName != null){
+				strWhere = strWhere + " and " + columnName + " = " + "?";
+			}else {
+				strWhere = strWhere + " and " + expers[0] + " = " + "?";
+			}
+			
 			params.add(ps[0]);
 		}
 	
@@ -134,11 +216,24 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		// TODO 自动生成的方法存根
 		String strOrderBy = this.strOrderBy;
 		Vector<Object> params = deepCloneVector(this.params);
+		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
 		for(int i=0 ; i<expressions.length ; i++){
 			if(expressions[i].startsWith("-")){
-				strOrderBy = strOrderBy + " , " + expressions[i].substring(1) + " " + "DESC";
+				String columnName = findFieldName(fieldInfos,expressions[i]);
+				if(columnName != null){
+					strOrderBy = strOrderBy + " , " + columnName.substring(1) + " " + "DESC";
+				}else {
+					strOrderBy = strOrderBy + " , " + expressions[i].substring(1) + " " + "DESC";
+				}
+				
 			}else {
-				strOrderBy = strOrderBy + " , " + expressions[i] + " " + "ASC";
+				String columnName = findFieldName(fieldInfos,expressions[i]);
+				if(columnName != null){
+					strOrderBy = strOrderBy + " , " + columnName + " " + "ASC";
+				}else {
+					strOrderBy = strOrderBy + " , " + expressions[i] + " " + "ASC";
+				}
+				
 			}
 		}
 		return new QuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strOrderBy, params);

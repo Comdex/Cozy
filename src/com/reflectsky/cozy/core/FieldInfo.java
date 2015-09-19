@@ -1,4 +1,4 @@
-package com.reflectsky.cozy.core;
+ package com.reflectsky.cozy.core;
 
 /**
  *对象映射数据库字段信息保存类 
