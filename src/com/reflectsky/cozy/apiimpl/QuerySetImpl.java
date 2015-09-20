@@ -83,6 +83,9 @@ public class QuerySetImpl implements QuerySet,Serializable {
 		Vector<Object> params = deepCloneVector(this.params);
 		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
 		if(expers.length == 2){
+			if(ps.length == 0){
+				return null;
+			}
 			if(expers[1].equalsIgnoreCase("gt")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
@@ -193,8 +196,27 @@ public class QuerySetImpl implements QuerySet,Serializable {
 					
 				params.add("%" + ps[0] + "%");
 				
+			}else if(expers[1].equalsIgnoreCase("isnull")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					if((boolean)ps[0] == true){
+						strWhere = strWhere + " and " + columnName + " IS NULL";
+					}else {
+						strWhere = strWhere + " and " + columnName + " IS NOT NULL";
+					}
+					
+				}else {
+					if((boolean)ps[0] == true){
+						strWhere = strWhere + " and " + expers[0] + " IS NULL";
+					}else {
+						strWhere = strWhere + " and " + expers[0] + " IS NOT NULL";
+					}
+				}
 			}
 		}else if(expers.length == 1){
+			if(ps.length == 0){
+				return null;
+			}
 			String columnName = findFieldName(fieldInfos, expers[0]);
 			if(columnName != null){
 				strWhere = strWhere + " and " + columnName + " = " + "?";
