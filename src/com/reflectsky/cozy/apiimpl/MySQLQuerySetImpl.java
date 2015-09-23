@@ -23,7 +23,7 @@ import com.reflectsky.cozy.core.TableInfo;
  * ORM查询接口实现
  * @author Comdex
  */
-public class QuerySetImpl implements QuerySet,Serializable {
+public class MySQLQuerySetImpl implements QuerySet,Serializable {
 	
 	private static final long serialVersionUID = -3916590626146857830L;
 	private OrmManager oManager = null;
@@ -31,15 +31,16 @@ public class QuerySetImpl implements QuerySet,Serializable {
 	private String tableName = "";
 	private String strWhere = "";
 	private String strOrderBy = "";
+	private String strExclude = "";
 	private Vector<Object> params = new Vector<Object>();
 	
-	public QuerySetImpl(OrmManager oManager,Connection conn,String tableName){
+	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName){
 		this.oManager = oManager;
 		this.conn = conn;
 		this.tableName = tableName;
 	}
 	
-	public QuerySetImpl(OrmManager oManager,Connection conn,String tableName,String strWhere,String strOrderBy, Vector<Object> params){
+	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName,String strWhere,String strExclude,String strOrderBy, Vector<Object> params){
 		this.oManager = oManager;
 		this.conn = conn;
 		this.tableName = tableName;
@@ -227,7 +228,7 @@ public class QuerySetImpl implements QuerySet,Serializable {
 			params.add(ps[0]);
 		}
 	
-		return new QuerySetImpl(this.oManager, this.conn, this.tableName, strWhere, this.strOrderBy, params);
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, strWhere, this.strExclude, this.strOrderBy, params);
 	}
 
 	/* @author Comdex
@@ -258,7 +259,7 @@ public class QuerySetImpl implements QuerySet,Serializable {
 				
 			}
 		}
-		return new QuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strOrderBy, params);
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere,this.strExclude, strOrderBy, params);
 	}
 
 	/* @author Comdex
@@ -595,6 +596,164 @@ public class QuerySetImpl implements QuerySet,Serializable {
 			this.oManager.closeStmt(pstmt);
 		}
 		return count;
+	}
+
+	/* @author Comdex
+	 * @see com.reflectsky.cozy.QuerySet#exclude(java.lang.String, java.lang.Object[])
+	 */
+	@Override
+	public QuerySet exclude(String expression, Object... ps) {
+		// TODO 自动生成的方法存根
+		String[] expers = expression.split("__");//split with double underline
+		String strExclude = this.strExclude;
+		Vector<Object> params = deepCloneVector(this.params);
+		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
+		if(expers.length == 2){
+			if(ps.length == 0){
+				return null;
+			}
+			if(expers[1].equalsIgnoreCase("gt")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " > " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " > " + "?";
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("gte")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " >= " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " >= " + "?";
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("lt")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " < " + "?";
+				}else{
+					strExclude = strExclude + " not " + expers[0] + " < " + "?";
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("lte")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " <= " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " <= " + "?";
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("exact")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " = " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " = " + "?";
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("iexact")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+					
+				}
+				
+				params.add(ps[0]);
+			}else if(expers[1].equalsIgnoreCase("istartswith")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+				}
+				
+				params.add(ps[0] + "%");
+			}else if(expers[1].equalsIgnoreCase("iendswith")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+				}
+				
+				params.add("%" + ps[0]);
+			}else if(expers[1].equalsIgnoreCase("in")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " in (";
+					for(int i=0 ; i<ps.length ; i++){
+						strExclude = strExclude + " ? ";
+						params.add(ps[i]);
+					}
+					strExclude = strExclude + ") ";
+				}else{
+					strExclude = strExclude + " not " + expers[0] + " in (";
+					for(int i=0 ; i<ps.length ; i++){
+						strExclude = strExclude + " ? ";
+						params.add(ps[i]);
+					}
+					strExclude = strExclude + ") ";
+				}
+				
+			}else if(expers[1].equalsIgnoreCase("icontains")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+				}
+				
+				params.add("%" + ps[0] + "%");
+			}else if(expers[1].equalsIgnoreCase("contains")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+				}else{
+					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+				}
+					
+				params.add("%" + ps[0] + "%");
+				
+			}else if(expers[1].equalsIgnoreCase("isnull")){
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					if((boolean)ps[0] == true){
+						strExclude = strExclude + " not " + columnName + " IS NULL";
+					}else {
+						strExclude = strExclude + " not " + columnName + " IS NOT NULL";
+					}
+					
+				}else {
+					if((boolean)ps[0] == true){
+						strExclude = strExclude + " not " + expers[0] + " IS NULL";
+					}else {
+						strExclude = strExclude + " not " + expers[0] + " IS NOT NULL";
+					}
+				}
+			}
+		}else if(expers.length == 1){
+			if(ps.length == 0){
+				return null;
+			}
+			String columnName = findFieldName(fieldInfos, expers[0]);
+			if(columnName != null){
+				strExclude = strExclude + " not " + columnName + " = " + "?";
+			}else {
+				strExclude = strExclude + " not " + expers[0] + " = " + "?";
+			}
+			
+			params.add(ps[0]);
+		}
+	
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strExclude, this.strOrderBy, params);
 	}
 
 }

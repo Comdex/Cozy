@@ -27,6 +27,15 @@ public interface QuerySet {
 	public QuerySet orderBy(String...expressions);
 	
 	/**
+	 *根据排除条件查询表达式和查询参数返回ORM查询对象
+	 * @author Comdex
+	 * @param expression 排除条件查询表达式
+	 * @param params 排除条件查询参数
+	 * @return QuerySet
+	 */
+	public QuerySet exclude(String expression,Object...params);
+	
+	/**
 	 *计算符合条件的数据库记录条数
 	 * @author Comdex
 	 * @return long 数据库记录条数,-1为执行失败

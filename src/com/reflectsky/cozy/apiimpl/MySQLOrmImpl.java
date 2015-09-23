@@ -1260,12 +1260,12 @@ public class MySQLOrmImpl implements Ormer{
 	
 	public QuerySet queryTable(Object obj){
 		if(obj.getClass() == String.class){
-			return new QuerySetImpl(oManager, conn, (String)obj);
+			return new MySQLQuerySetImpl(oManager, conn, (String)obj);
 		}else{
 			TableInfo tbinfo = this.oManager.getTableCache().getByTN(obj.getClass().getName());
 			if(tbinfo != null){
 				String tableName = tbinfo.getTableName();
-				return new QuerySetImpl(oManager, conn, tableName);
+				return new MySQLQuerySetImpl(oManager, conn, tableName);
 			}else{
 				return null;
 			}
