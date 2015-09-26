@@ -32,7 +32,6 @@ public class MySQLOrmImpl implements Ormer{
 	private OrmManager oManager = null;
 	//默认不存在回调对象
 	private Object callbackobj = null;
-	
 		
 	public MySQLOrmImpl(){
 	}
@@ -1234,6 +1233,8 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				Statement stmt = conn.createStatement();
 				RawSet rawSet = new RawSetImpl(this.oManager, stmt, sql);
+				
+				this.debug(sql, params);
 				return rawSet;
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
@@ -1260,12 +1261,12 @@ public class MySQLOrmImpl implements Ormer{
 	
 	public QuerySet queryTable(Object obj){
 		if(obj.getClass() == String.class){
-			return new MySQLQuerySetImpl(oManager, conn, (String)obj);
+			return new MySQLQuerySetImpl(oManager, conn, (String)obj, " LIMIT " + this.oManager.getDefaultRowsLimit());
 		}else{
 			TableInfo tbinfo = this.oManager.getTableCache().getByTN(obj.getClass().getName());
 			if(tbinfo != null){
 				String tableName = tbinfo.getTableName();
-				return new MySQLQuerySetImpl(oManager, conn, tableName);
+				return new MySQLQuerySetImpl(oManager, conn, tableName, " LIMIT " + this.oManager.getDefaultRowsLimit());
 			}else{
 				return null;
 			}
@@ -1320,5 +1321,26 @@ public class MySQLOrmImpl implements Ormer{
 		// TODO 自动生成的方法存根
 		this.oManager = omanager;
 	}
-	
+
+	private void debug(String sql,Object[] params){
+		if(this.oManager.isDebug()){
+			if(params != null){
+				sql += "  parameter:";
+				for(Object object : params){
+					if(object != null){
+						if(object.getClass().getSimpleName().equals("Date")){
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							Date date = (Date)object;
+							sql += " <" + sdf.format(date) + ">" ;
+						}else {
+							sql += " <" + object + ">" ;
+						}
+					}else {
+						sql += " <null>";
+					}	
+				}
+			}
+			this.oManager.deBugInfo(sql);	
+		}
+	}
 }

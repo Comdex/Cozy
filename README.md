@@ -5,6 +5,14 @@ Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言
 
 目前仍处于开发阶段，但api已基本稳定
 
+v0.2.6——2015/09/26 update:
+
+添加操作符号startswith和endswith 用于表达sql操作 WHERE name LIKE BINARY 'xxx%' 
+
+与istartswith和iendswith的区别为大小写匹配敏感
+
+添加limit()和offset()方法用于设置返回数据行数及偏移行
+
 v0.2.5——2015/09/23 update:
 
 重构类QuerySetImpl为与MySQL具体实现相关的MySQLQuerySetImpl，添加了exclude方法用于表达Sql操作where not xxx

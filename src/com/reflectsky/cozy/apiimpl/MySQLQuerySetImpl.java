@@ -5,12 +5,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,7 +24,7 @@ import com.reflectsky.cozy.core.TableInfo;
  * ORM查询接口实现
  * @author Comdex
  */
-public class MySQLQuerySetImpl implements QuerySet,Serializable {
+public class MySQLQuerySetImpl implements QuerySet {
 	
 	private static final long serialVersionUID = -3916590626146857830L;
 	private OrmManager oManager = null;
@@ -32,20 +33,24 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 	private String strWhere = "";
 	private String strOrderBy = "";
 	private String strExclude = "";
+	private String strLimit = "";
 	private Vector<Object> params = new Vector<Object>();
 	
-	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName){
+	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName,String limit){
 		this.oManager = oManager;
 		this.conn = conn;
 		this.tableName = tableName;
+		this.strLimit = limit;
 	}
 	
-	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName,String strWhere,String strExclude,String strOrderBy, Vector<Object> params){
+	public MySQLQuerySetImpl(OrmManager oManager,Connection conn,String tableName,String strWhere,String strExclude,String strOrderBy, 
+			String strLimit, Vector<Object> params){
 		this.oManager = oManager;
 		this.conn = conn;
 		this.tableName = tableName;
 		this.strWhere = strWhere;
 		this.strOrderBy = strOrderBy;
+		this.strLimit = strLimit;
 		this.params = params;
 	}
 	
@@ -213,6 +218,24 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 						strWhere = strWhere + " and " + expers[0] + " IS NOT NULL";
 					}
 				}
+			}else if (expers[1].equalsIgnoreCase("startswith")) {
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like BINARY " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like BINARY " + "?";
+				}
+				
+				params.add(ps[0] + "%");
+			}else if (expers[1].equalsIgnoreCase("endswith")) {
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strWhere = strWhere + " and " + columnName + " like BINARY " + "?";
+				}else {
+					strWhere = strWhere + " and " + expers[0] + " like BINARY " + "?";
+				}
+				
+				params.add("%" + ps[0]);
 			}
 		}else if(expers.length == 1){
 			if(ps.length == 0){
@@ -227,8 +250,9 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 			
 			params.add(ps[0]);
 		}
-	
-		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, strWhere, this.strExclude, this.strOrderBy, params);
+		this.qsDebug(strWhere, params);
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, strWhere, this.strExclude, this.strOrderBy,
+				strLimit,params);
 	}
 
 	/* @author Comdex
@@ -238,7 +262,6 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 	public QuerySet orderBy(String... expressions) {
 		// TODO 自动生成的方法存根
 		String strOrderBy = this.strOrderBy;
-		Vector<Object> params = deepCloneVector(this.params);
 		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
 		for(int i=0 ; i<expressions.length ; i++){
 			if(expressions[i].startsWith("-")){
@@ -259,7 +282,9 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 				
 			}
 		}
-		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere,this.strExclude, strOrderBy, params);
+		this.qsDebug(strOrderBy, null);
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere,this.strExclude, strOrderBy,
+				this.strLimit,this.params);
 	}
 
 	/* @author Comdex
@@ -293,7 +318,7 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 	
 			}
 		}
-		oManager.deBugInfo(sql);
+		this.qsDebug(sql, null);
 		PreparedStatement pstmt = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -352,7 +377,7 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
-				oManager.deBugInfo(sql);
+				this.qsDebug(sql, null);
 				
 				rs = pstmt.executeQuery();
 				isExist = rs.next();
@@ -391,7 +416,7 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
-				oManager.deBugInfo(sql);
+				this.qsDebug(sql, null);
 				count = pstmt.executeUpdate();
 			
 			} catch (SQLException e) {
@@ -433,7 +458,7 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
-				oManager.deBugInfo(sql);
+				this.qsDebug(sql, null);
 				
 				rs = pstmt.executeQuery();
 				
@@ -524,7 +549,7 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 					pstmt.setObject(i+1, params.get(i));
 				}
 				
-				oManager.deBugInfo(sql);
+				this.qsDebug(sql, null);
 				
 				rs = pstmt.executeQuery();
 				
@@ -738,6 +763,24 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 						strExclude = strExclude + " not " + expers[0] + " IS NOT NULL";
 					}
 				}
+			}else if (expers[1].equalsIgnoreCase("startswith")) {
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+				}
+				
+				params.add(ps[0] + "%");
+			}else if (expers[1].equalsIgnoreCase("endswith")) {
+				String columnName = findFieldName(fieldInfos, expers[0]);
+				if(columnName != null){
+					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+				}else {
+					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+				}
+				
+				params.add("%" + ps[0]);
 			}
 		}else if(expers.length == 1){
 			if(ps.length == 0){
@@ -752,8 +795,82 @@ public class MySQLQuerySetImpl implements QuerySet,Serializable {
 			
 			params.add(ps[0]);
 		}
-	
-		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strExclude, this.strOrderBy, params);
+		this.qsDebug(strExclude, params);
+		return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, strExclude, this.strOrderBy,
+				this.strLimit,params);
 	}
 
+	/* @author Comdex
+	 * @see com.reflectsky.cozy.QuerySet#limit(int, long[])
+	 */
+	@Override
+	public QuerySet limit(int count, long... offset) {
+		// TODO 自动生成的方法存根
+		String strLimit = "";
+		if(offset.length == 0){
+			int off = this.strLimit.indexOf(",");
+			// 如果不存在offset
+			if(off == -1){
+				strLimit = " LIMIT " + count;
+				this.qsDebug(strLimit, null);
+				return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
+						strLimit,this.params);
+			}else {
+				strLimit = this.strLimit.substring(0, off+1) + " " + count;
+				this.qsDebug(strLimit, null);
+				return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
+						strLimit,this.params);
+			}
+		}else {
+			strLimit = " LIMIT " + offset[0] + ", " + count;
+			this.qsDebug(strLimit, null);
+			return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
+					strLimit,this.params);
+		}
+	}
+
+	/* @author Comdex
+	 * @see com.reflectsky.cozy.QuerySet#offset(long)
+	 */
+	@Override
+	public QuerySet offset(long offset) {
+		// TODO 自动生成的方法存根
+		String strLimit = "";
+		int off = this.strLimit.indexOf(",");
+		if(off == -1){
+			String count = this.strLimit.substring(7);
+			strLimit = " LIMIT " + offset + ", " + count;
+			this.qsDebug(strLimit, null);
+			return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
+					strLimit,this.params);
+		}else{
+			String count = this.strLimit.substring(off);
+			strLimit = " LIMIT " + offset + count;
+			this.qsDebug(strLimit, null);
+			return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
+					strLimit,this.params);
+		}
+	}
+	
+	private void qsDebug(String sql,Vector<Object> params){
+		if(this.oManager.isDebug()){
+			if(params != null){
+				sql += "  parameter:";
+				for(Object object : params){
+					if(object != null){
+						if(object.getClass().getSimpleName().equals("Date")){
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+							Date date = (Date)object;
+							sql += " <" + sdf.format(date) + ">" ;
+						}else {
+							sql += " <" + object + ">" ;
+						}
+					}else {
+						sql += " <null>";
+					}	
+				}
+			}
+			this.oManager.deBugInfo(sql);	
+		}
+	}
 }

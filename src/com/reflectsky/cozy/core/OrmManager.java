@@ -37,6 +37,7 @@ public class OrmManager {
 	private  boolean Force = false;
 	private TableCache tableCache;
 	private static ConnectionPool connPool;
+	private int defaultRowsLimit = 1000;
 	
 	//缓存OrmUtil
 	private OrmUtil ormUtil = null;
@@ -268,6 +269,8 @@ public class OrmManager {
 			conMethod.invoke(obj, connPool.getConnection());
 			java.lang.reflect.Method ormMethod = clazz.getDeclaredMethod("setOrmManager", OrmManager.class);
 			ormMethod.invoke(obj, this);
+			java.lang.reflect.Method defaultLimitMethod = clazz.getDeclaredMethod("setDefaultRowsLimit", int.class);
+			defaultLimitMethod.invoke(obj, this.defaultRowsLimit);
 			return (Ormer)obj;
 		} catch (InstantiationException e1) {
 			// TODO 自动生成的 catch 块
@@ -474,5 +477,13 @@ public class OrmManager {
 	
     public String getDBType(){
     	return this.DBtype;
+    }
+    
+    public void setDefaultRowsLimit(int limit){
+    	this.defaultRowsLimit = limit;
+    }
+    
+    public int getDefaultRowsLimit(){
+    	return this.defaultRowsLimit;
     }
 }

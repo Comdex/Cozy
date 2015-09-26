@@ -74,4 +74,21 @@ public interface QuerySet {
 	 * @return long 受影响的记录条数
 	 */
 	public long all(List list,Class clazz,String...params);
+	
+	/**
+	 *限制最大返回数据行数，第二个参数可以设置 Offset
+	 * @author Comdex
+	 * @param int 限制返回行数
+	 * @param long 偏移行数
+	 * @return QuerySet
+	 */
+	public QuerySet limit(int count, long... offset);
+	
+	/**
+	 *设置偏移行数
+	 * @author Comdex
+	 * @param long 偏移行数
+	 * @return QuerySet
+	 */
+	public QuerySet offset(long offset);
 }

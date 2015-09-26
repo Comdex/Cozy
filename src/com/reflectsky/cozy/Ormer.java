@@ -124,4 +124,5 @@ public interface Ormer {
 	 * @param OrmManager 需要注入的OrmManager
 	 */
 	public void setOrmManager(OrmManager omanager);
+	
 }
