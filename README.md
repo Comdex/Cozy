@@ -11,7 +11,7 @@ v0.2.6——2015/09/26 update:
 
 与istartswith和iendswith的区别为大小写匹配敏感
 
-添加limit()和offset()方法用于设置返回数据行数及偏移行
+QuerySet添加limit()和offset()方法用于设置返回数据行数及偏移行
 
 v0.2.5——2015/09/23 update:
 
