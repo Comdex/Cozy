@@ -2,6 +2,7 @@ package com.reflectsky.cozy;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 
 import com.reflectsky.cozy.core.OrmManager;
 
@@ -124,5 +125,13 @@ public interface Ormer {
 	 * @param OrmManager 需要注入的OrmManager
 	 */
 	public void setOrmManager(OrmManager omanager);
+	
+	/**
+	 *同时插入多个对象
+	 * @author Comdex
+	 * @param objects 需要插入的对象list
+	 * @return 执行插入的条数 
+	 */
+	public int insertMulti(List objects);
 	
 }

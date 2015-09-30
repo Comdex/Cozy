@@ -1,4 +1,4 @@
-package com.reflectsky.cozy.apiimpl;
+package com.reflectsky.cozy.mysqldriver;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,13 +10,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
-
-import sun.org.mozilla.javascript.internal.ast.ContinueStatement;
 
 import com.reflectsky.cozy.Ormer;
 import com.reflectsky.cozy.QuerySet;
 import com.reflectsky.cozy.RawSet;
+import com.reflectsky.cozy.common.RawSetImpl;
 import com.reflectsky.cozy.core.FieldInfo;
 import com.reflectsky.cozy.core.OperateSet;
 import com.reflectsky.cozy.core.OrmManager;
@@ -1030,6 +1030,92 @@ public class MySQLOrmImpl implements Ormer{
 		return os;	
 	}
 	
+	
+	private OperateSet generateInsertMultiOperateSet(List objects){
+		if(objects == null || objects.isEmpty()){
+			return null;
+		}
+		Object obj = objects.get(0);
+		Class<? extends Object> clazz = obj.getClass();
+		//获取tablecache中的对应的info
+		String typeName = clazz.getName();
+		TableInfo tbinfo = null;
+		String autoKeyName = "";
+		
+		if(typeName != null){
+			tbinfo = oManager.getTableCache().getByTN(typeName);
+		}
+		
+		if(tbinfo == null){
+			//提示错误
+			System.out.println("[generateInsertMultiOperateSet error]-Model<"+typeName+"> has not registered!");
+			return null;
+		}
+		
+		String strSql = "insert into " + tbinfo.getTableName();
+		String strField = "";
+		String strValue = "";
+		Vector<Object> param = new Vector<Object>();
+		// 初始化Vector<Vector>
+		for(int i=0;i<objects.size();i++){
+			param.add(new Vector<Object>());
+		}
+		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
+		for(FieldInfo fin : fins){
+			//跳过自动增长的字段
+			if(fin.isAutoGenerate()){
+				autoKeyName = fin.getColumnName();
+				continue;
+			}
+			strField += fin.getColumnName() + ",";
+			strValue += "?,";
+			//获取值
+			Field fie = null;
+			try {
+				 fie = clazz.getDeclaredField(fin.getFieldName());
+				 fie.setAccessible(true);
+			} catch (NoSuchFieldException e) {
+				// TODO 自动生成的 catch 块
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
+			} catch (SecurityException e) {
+				// TODO 自动生成的 catch 块
+				this.oManager.deBugInfo(e.getMessage());
+				return null;
+			}
+			if(fie != null){
+				try {
+					for(int i=0;i<objects.size();i++){
+						((Vector<Object>)param.get(i)).add(fie.get(obj));
+					}
+					
+				} catch (IllegalArgumentException e) {
+					// TODO 自动生成的 catch 块
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
+				} catch (IllegalAccessException e) {
+					// TODO 自动生成的 catch 块
+					this.oManager.deBugInfo(e.getMessage());
+					return null;
+				}
+			}
+			
+		}
+		
+		//只有自增字段错误退出
+		if(strField.equals("")){
+			System.out.println("[generateInsertOperateSet error]-Model<"+typeName+"> only have autogenerate field!");
+			return null;
+		}
+		//去除尾部的，号
+		strField = strField.substring(0, strField.length()-1);
+		strValue = strValue.substring(0,strValue.length()-1);
+		strSql += " (" + strField + ") values(" + strValue + ")";
+		OperateSet os = new OperateSet(strSql, param, tbinfo);
+		os.setAutoKeyName(autoKeyName);
+		return os;	
+	}
+	
 	//生成更新Sql,以主键为更新条件,如果有指定更新的键那只更新该键
 	private OperateSet generateUpdateOperateSet(Object obj , String... fieldnames){
 		Class<? extends Object> clazz = obj.getClass();
@@ -1342,5 +1428,203 @@ public class MySQLOrmImpl implements Ormer{
 			}
 			this.oManager.deBugInfo(sql);	
 		}
+	}
+
+	@Override
+	public int insertMulti(List objects) {
+		// TODO 自动生成的方法存根
+		if (objects == null || objects.isEmpty()) {
+			return 0;
+		}
+		OperateSet oSet = generateInsertMultiOperateSet(objects);
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int rows = 0;
+
+		if (oSet == null) {
+
+			return rows;
+		}
+
+		try {
+			pstmt = conn.prepareStatement(oSet.getStrSql(),
+					Statement.RETURN_GENERATED_KEYS);
+
+			ormDebug(oSet);
+
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			this.oManager.deBugInfo(e.getMessage());
+		}
+		
+		
+		if(pstmt != null){
+			Vector<Object> param = oSet.getParam();
+			int paramSize = ((Vector<Object>)param.get(0)).size();
+			for(int i=0 ; i < objects.size() ; i++){
+				
+				for(int j=0 ; j < paramSize ; j++){
+					Object object = param.get(j);
+					
+					try {
+						pstmt.setObject(j+1, object);
+					} catch (SQLException e) {
+						// TODO 自动生成的 catch 块
+						this.oManager.deBugInfo(e.getMessage());
+						
+					}
+					
+				}
+				try {
+					pstmt.addBatch();
+				} catch (SQLException e) {
+					// TODO 自动生成的 catch 块
+					this.oManager.deBugInfo(e.getMessage());
+				}
+			}
+			
+			
+			
+			//如果开启方法回调支持功能
+			if(callbackobj != null){
+				Class<?> clazz = callbackobj.getClass();
+				Method[] mtds = clazz.getDeclaredMethods();
+				for(Method mtd:mtds){
+					if(mtd.getName().equals("beforeInsertMulti")){
+						Class<?>[] params = mtd.getParameterTypes();
+						if(params.length == 2){
+							if(params[0]==objects.getClass() && params[1]==Ormer.class){
+								//用于回调的注入参数Ormer
+								Ormer ormer = this.oManager.NewOrm();
+								mtd.setAccessible(true);
+								try {
+									mtd.invoke(callbackobj, objects, ormer);
+								} catch (IllegalAccessException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (IllegalArgumentException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								} catch (InvocationTargetException e) {
+									// TODO 自动生成的 catch 块
+									this.oManager.deBugInfo(e.getMessage());
+									
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			
+			
+			try {
+				int[] execute = pstmt.executeBatch();
+				rows = execute.length;
+			} catch (SQLException e1) {
+				// TODO 自动生成的 catch 块
+				this.oManager.deBugInfo(e1.getMessage());
+
+			}
+			
+
+			try {
+				if(!oSet.getAutoKeyName().equals("")){
+					rs = pstmt.getGeneratedKeys();
+					int index = 0;
+					while(rs.next()){
+						long autoId = rs.getLong(1);
+						Field field = null;
+						Object obj = objects.get(index);
+						try {
+							field = obj.getClass().getDeclaredField(oSet.getAutoKeyName());
+						} catch (NoSuchFieldException e) {
+							// TODO 自动生成的 catch 块
+							this.oManager.deBugInfo(e.getMessage());
+							
+						} catch (SecurityException e) {
+							// TODO 自动生成的 catch 块
+							this.oManager.deBugInfo(e.getMessage());
+							
+						}
+						field.setAccessible(true);
+						try {
+							if(field.getClass().getName().equals("Integer")){
+								field.set(obj, (int)autoId);
+							}else if(field.getClass().getName().equals("Short")){
+								field.set(obj, (short)autoId);
+							}else {
+								field.set(obj, (int)autoId);
+							}
+							
+							index++;
+						
+						} catch (IllegalArgumentException e) {
+							// TODO 自动生成的 catch 块
+							this.oManager.deBugInfo(e.getMessage());
+							
+						} catch (IllegalAccessException e) {
+							// TODO 自动生成的 catch 块
+							this.oManager.deBugInfo(e.getMessage());
+							
+						}
+					}
+					
+					
+					if(callbackobj != null){
+						Class<?> clazz = callbackobj.getClass();
+						Method[] mtds = clazz.getDeclaredMethods();
+						for(Method mtd:mtds){
+							if(mtd.getName().equals("afterInsertMulti")){
+								Class<?>[] params = mtd.getParameterTypes();
+								if(params.length == 2){
+									if(params[0]==objects.getClass() && params[1]==Ormer.class){
+										//用于回调的注入参数Ormer
+										Ormer ormer = this.oManager.NewOrm();
+										mtd.setAccessible(true);
+										try {
+											mtd.invoke(callbackobj, objects, ormer);
+										} catch (IllegalAccessException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										} catch (IllegalArgumentException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										} catch (InvocationTargetException e) {
+											// TODO 自动生成的 catch 块
+											this.oManager.deBugInfo(e.getMessage());
+											
+										}
+									}
+								}
+							}
+						}
+					}
+								
+					this.oManager.closeRs(rs);
+					this.oManager.closeStmt(pstmt);
+					this.oManager.closeStmt(pstmt);
+					return rows;
+					
+				}else{
+					
+					this.oManager.closeStmt(pstmt);
+					return rows;
+				}
+				
+				
+			} catch (SQLException e) {
+				// TODO 自动生成的 catch 块
+				this.oManager.deBugInfo(e.getMessage());
+				
+			}
+			
+		}
+		
+		return rows;
 	}
 }

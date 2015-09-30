@@ -1,5 +1,5 @@
 
-package com.reflectsky.cozy.apiimpl;
+package com.reflectsky.cozy.common;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

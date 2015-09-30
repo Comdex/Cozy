@@ -14,8 +14,8 @@ import java.util.Vector;
 
 import com.reflectsky.cozy.OrmUtil;
 import com.reflectsky.cozy.Ormer;
-import com.reflectsky.cozy.apiimpl.MySQLOrmImpl;
-import com.reflectsky.cozy.apiimpl.MySQLOrmUtilImpl;
+import com.reflectsky.cozy.mysqldriver.MySQLOrmImpl;
+import com.reflectsky.cozy.mysqldriver.MySQLOrmUtilImpl;
 
 
 public class OrmManager {

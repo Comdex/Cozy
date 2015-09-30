@@ -1,4 +1,4 @@
-package com.reflectsky.cozy.apiimpl;
+package com.reflectsky.cozy.common;
 
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;

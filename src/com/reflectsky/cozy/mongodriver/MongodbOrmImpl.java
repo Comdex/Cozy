@@ -1,7 +1,8 @@
-package com.reflectsky.cozy.apiimpl;
+package com.reflectsky.cozy.mongodriver;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 
 import com.reflectsky.cozy.Ormer;
 import com.reflectsky.cozy.QuerySet;
@@ -98,6 +99,12 @@ public class MongodbOrmImpl implements Ormer {
 	public void setOrmManager(OrmManager omanager) {
 		// TODO 自动生成的方法存根
 		
+	}
+
+	@Override
+	public int insertMulti(List objects) {
+		// TODO 自动生成的方法存根
+		return 0;
 	}
 
 }
