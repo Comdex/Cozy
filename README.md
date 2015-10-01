@@ -1,9 +1,13 @@
-Cozy - Easy Java ORM（version:0.2.7）
+Cozy - Easy Java ORM（version:0.2.8）
 ===============
 
 Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM。
 
 目前仍处于开发阶段，但api已基本稳定
+
+v0.2.8——2015/10/1 update:
+
+fix bugs:QuerySet的count,exists,all,one方法fix...
 
 v0.2.7——2015/09/30 update:
 
