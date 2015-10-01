@@ -269,8 +269,6 @@ public class OrmManager {
 			conMethod.invoke(obj, connPool.getConnection());
 			java.lang.reflect.Method ormMethod = clazz.getDeclaredMethod("setOrmManager", OrmManager.class);
 			ormMethod.invoke(obj, this);
-			java.lang.reflect.Method defaultLimitMethod = clazz.getDeclaredMethod("setDefaultRowsLimit", int.class);
-			defaultLimitMethod.invoke(obj, this.defaultRowsLimit);
 			return (Ormer)obj;
 		} catch (InstantiationException e1) {
 			// TODO 自动生成的 catch 块

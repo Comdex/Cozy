@@ -18,27 +18,27 @@ import com.reflectsky.cozy.core.OrmManager;
 public class Te {
 	public static void main(String[] args) {
 		
-		Mongo mg = new Mongo("localhost", 27017);
-		DB db = mg.getDB("dajia");
-		DBCollection collection = db.getCollection("bibi");
-		DBObject b = new BasicDBObject();
-		b.put("nihao", 123);
-		b.put("ta", "baba");
-		System.out.println(collection.save(b));
-		BasicDBObject dbo = new BasicDBObject();
+//		Mongo mg = new Mongo("localhost", 27017);
+//		DB db = mg.getDB("dajia");
+//		DBCollection collection = db.getCollection("bibi");
+//		DBObject b = new BasicDBObject();
+//		b.put("nihao", 123);
+//		b.put("ta", "baba");
+//		System.out.println(collection.save(b));
+//		BasicDBObject dbo = new BasicDBObject();
 		
 		
 		
 		
 		
-		/*OrmManager oman = new OrmManager("com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1:3306/ok", "root", "", "mysql");
+		OrmManager oman = new OrmManager("com.mysql.jdbc.Driver", "jdbc:mysql://127.0.0.1:3306/ok?charset=utf-8", "root", "", "mysql");
 		oman.RegisterModel(Teacher.class);
 		oman.Force(false);
 		oman.Debug(true);
 		oman.runSyncDB();
 		Ormer orm = oman.NewOrm();
 		//orm.openCallback(true);
-		orm.addCallback(new Object(){
+		/*orm.addCallback(new Object(){
 			private void beforeInsert(Student t,Ormer orm){
 				System.out.println("before t");
 				System.out.println(t.getId()+" id before");
@@ -50,17 +50,24 @@ public class Te {
 				System.out.println(orm);
 			}
 		});
-	
-		class BB{
+	*/
+		/*class BB{
 			public String tname;
 			public Date now;
 		}
-		
+		*/
 		Teacher t = new Teacher();
-		t.setTname("»Àf445");
+		t.setTname("eng");
 		t.setNow(new Date());
 		System.out.println(orm.insert(t));
-		System.out.println("kankan:"+t.getId());*/
+		System.out.println("kankan:"+t.getId());
+		
+		ArrayList<Teacher> a = new ArrayList<Teacher>();
+		a.add(t);
+		a.add(t);
+		a.add(t);
+		a.add(t);
+		System.out.println(orm.insertMulti(a));
 		
 		//Teacher teacher = new Teacher();
 		//List<Teacher> list = new ArrayList<Teacher>();

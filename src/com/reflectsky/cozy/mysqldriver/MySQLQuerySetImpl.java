@@ -50,6 +50,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 		this.tableName = tableName;
 		this.strWhere = strWhere;
 		this.strOrderBy = strOrderBy;
+		this.strExclude = strExclude;
 		this.strLimit = strLimit;
 		this.params = params;
 	}
@@ -296,63 +297,50 @@ public class MySQLQuerySetImpl implements QuerySet {
 		String sql = "select count(*) from " + tableName + " ";
 		long count = -1;
 		PreparedStatement pstmt1 = null;
+		ResultSet rs = null;
+		
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
-			sql = sql + strWhere + " ;";
-		    try {
-		    	pstmt1 = conn.prepareStatement(sql);
-				for(int i=0 ; i<params.size() ; i++){
-					pstmt1.setObject(i+1, params.get(i));
-				}
-				oManager.deBugInfo(sql);
-				ResultSet rs = pstmt1.executeQuery();
-				if(rs.next()){
-					count = rs.getLong(1);
-					
-				}
-				
-			} catch (SQLException e) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e.getMessage());
-	
+		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql = sql + strLimit;		
+		sql = sql + " ;";
+	    try {
+	    	pstmt1 = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				pstmt1.setObject(i+1, params.get(i));
 			}
-		}
-		this.qsDebug(sql, null);
-		PreparedStatement pstmt = null;
-		try {
-			pstmt = conn.prepareStatement(sql);
-		} catch (SQLException e) {
-			// TODO 自动生成的 catch 块
-			this.oManager.deBugInfo(e.getMessage());
-			
-		}
-		ResultSet rs = null;
-		try {
-			rs = pstmt.executeQuery();
-		} catch (SQLException e) {
-			// TODO 自动生成的 catch 块
-			this.oManager.deBugInfo(e.getMessage());
-			
-		}
-		try {
+			oManager.deBugInfo(sql);
+			rs = pstmt1.executeQuery();
 			if(rs.next()){
 				count = rs.getLong(1);
-
+				
 			}
+			
 		} catch (SQLException e) {
 			// TODO 自动生成的 catch 块
 			this.oManager.deBugInfo(e.getMessage());
+
+		}
+		
+		this.qsDebug(sql, null);
+		
+		if(rs != null){
+			this.oManager.closeRs(rs);
 		}
 		if(pstmt1 != null){
 			this.oManager.closeStmt(pstmt1);
 		}
-		if(rs != null){
-			this.oManager.closeRs(rs);
-		}
-		if(pstmt != null){
-			this.oManager.closeStmt(pstmt);
-		}
+		
+		
 		return count;
 	}
 
@@ -366,28 +354,39 @@ public class MySQLQuerySetImpl implements QuerySet {
 		boolean isExist = false;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
-			sql = sql + strWhere + " ;";
-			
-		    try {
-		    	pstmt = conn.prepareStatement(sql);
-				for(int i=0 ; i<params.size() ; i++){
-					pstmt.setObject(i+1, params.get(i));
-				}
-				
-				this.qsDebug(sql, null);
-				
-				rs = pstmt.executeQuery();
-				isExist = rs.next();
-				
-			} catch (SQLException e) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e.getMessage());
-				
-			}
 		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql += strLimit;
+		sql += " ;";
+		
+	    try {
+	    	pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				pstmt.setObject(i+1, params.get(i));
+			}
+			
+			this.qsDebug(sql, null);
+			
+			rs = pstmt.executeQuery();
+			isExist = rs.next();
+			
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			this.oManager.deBugInfo(e.getMessage());
+			
+		}
+		
 		if(rs != null){
 			this.oManager.closeRs(rs);
 		}
@@ -406,25 +405,36 @@ public class MySQLQuerySetImpl implements QuerySet {
 		String sql = "delete from " + tableName + " ";
 		long count = 0;
 		PreparedStatement pstmt = null;
+		
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
-			sql = sql + strWhere + " ;";
-		    try {
-				pstmt = conn.prepareStatement(sql);
-				for(int i=0 ; i<params.size() ; i++){
-					pstmt.setObject(i+1, params.get(i));
-				}
-				
-				this.qsDebug(sql, null);
-				count = pstmt.executeUpdate();
-			
-			} catch (SQLException e) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e.getMessage());
-				
-			}
 		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql = sql + strLimit;		
+		sql = sql + " ;";
+	    try {
+			pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				pstmt.setObject(i+1, params.get(i));
+			}
+			
+			this.qsDebug(sql, null);
+			count = pstmt.executeUpdate();
+		
+		} catch (SQLException e) {
+			// TODO 自动生成的 catch 块
+			this.oManager.deBugInfo(e.getMessage());
+			
+		}
+		
 		if(pstmt != null){
 			this.oManager.closeStmt(pstmt);
 		}
@@ -441,56 +451,41 @@ public class MySQLQuerySetImpl implements QuerySet {
 		boolean isOk = false;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
-			sql = sql + strWhere;
-			if(!strOrderBy.equals("")){
-				strOrderBy = strOrderBy.substring(3);
-				strOrderBy = "order by " + strOrderBy;
-				sql = sql + " " + strOrderBy;
+		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql = sql + strLimit;
+		sql += " ;";
+		
+	    try {
+			pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				pstmt.setObject(i+1, params.get(i));
 			}
-			sql += " ;";
 			
-		    try {
-				pstmt = conn.prepareStatement(sql);
-				for(int i=0 ; i<params.size() ; i++){
-					pstmt.setObject(i+1, params.get(i));
-				}
-				
-				this.qsDebug(sql, null);
-				
-				rs = pstmt.executeQuery();
-				
-				Class clazz = bean.getClass();
-				TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
-				Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
-				
-				if(rs.next()){
-					if(ps.length != 0){
-						for(String s : ps){
-							for(FieldInfo fin : fins){
-								if(fin.getColumnName().equalsIgnoreCase(s)){
-									Field field = null;
-									try {
-										field = clazz.getDeclaredField(fin.getFieldName());
-									} catch (NoSuchFieldException e) {
-										// TODO 自动生成的 catch 块
-										this.oManager.deBugInfo(e.getMessage());
-										
-									} catch (SecurityException e) {
-										// TODO 自动生成的 catch 块
-										this.oManager.deBugInfo(e.getMessage());
-										
-									}
-									field.setAccessible(true);
-									field.set(bean, rs.getObject(s));
-								}
-							}
-						}
-					}else {
+			this.qsDebug(sql, null);
+			
+			rs = pstmt.executeQuery();
+			
+			Class clazz = bean.getClass();
+			TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
+			Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
+			
+			if(rs.next()){
+				if(ps.length != 0){
+					for(String s : ps){
 						for(FieldInfo fin : fins){
-							
+							if(fin.getColumnName().equalsIgnoreCase(s)){
 								Field field = null;
 								try {
 									field = clazz.getDeclaredField(fin.getFieldName());
@@ -504,16 +499,36 @@ public class MySQLQuerySetImpl implements QuerySet {
 									
 								}
 								field.setAccessible(true);
-								field.set(bean, rs.getObject(fin.getColumnName()));
+								field.set(bean, rs.getObject(s));
 							}
 						}
 					}
-				
-			} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e.getMessage());
-			}
+				}else {
+					for(FieldInfo fin : fins){
+						
+							Field field = null;
+							try {
+								field = clazz.getDeclaredField(fin.getFieldName());
+							} catch (NoSuchFieldException e) {
+								// TODO 自动生成的 catch 块
+								this.oManager.deBugInfo(e.getMessage());
+								
+							} catch (SecurityException e) {
+								// TODO 自动生成的 catch 块
+								this.oManager.deBugInfo(e.getMessage());
+								
+							}
+							field.setAccessible(true);
+							field.set(bean, rs.getObject(fin.getColumnName()));
+						}
+					}
+				}
+			
+		} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO 自动生成的 catch 块
+			this.oManager.deBugInfo(e.getMessage());
 		}
+		
 		if(rs != null){
 			this.oManager.closeRs(rs);
 		}
@@ -533,56 +548,43 @@ public class MySQLQuerySetImpl implements QuerySet {
 		String sql = "select * from " + tableName + " "; 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		
 		if(strWhere.startsWith(" and ")){
 			strWhere = strWhere.substring(5);
 			strWhere = " where " + strWhere;
-			sql = sql + strWhere;
-			if(!strOrderBy.equals("")){
-				strOrderBy = strOrderBy.substring(3);
-				strOrderBy = "order by " + strOrderBy;
-				sql = sql + " " + strOrderBy;
+		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql += strLimit;
+		sql += " ;";
+		System.out.println(sql);
+	    try {
+			pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				System.out.println(params.size());
+				pstmt.setObject(i+1, params.get(i));
 			}
-			sql += " ;";
-		    try {
-				pstmt = conn.prepareStatement(sql);
-				for(int i=0 ; i<params.size() ; i++){
-					pstmt.setObject(i+1, params.get(i));
-				}
+			
+			this.qsDebug(sql, null);
+			
+			rs = pstmt.executeQuery();
+			
+			TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
+			Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
+			
+			while(rs.next()){
+				Object bean= clazz.newInstance();
 				
-				this.qsDebug(sql, null);
-				
-				rs = pstmt.executeQuery();
-				
-				TableInfo tbinfo = oManager.getTableCache().getByTN(clazz.getName());
-				Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
-				
-				while(rs.next()){
-					Object bean= clazz.newInstance();
-					
-					if(ps.length != 0){
-						for(String s : ps){
-							for(FieldInfo fin : fins){
-								if(fin.getColumnName().equalsIgnoreCase(s)){
-									Field field = null;
-									try {
-										field = clazz.getDeclaredField(fin.getFieldName());
-									} catch (NoSuchFieldException e) {
-										// TODO 自动生成的 catch 块
-										this.oManager.deBugInfo(e.getMessage());
-										
-									} catch (SecurityException e) {
-										// TODO 自动生成的 catch 块
-										this.oManager.deBugInfo(e.getMessage());
-										
-									}
-									field.setAccessible(true);
-									field.set(bean, rs.getObject(s));
-								}
-							}
-						}
-					}else {
+				if(ps.length != 0){
+					for(String s : ps){
 						for(FieldInfo fin : fins){
-							
+							if(fin.getColumnName().equalsIgnoreCase(s)){
 								Field field = null;
 								try {
 									field = clazz.getDeclaredField(fin.getFieldName());
@@ -596,24 +598,44 @@ public class MySQLQuerySetImpl implements QuerySet {
 									
 								}
 								field.setAccessible(true);
-								field.set(bean, rs.getObject(fin.getColumnName()));
+								field.set(bean, rs.getObject(s));
 							}
-					   }
-					list.add(bean);
-				}
-					
-				count = list.size();
-				
-			} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e.getMessage());
-				
-			} catch (InstantiationException e1) {
-				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e1.getMessage());
-				
+						}
+					}
+				}else {
+					for(FieldInfo fin : fins){
+						
+							Field field = null;
+							try {
+								field = clazz.getDeclaredField(fin.getFieldName());
+							} catch (NoSuchFieldException e) {
+								// TODO 自动生成的 catch 块
+								this.oManager.deBugInfo(e.getMessage());
+								
+							} catch (SecurityException e) {
+								// TODO 自动生成的 catch 块
+								this.oManager.deBugInfo(e.getMessage());
+								
+							}
+							field.setAccessible(true);
+							field.set(bean, rs.getObject(fin.getColumnName()));
+						}
+				   }
+				list.add(bean);
 			}
+				
+			count = list.size();
+			
+		} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			
+		} catch (InstantiationException e1) {
+			// TODO 自动生成的 catch 块
+			this.oManager.deBugInfo(e1.getMessage());
+			
 		}
+		
 		if(rs != null){
 			this.oManager.closeRs(rs);
 		}
@@ -640,54 +662,54 @@ public class MySQLQuerySetImpl implements QuerySet {
 			if(expers[1].equalsIgnoreCase("gt")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " > " + "?";
+					strExclude = strExclude + " and not " + columnName + " > " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " > " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " > " + "?";
 				}
 				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("gte")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " >= " + "?";
+					strExclude = strExclude + " and not " + columnName + " >= " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " >= " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " >= " + "?";
 				}
 				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("lt")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " < " + "?";
+					strExclude = strExclude + " and not " + columnName + " < " + "?";
 				}else{
-					strExclude = strExclude + " not " + expers[0] + " < " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " < " + "?";
 				}
 				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("lte")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " <= " + "?";
+					strExclude = strExclude + " and not " + columnName + " <= " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " <= " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " <= " + "?";
 				}
 				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("exact")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " = " + "?";
+					strExclude = strExclude + " and not " + columnName + " = " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " = " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " = " + "?";
 				}
 				
 				params.add(ps[0]);
 			}else if(expers[1].equalsIgnoreCase("iexact")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like " + "?";
+					strExclude = strExclude + " and not " + columnName + " like " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like " + "?";
 					
 				}
 				
@@ -695,32 +717,32 @@ public class MySQLQuerySetImpl implements QuerySet {
 			}else if(expers[1].equalsIgnoreCase("istartswith")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like " + "?";
+					strExclude = strExclude + " and not " + columnName + " like " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like " + "?";
 				}
 				
 				params.add(ps[0] + "%");
 			}else if(expers[1].equalsIgnoreCase("iendswith")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like " + "?";
+					strExclude = strExclude + " and not " + columnName + " like " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like " + "?";
 				}
 				
 				params.add("%" + ps[0]);
 			}else if(expers[1].equalsIgnoreCase("in")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " in (";
+					strExclude = strExclude + " and not " + columnName + " in (";
 					for(int i=0 ; i<ps.length ; i++){
 						strExclude = strExclude + " ? ";
 						params.add(ps[i]);
 					}
 					strExclude = strExclude + ") ";
 				}else{
-					strExclude = strExclude + " not " + expers[0] + " in (";
+					strExclude = strExclude + " and not " + expers[0] + " in (";
 					for(int i=0 ; i<ps.length ; i++){
 						strExclude = strExclude + " ? ";
 						params.add(ps[i]);
@@ -731,18 +753,18 @@ public class MySQLQuerySetImpl implements QuerySet {
 			}else if(expers[1].equalsIgnoreCase("icontains")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like " + "?";
+					strExclude = strExclude + " and not " + columnName + " like " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like " + "?";
 				}
 				
 				params.add("%" + ps[0] + "%");
 			}else if(expers[1].equalsIgnoreCase("contains")){
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + columnName + " like BINARY " + "?";
 				}else{
-					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like BINARY " + "?";
 				}
 					
 				params.add("%" + ps[0] + "%");
@@ -751,33 +773,33 @@ public class MySQLQuerySetImpl implements QuerySet {
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
 					if((boolean)ps[0] == true){
-						strExclude = strExclude + " not " + columnName + " IS NULL";
+						strExclude = strExclude + " and not " + columnName + " IS NULL";
 					}else {
-						strExclude = strExclude + " not " + columnName + " IS NOT NULL";
+						strExclude = strExclude + " and not " + columnName + " IS NOT NULL";
 					}
 					
 				}else {
 					if((boolean)ps[0] == true){
-						strExclude = strExclude + " not " + expers[0] + " IS NULL";
+						strExclude = strExclude + " and not " + expers[0] + " IS NULL";
 					}else {
-						strExclude = strExclude + " not " + expers[0] + " IS NOT NULL";
+						strExclude = strExclude + " and not " + expers[0] + " IS NOT NULL";
 					}
 				}
 			}else if (expers[1].equalsIgnoreCase("startswith")) {
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + columnName + " like BINARY " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like BINARY " + "?";
 				}
 				
 				params.add(ps[0] + "%");
 			}else if (expers[1].equalsIgnoreCase("endswith")) {
 				String columnName = findFieldName(fieldInfos, expers[0]);
 				if(columnName != null){
-					strExclude = strExclude + " not " + columnName + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + columnName + " like BINARY " + "?";
 				}else {
-					strExclude = strExclude + " not " + expers[0] + " like BINARY " + "?";
+					strExclude = strExclude + " and not " + expers[0] + " like BINARY " + "?";
 				}
 				
 				params.add("%" + ps[0]);
@@ -788,9 +810,9 @@ public class MySQLQuerySetImpl implements QuerySet {
 			}
 			String columnName = findFieldName(fieldInfos, expers[0]);
 			if(columnName != null){
-				strExclude = strExclude + " not " + columnName + " = " + "?";
+				strExclude = strExclude + " and not " + columnName + " = " + "?";
 			}else {
-				strExclude = strExclude + " not " + expers[0] + " = " + "?";
+				strExclude = strExclude + " and not " + expers[0] + " = " + "?";
 			}
 			
 			params.add(ps[0]);

@@ -333,6 +333,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 			try {
 				pstmt.executeUpdate();
+				isOk = true;
 			} catch (SQLException e1) {
 				// TODO 自动生成的 catch 块
 				this.oManager.deBugInfo(e1.getMessage());
@@ -1464,13 +1465,13 @@ public class MySQLOrmImpl implements Ormer{
 			for(int i=0 ; i < objects.size() ; i++){
 				
 				for(int j=0 ; j < paramSize ; j++){
-					Object object = param.get(j);
+					Object object = ((Vector<Object>)param.get(i)).get(j);
 					
 					try {
 						pstmt.setObject(j+1, object);
 					} catch (SQLException e) {
 						// TODO 自动生成的 catch 块
-						this.oManager.deBugInfo(e.getMessage());
+						e.printStackTrace();
 						
 					}
 					
@@ -1479,7 +1480,7 @@ public class MySQLOrmImpl implements Ormer{
 					pstmt.addBatch();
 				} catch (SQLException e) {
 					// TODO 自动生成的 catch 块
-					this.oManager.deBugInfo(e.getMessage());
+					e.printStackTrace();
 				}
 			}
 			
@@ -1525,7 +1526,7 @@ public class MySQLOrmImpl implements Ormer{
 				rows = execute.length;
 			} catch (SQLException e1) {
 				// TODO 自动生成的 catch 块
-				this.oManager.deBugInfo(e1.getMessage());
+				e1.printStackTrace();
 
 			}
 			
