@@ -74,6 +74,13 @@ oManager.addCallback(new Object(){
 
 ```
 
+**为Cozy贡献驱动实现或自定制驱动实现:**
+* 分别自定义类实现Orm接口,OrmUtil接口和QuerySet接口
+* 实现请按照Cozy的Mysql实现功能规范
+* 若是为Cozy贡献可在com.reflectsky.cozy.core.OrmManager的构造方法中registerOrmUtilImpl和registerOrmImpl注册自定义类后发起pull request
+* 自定制驱动可在new OrmManager()之后代码处使用以上提及的方法注册自己的实现，必须在NewOrm()之前注册
+* registerOrmUtilImpl和registerOrmImpl请使用自定义的驱动别名参数，例如Cozy默认mysql驱动就为"mysql"
+
 **Cozy设计初衷:**
 * 熟悉java的反射和ORM的原理
 * 对于小型项目用hibernate太重，直接上sql语句不爽
@@ -108,7 +115,7 @@ oManager.addCallback(new Object(){
 
 **使用Cozy:**
 
-下载编译好的[Cozy.jar](https://github.com/Comdex/Cozy/releases/download/0.2/cozy.jar)包在eclipse中导入使用就OK
+下载编译好的[Cozy.jar v0.2.9](https://github.com/Comdex/Cozy/releases/download/0.2.9/cozy0.2.9.jar)包在eclipse中导入使用就OK
 
 ### Cozy API使用注释
 [Ormer接口](src/com/reflectsky/cozy/Ormer.java)
