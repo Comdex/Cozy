@@ -360,12 +360,12 @@ public class MySQLOrmImpl implements Ormer{
 						}
 						field.setAccessible(true);
 						try {
-							if(field.getClass().getName().equals("Integer")){
+							if(field.getClass().getName().equals("java.lang.Integer")||field.getClass().getName().equals("int")){
 								field.set(obj, (int)autoId);
-							}else if(field.getClass().getName().equals("Short")){
+							}else if(field.getClass().getName().equals("java.lang.Short")||field.getClass().getName().equals("short")){
 								field.set(obj, (short)autoId);
-							}else {
-								field.set(obj, (int)autoId);
+							}else{
+								field.set(obj, autoId);
 							}
 							
 							this.oManager.closeRs(rs);
@@ -1552,12 +1552,12 @@ public class MySQLOrmImpl implements Ormer{
 						}
 						field.setAccessible(true);
 						try {
-							if(field.getClass().getName().equals("Integer")){
+							if(field.getClass().getName().equals("int")||field.getClass().getName().equals("java.lang.Integer")){
 								field.set(obj, (int)autoId);
-							}else if(field.getClass().getName().equals("Short")){
+							}else if(field.getClass().getName().equals("short")||field.getClass().getName().equals("java.lang.Short")){
 								field.set(obj, (short)autoId);
 							}else {
-								field.set(obj, (int)autoId);
+								field.set(obj, autoId);
 							}
 							
 							index++;

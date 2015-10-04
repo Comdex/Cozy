@@ -46,26 +46,29 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 				//数据库字段默认not null
 				//如果该字段名为Id,id或ID,iD且其类型为short,int,long则默认为递增的主键
 				if(f.getName().equalsIgnoreCase("id")){
-					if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("short")){
+					if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("short")
+							||fieldType.equalsIgnoreCase("java.lang.Integer")||fieldType.equalsIgnoreCase("java.lang.Long")
+							||fieldType.equalsIgnoreCase("java.lang.Short")){
 							specialNum++;
 					}	
 				}
-				//字段类型为int
-				if(fieldType.equalsIgnoreCase("int")){
+				//字段类型为int或Integer
+				if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("java.lang.Integer")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "integer", 0, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("java.lang.String")){
 					//如果该字段类型为String默认fieldinfo的type为varchar(255)
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "varchar", 255, 0, 0, "", fieldType, null);
-				}else if(fieldType.equalsIgnoreCase("long")){
+				}else if(fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("java.lang.Long")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "bigint", 0, 0, 0, "", fieldType, null);
-				}else if(fieldType.equalsIgnoreCase("short")){
+				}else if(fieldType.equalsIgnoreCase("short")||fieldType.equalsIgnoreCase("java.lang.Short")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "tinyint", 0, 0, 0, "", fieldType, null);
-				}else if(fieldType.equalsIgnoreCase("float")||fieldType.equalsIgnoreCase("double")){
+				}else if(fieldType.equalsIgnoreCase("float")||fieldType.equalsIgnoreCase("double")
+						||fieldType.equalsIgnoreCase("java.lang.Float")||fieldType.equalsIgnoreCase("java.lang.Double")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "double", 0, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("java.util.Date")){
 					//如果该字段类型为Date默认其type为datetime
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "datetime", 0, 0, 0, "", fieldType, null);
-				}else if(fieldType.equalsIgnoreCase("boolean")){
+				}else if(fieldType.equalsIgnoreCase("boolean")||fieldType.equalsIgnoreCase("java.lang.Boolean")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "bool", 0, 0, 0, "", fieldType, null);
 				}
 					
@@ -106,16 +109,16 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					}
 					
 					//判断字段类型进行后续注解的操作
-					if(fieldType.equalsIgnoreCase("int")){
+					if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("java.lang.Integer")){
 						
 						if(!or.type().equals("") && !or.type().equals("integer")){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The int type can just convert to the type integer of database!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The int/Integer type can just convert to the type integer of database!");
 						}else{
 							fin.setType("integer");	
 						}
 						
 						if(or.digits()!=0 || or.decimals()!=0){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The int type can not have digits/decimals!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The int/Integer type can not have digits/decimals!");
 						}
 					}else if(fieldType.equalsIgnoreCase("java.lang.String")){
 						//如果type设置了text
@@ -147,32 +150,33 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The String type can not have digits/decimals!");
 						}
 					
-					}else if(fieldType.equalsIgnoreCase("long")){
+					}else if(fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("java.lang.Long")){
 						
 						if(!or.type().equals("") && !or.type().equals("bigint")){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The long type can just convert to the type bigint of database!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The long/Long type can just convert to the type bigint of database!");
 						}else{
 							fin.setType("bigint");
 						}
 						
 						if(or.digits()!=0 || or.decimals()!=0){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The long type can not have digits/decimals!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The long/Long type can not have digits/decimals!");
 						}
-					}else if(fieldType.equalsIgnoreCase("short")){
+					}else if(fieldType.equalsIgnoreCase("short")||fieldType.equalsIgnoreCase("java.lang.Short")){
 						
 						if(!or.type().equals("") && !or.type().equals("tinyint")){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The short type can just convert to the type tinyint of database!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The short/Short type can just convert to the type tinyint of database!");
 						}else {
 							fin.setType("tinyint");
 						}
 						
 						if(or.digits()!=0 || or.decimals()!=0){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The short type can not have digits/decimals!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The short/Short type can not have digits/decimals!");
 						}
-					}else if(fieldType.equalsIgnoreCase("float")||fieldType.equalsIgnoreCase("double")){
+					}else if(fieldType.equalsIgnoreCase("float")||fieldType.equalsIgnoreCase("double")
+							||fieldType.equalsIgnoreCase("java.lang.Short")||fieldType.equalsIgnoreCase("java.lang.Double")){
 						
 						if(!or.type().equals("") && !or.type().equals("double") && !or.type().equals("numeric")){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The float/double type can just convert to the type double/numeric of database!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The float/double(Float/Double) type can just convert to the type double/numeric of database!");
 						}else if(or.type().equals("double")) {
 							fin.setType("double");
 						}else{
@@ -208,19 +212,19 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 						if(or.digits()!=0 || or.decimals()!=0){
 							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The Date type can not have digits/decimals!");
 						}
-					}else if(fieldType.equalsIgnoreCase("boolean")){
+					}else if(fieldType.equalsIgnoreCase("boolean")||fieldType.equalsIgnoreCase("java.lang.Boolean")){
 						
 						if(!or.type().equals("") && !or.type().equals("bool")){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean type can just convert to the type bool of database!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean/Boolean type can just convert to the type bool of database!");
 						}else {
 							fin.setType("bool");
 						}
 						if(fin.isAutoGenerate()==true){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean type can not be autogenerate key!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean/Boolean type can not be autogenerate key!");
 						}
 						
 						if(or.digits()!=0 || or.decimals()!=0){
-							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean type can not have digits/decimals!");
+							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The boolean/Boolean type can not have digits/decimals!");
 						}
 					}	
 					
@@ -250,7 +254,9 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 				//此处没有考虑到是否存在类型和名都符合的但有注解的"id"
 				if(pkNumber == 0 && autoNumber == 0 && specialNum == 1){
 					for(FieldInfo fin : fins){
-						if(fin.getTypeName().equals("int")||fin.getTypeName().equals("long")||fin.getTypeName().equals("short")){
+						String typeName = fin.getTypeName();
+						if(typeName.equals("int")||typeName.equals("long")||typeName.equals("short")
+								||typeName.equals("java.lang.Integer")||typeName.equals("java.lang.Long")||typeName.equals("java.lang.Short")){
 							if(fin.getFieldName().equalsIgnoreCase("id")){
 								fin.setPrimaryKey(true);
 								fin.setAutoGenerate(true);

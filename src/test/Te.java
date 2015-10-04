@@ -68,6 +68,7 @@ public class Te {
 		a.add(t);
 		a.add(t);
 		System.out.println(orm.insertMulti(a));
+		System.out.println(a.get(1).getId());
 		
 		//Teacher teacher = new Teacher();
 		//List<Teacher> list = new ArrayList<Teacher>();

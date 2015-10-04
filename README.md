@@ -1,11 +1,15 @@
-Cozy - Easy Java ORM（version:0.2.8）
+Cozy - Easy Java ORM（version:0.2.9）
 ===============
 
 Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM。
 
 目前仍处于开发阶段，但api已基本稳定
 
-v0.2.8——2015/10/1 update:
+v0.2.9——2015/10/04 update:
+
+支持java基本类型对应的包装类型，fix bugs
+
+v0.2.8——2015/10/01 update:
 
 fix bugs:QuerySet的count,exists,all,one方法fix...
 
@@ -223,17 +227,17 @@ public class Test{
 
 | java		   |mysql
 | :---   	   | :---
-| int - 设置 auto 或者名称为 `Id` 时 | integer AUTO_INCREMENT
-| long - 设置 auto 或者名称为 `Id` 时 | bigint AUTO_INCREMENT
-| short - 设置 auto 或者名称为 `Id` 时 | tinyint AUTO_INCREMENT
-| boolean | bool
-| string - 默认为 size 255 | varchar(size)
-| string - 设置 type(text) 时 | longtext
+| int/Integer - 设置 auto 或者名称为 `Id` 时 | integer AUTO_INCREMENT
+| long/Long - 设置 auto 或者名称为 `Id` 时 | bigint AUTO_INCREMENT
+| short/Short - 设置 auto 或者名称为 `Id` 时 | tinyint AUTO_INCREMENT
+| boolean/Boolean | bool
+| String - 默认为 size 255 | varchar(size)
+| String - 设置 type(text) 时 | longtext
 | Date - 设置 type 为 date 时 | date
 | Date | datetime
-| float | double
-| double | double
-| double - 设置 digits, decimals 时  | numeric(digits, decimals)
+| float/Float | double
+| double/Double | double
+| double/Double - 设置 digits, decimals 时  | numeric(digits, decimals)
 
 ## 注解的使用
 
