@@ -2,6 +2,7 @@
 package com.reflectsky.cozy;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -91,4 +92,12 @@ public interface QuerySet {
 	 * @return QuerySet
 	 */
 	public QuerySet offset(long offset);
+	
+	/**
+	 *返回结果集的 key => value值(List<Map<String,String>>)
+     *key为 Model 里的 Field name，value 的值 以 string保存
+	 * @author Comdex
+	 * @return List<Map<String,String>>
+	 */
+	public List<Map<String,String>> values();
 }

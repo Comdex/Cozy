@@ -20,8 +20,8 @@ public class TableCache {
 		return cache;
 	}
 	
-	public TableInfo get(String tablename){
-		return cache.get(tablename);
+	public TableInfo get(String tableName){
+		return cache.get(tableName);
 	}
 	//根据类型名得到tableinfo
 	public TableInfo getByTN(String typename){

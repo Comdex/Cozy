@@ -9,10 +9,14 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import com.reflectsky.cozy.QuerySet;
@@ -563,11 +567,10 @@ public class MySQLQuerySetImpl implements QuerySet {
 		}
 		sql += strLimit;
 		sql += " ;";
-		System.out.println(sql);
+		
 	    try {
 			pstmt = conn.prepareStatement(sql);
 			for(int i=0 ; i<params.size() ; i++){
-				System.out.println(params.size());
 				pstmt.setObject(i+1, params.get(i));
 			}
 			
@@ -872,6 +875,92 @@ public class MySQLQuerySetImpl implements QuerySet {
 			return new MySQLQuerySetImpl(this.oManager, this.conn, this.tableName, this.strWhere, this.strExclude, this.strOrderBy,
 					strLimit,this.params);
 		}
+	}
+	
+	/* @author Comdex
+	 * @see com.reflectsky.cozy.QuerySet#values
+	 */
+	public List<Map<String, String>> values(){
+		// TODO 自动生成的方法存根
+		ArrayList<Map<String,String>> maps = new ArrayList<Map<String,String>>();
+		String sql = "select * from " + tableName + " "; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		if(strWhere.startsWith(" and ")){
+			strWhere = strWhere.substring(5);
+			strWhere = " where " + strWhere;
+		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql += strLimit;
+		sql += " ;";
+		
+	    try {
+			pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				
+				pstmt.setObject(i+1, params.get(i));
+			}
+			
+			this.qsDebug(sql, null);
+			
+			rs = pstmt.executeQuery();
+	
+			int size = rs.getRow();
+			//初始化mps
+			for(int i=0; i<size; i++){
+				maps.add(new HashMap<String, String>());
+			}
+			
+			int cursor = 0;
+			//获取数据库元信息
+			ResultSetMetaData metaData = rs.getMetaData();
+			//获取列数
+			int columnCount = metaData.getColumnCount();
+			//获取tableName对应的TableInfo
+			TableInfo tbinfo = this.oManager.getTableCache().get(this.tableName);
+			//获取对应字段信息
+			Vector<FieldInfo> fields = tbinfo.getAllFieldInfos();
+			
+			while(rs.next()){
+				Map<String,String> map = maps.get(cursor);
+				for(int i=1; i<=columnCount; i++){
+					String fieldName = null;
+					for(int j=0; j<fields.size(); j++){
+						FieldInfo field = fields.get(j);
+						if(field.getColumnName().equals(metaData.getColumnName(i))){
+							fieldName = field.getFieldName();
+						}
+					}
+					if(fieldName != null){
+						map.put(fieldName, rs.getString(i));
+					}
+					
+				}
+
+			}
+					
+		} catch (SQLException | IllegalArgumentException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			
+		}
+		
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+
+		return maps;
 	}
 	
 	private void qsDebug(String sql,Vector<Object> params){
