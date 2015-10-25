@@ -94,8 +94,8 @@ public interface QuerySet {
 	public QuerySet offset(long offset);
 	
 	/**
-	 *返回结果集的 key => value值(List<Map<String,String>>)
-     *key为 Model 里的 Field name，value 的值 以 string保存
+	 * 返回结果集的 key => value值(List<Map<String,String>>)
+     * key为 Model 里的 Field name，value 的值 以 string保存
 	 * @author Comdex
 	 * @return List<Map<String,String>>
 	 */
