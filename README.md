@@ -1,7 +1,9 @@
-Cozy - Easy Java ORM（version:0.3）
+Cozy - Easy Java ORM（version:0.3.1）
 ===============
 
-Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM。
+Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言的beego ORM
+
+Cozy编译包内置mysql5.1.7驱动，请下载对应数据库版本的驱动配合Cozy使用
 
 目前仍处于开发阶段，但api已基本稳定(目前所有更新基于cozy mysqldriver)
 
@@ -127,7 +129,7 @@ oManager.addCallback(new Object(){
 
 **使用Cozy:**
 
-下载编译好的[Cozy.jar v0.2.9](https://github.com/Comdex/Cozy/releases/download/0.2.9/cozy0.2.9.jar)包在eclipse中导入使用就OK
+下载编译好的[Cozy.jar v0.3.1](http://pan.baidu.com/s/1TAYVs)包在eclipse中导入使用就OK
 
 ### Cozy API使用注释
 [Ormer接口](src/com/reflectsky/cozy/Ormer.java)
