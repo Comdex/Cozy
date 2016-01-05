@@ -3,13 +3,13 @@ package com.reflectsky.cozy.core;
 import java.util.Vector;
 
 /**
- * Ä£ĞÍ¶ÔÓ¦Êı¾İ¿â±íĞÅÏ¢±£´æÀà
+ * æ¨¡å‹å¯¹åº”æ•°æ®åº“è¡¨ä¿¡æ¯ä¿å­˜ç±»
  * @author Comdex
  */
 public class TableInfo {
-	//±íÃû
+	//è¡¨å
 	private String tableName;
-	//ÀàÃû
+	//ç±»å
 	private String typeName;
 	
 	private Vector<FieldInfo> fields;

@@ -16,7 +16,7 @@ import com.reflectsky.cozy.core.OrmManager;
 import com.reflectsky.cozy.core.TableInfo;
 
 /**
- * Ô­ÉúSQL²éÑ¯½Ó¿ÚÊµÏÖ
+ * åŸç”ŸSQLæŸ¥è¯¢æ¥å£å®ç°
  * @author Comdex
  */
 public class RawSetImpl implements RawSet{
@@ -42,11 +42,11 @@ public class RawSetImpl implements RawSet{
 	 */
 	@Override
 	public int exec() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int count = 0;
 		try {
 			
-			//´«ÈëµÄÊÇpreparestatment
+			//ä¼ å…¥çš„æ˜¯preparestatment
 			if(stmt != null){
 				if(stmt instanceof PreparedStatement){
 					PreparedStatement pstmt = (PreparedStatement)stmt;
@@ -76,23 +76,23 @@ public class RawSetImpl implements RawSet{
 
 	@Override
 	public boolean queryRow(Object obj) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		
 		tbinfo = oManager.getTableCache().getByTN(typeName);
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			oManager.deBugInfo("[RawSet queryRow error]-Model<"+typeName+"> has not registered!");
 			return false;
 		}
 		
 		ResultSet rs = null;
 		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
-		//´«ÈëµÄÊÇpreparestatment
+		//ä¼ å…¥çš„æ˜¯preparestatment
 		if(stmt != null){
 			if(stmt instanceof PreparedStatement){
 				PreparedStatement pstmt = (PreparedStatement)stmt;
@@ -100,7 +100,7 @@ public class RawSetImpl implements RawSet{
 					try {
 						pstmt.setObject(i+1, params.get(i));
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 	
 					}
@@ -113,11 +113,11 @@ public class RawSetImpl implements RawSet{
 							try {
 								field = obj.getClass().getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							} catch (SecurityException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							}
@@ -125,11 +125,11 @@ public class RawSetImpl implements RawSet{
 							try {
 								field.set(obj, rs.getObject(fin.getColumnName()));
 							} catch (IllegalArgumentException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							} catch (IllegalAccessException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							}
@@ -139,7 +139,7 @@ public class RawSetImpl implements RawSet{
 					
 					return true;
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return false;
 				}
@@ -155,20 +155,20 @@ public class RawSetImpl implements RawSet{
 								try {
 									field = obj.getClass().getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								}
 								field.setAccessible(true);
 								try {
 									field.set(obj, rs.getObject(fin.getColumnName()));
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								}
 							}
@@ -177,7 +177,7 @@ public class RawSetImpl implements RawSet{
 					
 						return true;
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 					}
 					
@@ -188,25 +188,25 @@ public class RawSetImpl implements RawSet{
 		return false;
 	}
 	
-	//ÒªÇó¶ÔÏó±ØĞëÒªÓĞÄ¬ÈÏµÄ¹¹ÔìÆ÷
+	//è¦æ±‚å¯¹è±¡å¿…é¡»è¦æœ‰é»˜è®¤çš„æ„é€ å™¨
 	@Override
 	public int queryRows(List list,Class clazz) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
-		//»ñÈ¡tablecacheÖĞ¶ÔÓ¦µÄinfo
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
+		//è·å–tablecacheä¸­å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		
 		tbinfo = oManager.getTableCache().getByTN(typeName);
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			oManager.deBugInfo("[RawSet queryRows error]-Model<"+typeName+"> has not registered!");
 			return -1;
 		}
 		
 		ResultSet rs = null;
 		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
-		//´«ÈëµÄÊÇpreparestatment
+		//ä¼ å…¥çš„æ˜¯preparestatment
 		if(stmt != null){
 			if(stmt instanceof PreparedStatement){
 				PreparedStatement pstmt = (PreparedStatement)stmt;
@@ -214,7 +214,7 @@ public class RawSetImpl implements RawSet{
 					try {
 						pstmt.setObject(i+1, params.get(i));
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 					}
 				}
@@ -226,10 +226,10 @@ public class RawSetImpl implements RawSet{
 						try {
 							obj = clazz.newInstance();
 						} catch (InstantiationException e1) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e1.getMessage());
 						} catch (IllegalAccessException e1) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e1.getMessage());
 						}
 						for(FieldInfo fin : fins){
@@ -237,20 +237,20 @@ public class RawSetImpl implements RawSet{
 							try {
 								field = clazz.getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 							} catch (SecurityException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 							}
 							field.setAccessible(true);
 							try {
 								field.set(obj, rs.getObject(fin.getColumnName()));
 							} catch (IllegalArgumentException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 							} catch (IllegalAccessException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 							}
 						}
@@ -261,7 +261,7 @@ public class RawSetImpl implements RawSet{
 			
 					return list.size();
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 				}
 				
@@ -276,10 +276,10 @@ public class RawSetImpl implements RawSet{
 							try {
 								obj = clazz.newInstance();
 							} catch (InstantiationException e1) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e1.getMessage());
 							} catch (IllegalAccessException e1) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e1.getMessage());
 							}
 							for(FieldInfo fin : fins){
@@ -287,20 +287,20 @@ public class RawSetImpl implements RawSet{
 								try {
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								}
 								field.setAccessible(true);
 								try {
 									field.set(obj, rs.getObject(fin.getColumnName()));
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								}
 							}
@@ -311,7 +311,7 @@ public class RawSetImpl implements RawSet{
 						
 						return list.size();
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 					}
 					
@@ -324,7 +324,7 @@ public class RawSetImpl implements RawSet{
 
 	@Override
 	public RawSet setArgs(Object... objects) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		params.removeAllElements();
 		for(Object object : objects){
 			params.add(object);
@@ -332,16 +332,16 @@ public class RawSetImpl implements RawSet{
 		return this;
 	}
 
-	//´Ë´¦Îñ±Ø×¢ÒâÖ»ÄÜ¸³ÖµÒ»Ìõ¼ÇÂ¼
+	//æ­¤å¤„åŠ¡å¿…æ³¨æ„åªèƒ½èµ‹å€¼ä¸€æ¡è®°å½•
 	@Override
 	public int rowsToMap(Map<String,Object> map, String... name) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		
 		ResultSet rs = null;
-		//´«ÈëµÄÊÇpreparestatment
+		//ä¼ å…¥çš„æ˜¯preparestatment
 		if(stmt != null){
 			if(stmt instanceof PreparedStatement){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				oManager.deBugInfo("[RawSet rowsToMap error]-rowToMap can only use sql without params!");
 				return -1;
 			}else {
@@ -364,7 +364,7 @@ public class RawSetImpl implements RawSet{
 							return map.size();
 						}
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 					}
 					
@@ -374,16 +374,16 @@ public class RawSetImpl implements RawSet{
 		return -1;
 	}
 
-	//ÒªÇóobjectÖĞµÄ×Ö¶ÎÃûºÍsqlµÄÁĞÃûÒ»ÖÂ
+	//è¦æ±‚objectä¸­çš„å­—æ®µåå’Œsqlçš„åˆ—åä¸€è‡´
 	@Override
 	public int rowsToObject(Object obj, String...name) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		Class clazz = obj.getClass();
 		ResultSet rs = null;
-		//´«ÈëµÄÊÇpreparestatment
+		//ä¼ å…¥çš„æ˜¯preparestatment
 		if(stmt != null){
 			if(stmt instanceof PreparedStatement){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				oManager.deBugInfo("[RawSet rowsToObject error]-rowToObject can only use sql without params!");
 				return -1;
 			}else {
@@ -399,16 +399,16 @@ public class RawSetImpl implements RawSet{
 									field.setAccessible(true);
 									field.set(obj, rs.getObject(name[i]));
 								} catch (NoSuchFieldException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (SecurityException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 								}
 								
@@ -419,7 +419,7 @@ public class RawSetImpl implements RawSet{
 				
 						return i;
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 					}
 					
@@ -431,7 +431,7 @@ public class RawSetImpl implements RawSet{
 
 	@Override
 	public RawPreparer prepare() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		if(stmt == null){
 			return null;
 		}

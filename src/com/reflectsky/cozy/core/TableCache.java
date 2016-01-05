@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 模型注册信息缓存
+ * 妯″瀷娉ㄥ唽淇℃伅缂撳瓨
  * @author Comdex
  */
 public class TableCache {
@@ -23,7 +23,7 @@ public class TableCache {
 	public TableInfo get(String tableName){
 		return cache.get(tableName);
 	}
-	//根据类型名得到tableinfo
+	//鏍规嵁绫诲瀷鍚嶅緱鍒皌ableinfo
 	public TableInfo getByTN(String typename){
 		return cacheByTN.get(typename);
 	}

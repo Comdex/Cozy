@@ -4,62 +4,62 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Ô­ÉúSQL²éÑ¯½Ó¿Ú
+ * åŸç”ŸSQLæŸ¥è¯¢æ¥å£
  * @author Comdex
  */
 public interface RawSet {
 	/**
-	 *Ö´ĞĞÔ­ÉúSQLÃüÁî
+	 *æ‰§è¡ŒåŸç”ŸSQLå‘½ä»¤
 	 * @author Comdex
-	 * @return ÊÜÓ°Ïì¼ÇÂ¼ÌõÊı£¬·µ»Ø0´ú±íÖ´ĞĞÊ§°Ü 
+	 * @return å—å½±å“è®°å½•æ¡æ•°ï¼Œè¿”å›0ä»£è¡¨æ‰§è¡Œå¤±è´¥ 
 	 */
 	public int exec();
 	
 	/**
-	 *°Ñ·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼¸³Öµµ½¶ÔÓ¦¶ÔÏó
+	 *æŠŠç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•èµ‹å€¼åˆ°å¯¹åº”å¯¹è±¡
 	 * @author Comdex
 	 * @param obj
-	 * @return boolean trueÎªÖ´ĞĞ³É¹¦£¬falseÎªÊ§°Ü
+	 * @return boolean trueä¸ºæ‰§è¡ŒæˆåŠŸï¼Œfalseä¸ºå¤±è´¥
 	 */
 	public boolean queryRow(Object obj);
 	
 	/**
-	 *°Ñ·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼¸³Öµµ½¶ÔÓ¦µÄList
+	 *æŠŠç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•èµ‹å€¼åˆ°å¯¹åº”çš„List
 	 * @author Comdex
-	 * @param list ±»¸³ÖµµÄList
-	 * @param clazz ListÖĞµÄ·ºĞÍÖÖÀà
-	 * @return int ÊÜÓ°ÏìÊı¾İ¿â¼ÇÂ¼ÌõÊı£¬·µ»Ø-1´ú±íÖ´ĞĞÊ§°Ü
+	 * @param list è¢«èµ‹å€¼çš„List
+	 * @param clazz Listä¸­çš„æ³›å‹ç§ç±»
+	 * @return int å—å½±å“æ•°æ®åº“è®°å½•æ¡æ•°ï¼Œè¿”å›-1ä»£è¡¨æ‰§è¡Œå¤±è´¥
 	 */
 	public int queryRows(List list,Class clazz);
 	
 	/**
-	 *ÎªÔ­ÉúSQL²éÑ¯¶ÔÏóÉèÖÃ²ÎÊı
+	 *ä¸ºåŸç”ŸSQLæŸ¥è¯¢å¯¹è±¡è®¾ç½®å‚æ•°
 	 * @author Comdex
-	 * @param objects ÒªÉèÖÃµÄ²ÎÊı£¬¶à¸ö
-	 * @return RawSet Ô­ÉúSQL²éÑ¯¶ÔÏó
+	 * @param objects è¦è®¾ç½®çš„å‚æ•°ï¼Œå¤šä¸ª
+	 * @return RawSet åŸç”ŸSQLæŸ¥è¯¢å¯¹è±¡
 	 */
 	public RawSet setArgs(Object... objects);
 	
 	/**
-	 *°ÑÒ»ÌõÊı¾İ¿â¼ÇÂ¼Ó³Éäµ½MapÖĞ,Èç¹ûÓĞ¶àÌõÖ»È¡µÚÒ»Ìõ
+	 *æŠŠä¸€æ¡æ•°æ®åº“è®°å½•æ˜ å°„åˆ°Mapä¸­,å¦‚æœæœ‰å¤šæ¡åªå–ç¬¬ä¸€æ¡
 	 * @author Comdex
-	 * @param map ±»Ó³ÉäµÄMap 
-	 * @param name ĞèÒª±»Ó³ÉäµÄÊı¾İ¿â¼ÇÂ¼µÄ×Ö¶Î(¿ÉÑ¡£¬¶à¸ö)
-	 * @return int ÊÜÓ°Ïì¼ÇÂ¼ÌõÊı£¬·µ»Ø-1´ú±íÊ§°Ü
+	 * @param map è¢«æ˜ å°„çš„Map 
+	 * @param name éœ€è¦è¢«æ˜ å°„çš„æ•°æ®åº“è®°å½•çš„å­—æ®µ(å¯é€‰ï¼Œå¤šä¸ª)
+	 * @return int å—å½±å“è®°å½•æ¡æ•°ï¼Œè¿”å›-1ä»£è¡¨å¤±è´¥
 	 */
 	public int rowsToMap(Map<String,Object> map,String...name);
 	
 	/**
-	 *°ÑÒ»ÌõÊı¾İ¿â¼ÇÂ¼Ó³Éäµ½¶ÔÏóobjÖĞ£¬Èç¹ûÓĞ¶àÌõÖ»È¡µÚÒ»Ìõ
+	 *æŠŠä¸€æ¡æ•°æ®åº“è®°å½•æ˜ å°„åˆ°å¯¹è±¡objä¸­ï¼Œå¦‚æœæœ‰å¤šæ¡åªå–ç¬¬ä¸€æ¡
 	 * @author Comdex
-	 * @param obj ±»Ó³ÉäµÄ¶ÔÏó
-	 * @param name ĞèÒª±»Ó³ÉäµÄÊı¾İ¿â¼ÇÂ¼µÄ×Ö¶Î(¿ÉÑ¡£¬¶à¸ö)
-	 * @return int ÊÕÓ°Ïì¼ÇÂ¼ÌõÊı£¬·µ»Ø-1´ú±íÊ§°Ü 
+	 * @param obj è¢«æ˜ å°„çš„å¯¹è±¡
+	 * @param name éœ€è¦è¢«æ˜ å°„çš„æ•°æ®åº“è®°å½•çš„å­—æ®µ(å¯é€‰ï¼Œå¤šä¸ª)
+	 * @return int æ”¶å½±å“è®°å½•æ¡æ•°ï¼Œè¿”å›-1ä»£è¡¨å¤±è´¥ 
 	 */
 	public int rowsToObject(Object obj,String...name);
 	
 	/**
-	 *·µ»ØÒ»¸öSQLÔ¤²éÑ¯¶ÔÏó
+	 *è¿”å›ä¸€ä¸ªSQLé¢„æŸ¥è¯¢å¯¹è±¡
 	 * @author Comdex
 	 * @return RawPreparer 
 	 */

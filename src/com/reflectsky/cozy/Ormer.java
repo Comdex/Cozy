@@ -8,129 +8,129 @@ import com.reflectsky.cozy.core.OrmManager;
 
 
 /**
- * ORM½Ó¿Ú
+ * ORMæ¥å£
  * @author Comdex
  */
 public interface Ormer {
 	
 	/**
-	 *¸ù¾İ´«ÈëµÄ¶ÔÏó²éÑ¯Êı¾İ¿â²¢¸³Öµ¸ø¸Ã¶ÔÏó
-	 *¿ÉÖ¸¶¨¶ÁÈëÊı¾İ¿âÖ¸¶¨µÄ×Ö¶Î¸ø¸Ã¶ÔÏó
+	 *æ ¹æ®ä¼ å…¥çš„å¯¹è±¡æŸ¥è¯¢æ•°æ®åº“å¹¶èµ‹å€¼ç»™è¯¥å¯¹è±¡
+	 *å¯æŒ‡å®šè¯»å…¥æ•°æ®åº“æŒ‡å®šçš„å­—æ®µç»™è¯¥å¯¹è±¡
 	 * @author Comdex
-	 * @param obj  ´«ÈëµÄ¶ÔÏó£¬Ê¹ÓÃÇ°Îñ±Ø×¢²á
-	 * @param fieldnames Ö¸¶¨¶ÁÈëµÄÊı¾İ¿â×Ö¶Î(²»ÊÇ¶ÔÏóµÄ×Ö¶ÎÃû)£¬¿ÉÑ¡
-	 * @return boolean trueÎªÖ´ĞĞ³É¹¦£¬falseÎªÖ´ĞĞÊ§°Ü
+	 * @param obj  ä¼ å…¥çš„å¯¹è±¡ï¼Œä½¿ç”¨å‰åŠ¡å¿…æ³¨å†Œ
+	 * @param fieldnames æŒ‡å®šè¯»å…¥çš„æ•°æ®åº“å­—æ®µ(ä¸æ˜¯å¯¹è±¡çš„å­—æ®µå)ï¼Œå¯é€‰
+	 * @return boolean trueä¸ºæ‰§è¡ŒæˆåŠŸï¼Œfalseä¸ºæ‰§è¡Œå¤±è´¥
 	 */
 	public boolean read(Object obj,String... fieldnames);
 
 	/**
-	 *¸ù¾İ´«ÈëµÄ¶ÔÏóÏòÊı¾İ¿â²åÈë¶ÔÓ¦µÄÊı¾İ
+	 *æ ¹æ®ä¼ å…¥çš„å¯¹è±¡å‘æ•°æ®åº“æ’å…¥å¯¹åº”çš„æ•°æ®
 	 * @author Comdex
-	 * @param obj ´«ÈëµÄ¶ÔÏó
-	 * @return boolean ·µ»ØfalseÎªÊ§°Ü
+	 * @param obj ä¼ å…¥çš„å¯¹è±¡
+	 * @return boolean è¿”å›falseä¸ºå¤±è´¥
 	 */
 	public boolean insert(Object obj);
 
 	/**
-	 *¸ù¾İ´«ÈëµÄ¶ÔÏó¼°Ö¸¶¨µÄÊı¾İ¿â×Ö¶Î¸üĞÂÊı¾İ¿âµÄ¼ÇÂ¼
+	 *æ ¹æ®ä¼ å…¥çš„å¯¹è±¡åŠæŒ‡å®šçš„æ•°æ®åº“å­—æ®µæ›´æ–°æ•°æ®åº“çš„è®°å½•
 	 * @author Comdex
-	 * @param obj ´«ÈëµÄ¶ÔÏó
-	 * @param fieldnames  Óë¶ÔÏó×Ö¶Î¶ÔÓ¦µÄÊı¾İ¿â¼ÇÂ¼×Ö¶Î£¬¿ÉÑ¡
-	 * @return int  ·µ»Ø0´ú±íÖ´ĞĞÊ§°Ü
+	 * @param obj ä¼ å…¥çš„å¯¹è±¡
+	 * @param fieldnames  ä¸å¯¹è±¡å­—æ®µå¯¹åº”çš„æ•°æ®åº“è®°å½•å­—æ®µï¼Œå¯é€‰
+	 * @return int  è¿”å›0ä»£è¡¨æ‰§è¡Œå¤±è´¥
 	 */
 	public int update(Object obj,String... fieldnames);
 
 	/**
-	 *¸ù¾İ´«ÈëµÄ¶ÔÏóÉ¾³ıÊı¾İ¿âÖ¸¶¨µÄ¼ÇÂ¼
+	 *æ ¹æ®ä¼ å…¥çš„å¯¹è±¡åˆ é™¤æ•°æ®åº“æŒ‡å®šçš„è®°å½•
 	 * @author Comdex
-	 * @param obj ´«ÈëµÄ¶ÔÏó
-	 * @return int  ·µ»Ø0´ú±íÖ´ĞĞÊ§°Ü
+	 * @param obj ä¼ å…¥çš„å¯¹è±¡
+	 * @return int  è¿”å›0ä»£è¡¨æ‰§è¡Œå¤±è´¥
 	 */
 	public int delete(Object obj);
 	
 	/**
-	 *¸ù¾İ´«ÈëµÄ»Øµ÷·½·¨ËùÔÚµÄ¶ÔÏó¿ªÆô»Øµ÷Ö§³Ö
+	 *æ ¹æ®ä¼ å…¥çš„å›è°ƒæ–¹æ³•æ‰€åœ¨çš„å¯¹è±¡å¼€å¯å›è°ƒæ”¯æŒ
 	 * @author Comdex
-	 * @param obj ´«ÈëµÄ¶ÔÏó
+	 * @param obj ä¼ å…¥çš„å¯¹è±¡
 	 */
 	public void addCallback(Object obj);
 	
 	/**
-	 *¸ù¾İ´«ÈëµÄsqlÓï¾äºÍÕ¼Î»·ûµÄ²ÎÊı(Èç¹ûÓĞ)·µ»ØÔ­ÉúSQL²éÑ¯¶ÔÏóRawSet
+	 *æ ¹æ®ä¼ å…¥çš„sqlè¯­å¥å’Œå ä½ç¬¦çš„å‚æ•°(å¦‚æœæœ‰)è¿”å›åŸç”ŸSQLæŸ¥è¯¢å¯¹è±¡RawSet
 	 * @author Comdex
-	 * @param sql ÆÕÍ¨sqlÓï¾ä»òº¬ÓĞÕ¼Î»·ûµÄsqlÓï¾ä
-	 * @param params ¿ÉÑ¡£¬Èç¹ûsqlÓï¾äÖĞÓĞÕ¼Î»·ûÎñ±ØÖ¸¶¨¸Ã²ÎÊı
-	 * @return RawSet  Ô­ÉúSQL²éÑ¯¶ÔÏó
+	 * @param sql æ™®é€šsqlè¯­å¥æˆ–å«æœ‰å ä½ç¬¦çš„sqlè¯­å¥
+	 * @param params å¯é€‰ï¼Œå¦‚æœsqlè¯­å¥ä¸­æœ‰å ä½ç¬¦åŠ¡å¿…æŒ‡å®šè¯¥å‚æ•°
+	 * @return RawSet  åŸç”ŸSQLæŸ¥è¯¢å¯¹è±¡
 	 */
 	public RawSet raw(String sql,Object... params);
 	
 	/**
-	 *¸ù¾İ´«ÈëµÄÊı¾İ¶ÔÏó»òÊı¾İ¿â±íÃû·µ»ØORM²éÑ¯¶ÔÏó
+	 *æ ¹æ®ä¼ å…¥çš„æ•°æ®å¯¹è±¡æˆ–æ•°æ®åº“è¡¨åè¿”å›ORMæŸ¥è¯¢å¯¹è±¡
 	 * @author Comdex
-	 * @param obj Êı¾İ¶ÔÏó»òÊı¾İ¿â±íÃû
-	 * @return QuerySet ORM²éÑ¯¶ÔÏó
+	 * @param obj æ•°æ®å¯¹è±¡æˆ–æ•°æ®åº“è¡¨å
+	 * @return QuerySet ORMæŸ¥è¯¢å¯¹è±¡
 	 */
 	public QuerySet queryTable(Object obj);
 	
 	/**
-	 *¿ªÊ¼ÊÂÎñ
+	 *å¼€å§‹äº‹åŠ¡
 	 * @author Comdex 
 	 */
 	public void begin();
 	
 	/**
-	 *Ìá½»ÊÂÎñ
+	 *æäº¤äº‹åŠ¡
 	 * @author Comdex
-	 * @return boolean trueÎªÖ´ĞĞ³É¹¦
+	 * @return boolean trueä¸ºæ‰§è¡ŒæˆåŠŸ
 	 */
 	public boolean commit();
 	
 	/**
-	 *»Ø¹öÊÂÎñ
+	 *å›æ»šäº‹åŠ¡
 	 * @author Comdex 
 	 */
 	public void rollback();
 	
 	/**
-	 *´´½¨Ô­ÉúµÄJDBC Statement¶ÔÏó
+	 *åˆ›å»ºåŸç”Ÿçš„JDBC Statementå¯¹è±¡
 	 * @author Comdex
 	 * @return Statement
 	 */
 	public Statement createStatement();
 	
 	/**
-	 *´´½¨Ô­ÉúµÄJDBC PreparedStatement¶ÔÏó
+	 *åˆ›å»ºåŸç”Ÿçš„JDBC PreparedStatementå¯¹è±¡
 	 * @author Comdex
-	 * @param sql ĞèÒªÔ¤±àÒëµÄSQLÓï¾ä
+	 * @param sql éœ€è¦é¢„ç¼–è¯‘çš„SQLè¯­å¥
 	 * @return PreparedStatement
 	 */
 	public PreparedStatement createPreparedStatement(String sql);
 	
 	/**
-	 *ÊÍ·ÅORMµÄ×ÊÔ´
+	 *é‡Šæ”¾ORMçš„èµ„æº
 	 * @author Comdex 
 	 */
 	public void close();
 	
 	/**
-	 *½ö¹©ORM¹ÜÀíÆ÷×¢ÈëÓÃ
+	 *ä»…ä¾›ORMç®¡ç†å™¨æ³¨å…¥ç”¨
 	 * @author Comdex
-	 * @param conn ĞèÒª×¢ÈëµÄconnection
+	 * @param conn éœ€è¦æ³¨å…¥çš„connection
 	 */
 	public void setConnection(Object conn);
 	
 	/**
-	 *½ö¹©Orm¹ÜÀíÆ÷×¢ÈëÓÃ
+	 *ä»…ä¾›Ormç®¡ç†å™¨æ³¨å…¥ç”¨
 	 * @author Comdex
-	 * @param OrmManager ĞèÒª×¢ÈëµÄOrmManager
+	 * @param OrmManager éœ€è¦æ³¨å…¥çš„OrmManager
 	 */
 	public void setOrmManager(OrmManager omanager);
 	
 	/**
-	 *Í¬Ê±²åÈë¶à¸ö¶ÔÏó
+	 *åŒæ—¶æ’å…¥å¤šä¸ªå¯¹è±¡
 	 * @author Comdex
-	 * @param objects ĞèÒª²åÈëµÄ¶ÔÏólist
-	 * @return Ö´ĞĞ²åÈëµÄÌõÊı 
+	 * @param objects éœ€è¦æ’å…¥çš„å¯¹è±¡list
+	 * @return æ‰§è¡Œæ’å…¥çš„æ¡æ•° 
 	 */
 	public int insertMulti(List objects);
 	

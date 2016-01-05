@@ -4,17 +4,17 @@ import java.util.Vector;
 
 /**
  * @author Comdex
- *Êı¾İ¿â²éÑ¯ÊµÌå
+ *æ•°æ®åº“æŸ¥è¯¢å®ä½“
  */
 public class OperateSet {
-	//²ÎÊı²éÑ¯sqlÓï¾ä
+	//å‚æ•°æŸ¥è¯¢sqlè¯­å¥
 	private String strSql = "";
-	//²ÎÊıÖµ
+	//å‚æ•°å€¼
 	private Vector<Object> param ;
-	//Ó³ÉäÀà
+	//æ˜ å°„ç±»
 	private TableInfo tbinfo;
 	
-	//Êı¾İ¿âÖĞµÄ×ÔÔö¼üÃû
+	//æ•°æ®åº“ä¸­çš„è‡ªå¢é”®å
 	private String autoKeyName = "";
 	
 	public OperateSet(String strSql, Vector<Object> param, TableInfo tbinfo) {

@@ -6,96 +6,96 @@ import java.util.Map;
 
 
 /**
- * ORM²éÑ¯½Ó¿Ú
+ * ORMæŸ¥è¯¢æ¥å£
  * @author Comdex
  */
 public interface QuerySet {
 	/**
-	 *¸ù¾İ¹ıÂË²éÑ¯±í´ïÊ½ºÍ²éÑ¯²ÎÊı·µ»ØORM²éÑ¯¶ÔÏó
+	 *æ ¹æ®è¿‡æ»¤æŸ¥è¯¢è¡¨è¾¾å¼å’ŒæŸ¥è¯¢å‚æ•°è¿”å›ORMæŸ¥è¯¢å¯¹è±¡
 	 * @author Comdex
-	 * @param expression ¹ıÂË²éÑ¯±í´ïÊ½
-	 * @param params ²éÑ¯²ÎÊı
+	 * @param expression è¿‡æ»¤æŸ¥è¯¢è¡¨è¾¾å¼
+	 * @param params æŸ¥è¯¢å‚æ•°
 	 * @return QuerySet
 	 */
 	public QuerySet filter(String expression,Object...params);
 	
 	/**
-	 *¸ù¾İÅÅĞò²éÑ¯±í´ïÊ½·µ»ØORM²éÑ¯¶ÔÏó
+	 *æ ¹æ®æ’åºæŸ¥è¯¢è¡¨è¾¾å¼è¿”å›ORMæŸ¥è¯¢å¯¹è±¡
 	 * @author Comdex
-	 * @param expressions ÅÅĞò²éÑ¯±í´ïÊ½
+	 * @param expressions æ’åºæŸ¥è¯¢è¡¨è¾¾å¼
 	 * @return QuerySet
 	 */
 	public QuerySet orderBy(String...expressions);
 	
 	/**
-	 *¸ù¾İÅÅ³ıÌõ¼ş²éÑ¯±í´ïÊ½ºÍ²éÑ¯²ÎÊı·µ»ØORM²éÑ¯¶ÔÏó
+	 *æ ¹æ®æ’é™¤æ¡ä»¶æŸ¥è¯¢è¡¨è¾¾å¼å’ŒæŸ¥è¯¢å‚æ•°è¿”å›ORMæŸ¥è¯¢å¯¹è±¡
 	 * @author Comdex
-	 * @param expression ÅÅ³ıÌõ¼ş²éÑ¯±í´ïÊ½
-	 * @param params ÅÅ³ıÌõ¼ş²éÑ¯²ÎÊı
+	 * @param expression æ’é™¤æ¡ä»¶æŸ¥è¯¢è¡¨è¾¾å¼
+	 * @param params æ’é™¤æ¡ä»¶æŸ¥è¯¢å‚æ•°
 	 * @return QuerySet
 	 */
 	public QuerySet exclude(String expression,Object...params);
 	
 	/**
-	 *¼ÆËã·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼ÌõÊı
+	 *è®¡ç®—ç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•æ¡æ•°
 	 * @author Comdex
-	 * @return long Êı¾İ¿â¼ÇÂ¼ÌõÊı,-1ÎªÖ´ĞĞÊ§°Ü
+	 * @return long æ•°æ®åº“è®°å½•æ¡æ•°,-1ä¸ºæ‰§è¡Œå¤±è´¥
 	 */
 	public long count();
 	
 	/**
-	 *²éÑ¯·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼ÊÇ·ñ´æÔÚ
+	 *æŸ¥è¯¢ç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•æ˜¯å¦å­˜åœ¨
 	 * @author Comdex
-	 * @return boolean trueÎª´æÔÚ,falseÎª²»´æÔÚ
+	 * @return boolean trueä¸ºå­˜åœ¨,falseä¸ºä¸å­˜åœ¨
 	 */
 	public boolean exist();
 	
 	/**
-	 *É¾³ı·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼
+	 *åˆ é™¤ç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•
 	 * @author Comdex
-	 * @return long ·µ»ØÊÜÓ°ÏìµÄ¼ÇÂ¼ÌõÊı
+	 * @return long è¿”å›å—å½±å“çš„è®°å½•æ¡æ•°
 	 */
 	public long delete();
 	
 	/**
-	 *°Ñ·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼Êı¾İ¸³Öµ¸øÒ»¸öÖ¸¶¨¶ÔÏó
+	 *æŠŠç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•æ•°æ®èµ‹å€¼ç»™ä¸€ä¸ªæŒ‡å®šå¯¹è±¡
 	 * @author Comdex
-	 * @param bean ±»¸³ÖµµÄ¶ÔÏó
-	 * @param params Ö¸¶¨±»¸³ÖµµÄÊı¾İ¿â×Ö¶Î
-	 * @return boolean trueÎªÖ´ĞĞ³É¹¦£¬falseÎªÊ§°Ü 
+	 * @param bean è¢«èµ‹å€¼çš„å¯¹è±¡
+	 * @param params æŒ‡å®šè¢«èµ‹å€¼çš„æ•°æ®åº“å­—æ®µ
+	 * @return boolean trueä¸ºæ‰§è¡ŒæˆåŠŸï¼Œfalseä¸ºå¤±è´¥ 
 	 */
 	public boolean one(Object bean,String...params);
 	
 	/**
-	 *°Ñ·ûºÏÌõ¼şµÄÊı¾İ¿â¼ÇÂ¼Êı¾İ¸³Öµ¸øÖ¸¶¨µÄList¶ÔÏó
+	 *æŠŠç¬¦åˆæ¡ä»¶çš„æ•°æ®åº“è®°å½•æ•°æ®èµ‹å€¼ç»™æŒ‡å®šçš„Listå¯¹è±¡
 	 * @author Comdex
-	 * @param list ±»¸³ÖµµÄlist¶ÔÏó
-	 * @param clazz listËù±£´æµÄ·ºĞÍÖÖÀàµÄclass¶ÔÏó
-	 * @param params Ö¸¶¨È¡Êı¾İµÄÊı¾İ¿â¼ÇÂ¼µÄ×Ö¶Î
-	 * @return long ÊÜÓ°ÏìµÄ¼ÇÂ¼ÌõÊı
+	 * @param list è¢«èµ‹å€¼çš„listå¯¹è±¡
+	 * @param clazz listæ‰€ä¿å­˜çš„æ³›å‹ç§ç±»çš„classå¯¹è±¡
+	 * @param params æŒ‡å®šå–æ•°æ®çš„æ•°æ®åº“è®°å½•çš„å­—æ®µ
+	 * @return long å—å½±å“çš„è®°å½•æ¡æ•°
 	 */
 	public long all(List list,Class clazz,String...params);
 	
 	/**
-	 *ÏŞÖÆ×î´ó·µ»ØÊı¾İĞĞÊı£¬µÚ¶ş¸ö²ÎÊı¿ÉÒÔÉèÖÃ Offset
+	 *é™åˆ¶æœ€å¤§è¿”å›æ•°æ®è¡Œæ•°ï¼Œç¬¬äºŒä¸ªå‚æ•°å¯ä»¥è®¾ç½® Offset
 	 * @author Comdex
-	 * @param int ÏŞÖÆ·µ»ØĞĞÊı
-	 * @param long Æ«ÒÆĞĞÊı
+	 * @param int é™åˆ¶è¿”å›è¡Œæ•°
+	 * @param long åç§»è¡Œæ•°
 	 * @return QuerySet
 	 */
 	public QuerySet limit(int count, long... offset);
 	
 	/**
-	 *ÉèÖÃÆ«ÒÆĞĞÊı
+	 *è®¾ç½®åç§»è¡Œæ•°
 	 * @author Comdex
-	 * @param long Æ«ÒÆĞĞÊı
+	 * @param long åç§»è¡Œæ•°
 	 * @return QuerySet
 	 */
 	public QuerySet offset(long offset);
 	
 	/**
-	 * ·µ»Ø½á¹û¼¯µÄ key => valueÖµ(List<Map<String,String>>)
-     * keyÎª Model ÀïµÄ Field name£¬value µÄÖµ ÒÔ string±£´æ
+	 * è¿”å›ç»“æœé›†çš„ key => valueå€¼(List<Map<String,String>>)
+     * keyä¸º Model é‡Œçš„ Field nameï¼Œvalue çš„å€¼ ä»¥ stringä¿å­˜
 	 * @author Comdex
 	 * @return List<Map<String,String>>
 	 */

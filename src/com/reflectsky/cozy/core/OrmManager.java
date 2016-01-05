@@ -23,23 +23,23 @@ public class OrmManager {
 	private String DBUrl="";
 	private String DBUser="";
 	private String DBPassword="";
-	//Ä¬ÈÏÎªmysql
+	//é»˜è®¤ä¸ºmysql
 	private String DBtype = "mysql";
-	//¿ÉÓÃµÄORMÊµÏÖ²éÕÒMap
+	//å¯ç”¨çš„ORMå®ç°æŸ¥æ‰¾Map
 	private Map<String, Class> ormMap = new HashMap<String,Class>();
-	//¿ÉÓÃµÄORMUtilÊµÏÖ²éÕÒMap
+	//å¯ç”¨çš„ORMUtilå®ç°æŸ¥æ‰¾Map
 	private Map<String, Class> ormUtilMap = new HashMap<String,Class>();
-	//orm sqlÓï¾äÖ´ĞĞ¹ı³Ì
+	//orm sqlè¯­å¥æ‰§è¡Œè¿‡ç¨‹
 	private  boolean Debug = false;
-	//orm ×Ô¶¯½¨±íÖ´ĞĞ¹ı³Ì
+	//orm è‡ªåŠ¨å»ºè¡¨æ‰§è¡Œè¿‡ç¨‹
 	private  boolean Verbose = true;
-	//ÊÇ·ñdrop tableºó½¨±í
+	//æ˜¯å¦drop tableåå»ºè¡¨
 	private  boolean Force = false;
 	private TableCache tableCache;
 	private static ConnectionPool connPool;
 	private int defaultRowsLimit = 1000;
 	
-	//»º´æOrmUtil
+	//ç¼“å­˜OrmUtil
 	private OrmUtil ormUtil = null;
 	
 	private static Map<String,Integer> supportTag ;
@@ -56,12 +56,12 @@ public class OrmManager {
 	}
 	
 	
-	/**ORM¹ÜÀíÆ÷¹¹Ôì·½·¨
-	 * @param driverName JDBCÇı¶¯Ãû
-	 * @param dBUrl Êı¾İ¿âURL
-	 * @param dBUser Êı¾İ¿âÓÃ»§Ãû
-	 * @param dBPassword Êı¾İ¿âÃÜÂë
-	 * @param dBtype Êı¾İ¿âÀàĞÍ£¬Ä¬ÈÏÖ§³Ömysql
+	/**ORMç®¡ç†å™¨æ„é€ æ–¹æ³•
+	 * @param driverName JDBCé©±åŠ¨å
+	 * @param dBUrl æ•°æ®åº“URL
+	 * @param dBUser æ•°æ®åº“ç”¨æˆ·å
+	 * @param dBPassword æ•°æ®åº“å¯†ç 
+	 * @param dBtype æ•°æ®åº“ç±»å‹ï¼Œé»˜è®¤æ”¯æŒmysql
 	 */
 	public OrmManager(String driverName, String dBUrl, String dBUser,
 			String dBPassword, String dBtype) {
@@ -80,18 +80,18 @@ public class OrmManager {
 		try {
 			connPool.createPool();
 		} catch (Exception e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		}
 	}
 	
-	/**ORM¹ÜÀíÆ÷¹¹Ôì·½·¨
-	 * @param driverName JDBCÇı¶¯Ãû
-	 * @param dBUrl Êı¾İ¿âURL
-	 * @param dBUser Êı¾İ¿âÓÃ»§Ãû
-	 * @param dBPassword Êı¾İ¿âÃÜÂë
-	 * @param dBtype Êı¾İ¿âÀàĞÍ£¬Ä¬ÈÏÖ§³Ömysql
-	 * @param debug ÊÇ·ñ¿ªÆôdebugÄ£Ê½
+	/**ORMç®¡ç†å™¨æ„é€ æ–¹æ³•
+	 * @param driverName JDBCé©±åŠ¨å
+	 * @param dBUrl æ•°æ®åº“URL
+	 * @param dBUser æ•°æ®åº“ç”¨æˆ·å
+	 * @param dBPassword æ•°æ®åº“å¯†ç 
+	 * @param dBtype æ•°æ®åº“ç±»å‹ï¼Œé»˜è®¤æ”¯æŒmysql
+	 * @param debug æ˜¯å¦å¼€å¯debugæ¨¡å¼
 	 */
 	public OrmManager(String driverName, String dBUrl, String dBUser,
 			String dBPassword, String dBtype, boolean debug) {
@@ -109,13 +109,13 @@ public class OrmManager {
 		try {
 			connPool.createPool();
 		} catch (Exception e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		}
 	}
 	
 	/**
-	 *»ñÈ¡ÀàÓ³ÉäÊı¾İ¿â±íĞÅÏ¢»º´æ
+	 *è·å–ç±»æ˜ å°„æ•°æ®åº“è¡¨ä¿¡æ¯ç¼“å­˜
 	 * @author Comdex
 	 * @return TableCache
 	 */
@@ -124,7 +124,7 @@ public class OrmManager {
 	}
 
 	/**
-	 *ÉèÖÃ×î´ó±£³ÖµÄÊı¾İ¿âÁ¬½ÓÊı
+	 *è®¾ç½®æœ€å¤§ä¿æŒçš„æ•°æ®åº“è¿æ¥æ•°
 	 * @author Comdex
 	 * @param maxConnections 
 	 */
@@ -135,7 +135,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÃ¿´ÎÔö¼ÓµÄÊı¾İ¿âÁ¬½ÓÊı
+	 *è®¾ç½®æ¯æ¬¡å¢åŠ çš„æ•°æ®åº“è¿æ¥æ•°
 	 * @author Comdex
 	 * @param incrementalConnections 
 	 */
@@ -146,16 +146,16 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÊÇ·ñÇ¿ÖÆÖØĞÂ½¨±í
+	 *æ˜¯å¦å¼ºåˆ¶é‡æ–°å»ºè¡¨
 	 * @author Comdex
-	 * @param force trueÎªÖØĞÂ½¨±í
+	 * @param force trueä¸ºé‡æ–°å»ºè¡¨
 	 */
 	public void Force(boolean force){
 		this.Force = force;
 	}
 	
 	/**
-	 *·µ»ØÊÇ·ñÇ¿ÖÆÖØĞÂ½¨±íµÄ±íÊ¾
+	 *è¿”å›æ˜¯å¦å¼ºåˆ¶é‡æ–°å»ºè¡¨çš„è¡¨ç¤º
 	 * @author Comdex
 	 * @return boolean
 	 */
@@ -165,9 +165,9 @@ public class OrmManager {
 	
 
 	/**
-	 *Îª¸÷¸öÊµÌåÀà×¢²á²¢½âÎöÓ³ÉäĞÅÏ¢½øĞĞ»º´æ
+	 *ä¸ºå„ä¸ªå®ä½“ç±»æ³¨å†Œå¹¶è§£ææ˜ å°„ä¿¡æ¯è¿›è¡Œç¼“å­˜
 	 * @author Comdex
-	 * @param models Òª½øĞĞ×¢²áµÄÊµÌåÀà 
+	 * @param models è¦è¿›è¡Œæ³¨å†Œçš„å®ä½“ç±» 
 	 */
 	public void RegisterModel(Class... models){
 		
@@ -180,22 +180,22 @@ public class OrmManager {
 				Object obj = con.newInstance(params);
 				ormUtil = (OrmUtil) obj;
 			} catch (NoSuchMethodException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} catch (InstantiationException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} catch (IllegalAccessException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} catch (IllegalArgumentException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} catch (InvocationTargetException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			}
 		}
@@ -208,7 +208,7 @@ public class OrmManager {
 					tbinfo = ormUtil.getTableInfo(model);
 					
 				} catch (Exception e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					deBugInfo(e.getMessage());
 					System.exit(-1);
 				}
@@ -222,10 +222,10 @@ public class OrmManager {
 	
 	
 	/**
-	 *×¢²á×ÔÖ÷µÄORMÊµÏÖ
+	 *æ³¨å†Œè‡ªä¸»çš„ORMå®ç°
 	 * @author Comdex
-	 * @param dbtype ËùÊµÏÖµÄORMÊı¾İ¿âÀàĞÍ
-	 * @param impl ËùÊµÏÖµÄORMÀàµÄClass
+	 * @param dbtype æ‰€å®ç°çš„ORMæ•°æ®åº“ç±»å‹
+	 * @param impl æ‰€å®ç°çš„ORMç±»çš„Class
 	 */
 	public void registerOrmImpl(String dbtype, Class impl){
 		ormMap.put(dbtype, impl);
@@ -233,10 +233,10 @@ public class OrmManager {
 	
 	
 	/**
-	 *×¢²á×ÔÖ÷µÄORMUtilÊµÏÖ
+	 *æ³¨å†Œè‡ªä¸»çš„ORMUtilå®ç°
 	 * @author Comdex
-	 * @param dbtype ËùÊµÏÖµÄORMUtilÊı¾İ¿âÀàĞÍ
-	 * @param impl ËùÊµÏÖµÄORMUtilÀàµÄClass
+	 * @param dbtype æ‰€å®ç°çš„ORMUtilæ•°æ®åº“ç±»å‹
+	 * @param impl æ‰€å®ç°çš„ORMUtilç±»çš„Class
 	 */
 	public void registerOrmUtilImpl(String dbtype, Class impl){
 		ormUtilMap.put(dbtype, impl);
@@ -244,7 +244,7 @@ public class OrmManager {
 	
 	
 	/**
-	 *·µ»ØÒ»¸ö¿ÉÓÃµÄormer
+	 *è¿”å›ä¸€ä¸ªå¯ç”¨çš„ormer
 	 * @author Comdex 
 	 * @return Ormer
 	 */
@@ -271,32 +271,32 @@ public class OrmManager {
 			ormMethod.invoke(obj, this);
 			return (Ormer)obj;
 		} catch (InstantiationException e1) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e1.getMessage());
 		} catch (IllegalAccessException e1) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e1.getMessage());
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		} catch (NoSuchMethodException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		} catch (SecurityException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		} catch (IllegalArgumentException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		} catch (InvocationTargetException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		}
 		return null;
 	}
 	
 	/**
-	 *»ñÈ¡JDBCÇı¶¯Ãû
+	 *è·å–JDBCé©±åŠ¨å
 	 * @author Comdex
 	 * @return String
 	 */
@@ -305,7 +305,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃJDBCÇı¶¯Ãû
+	 *è®¾ç½®JDBCé©±åŠ¨å
 	 * @author Comdex
 	 * @param driverName 
 	 */
@@ -314,7 +314,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *»ñÈ¡Êı¾İ¿âURL
+	 *è·å–æ•°æ®åº“URL
 	 * @author Comdex
 	 * @return String 
 	 */
@@ -323,7 +323,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÊı¾İ¿âURL
+	 *è®¾ç½®æ•°æ®åº“URL
 	 * @author Comdex
 	 * @param dBUrl 
 	 */
@@ -332,7 +332,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *»ñÈ¡Êı¾İ¿âÓÃ»§Ãû
+	 *è·å–æ•°æ®åº“ç”¨æˆ·å
 	 * @author Comdex
 	 * @return String
 	 */
@@ -341,7 +341,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÊı¾İ¿âÓÃ»§Ãû
+	 *è®¾ç½®æ•°æ®åº“ç”¨æˆ·å
 	 * @author Comdex
 	 * @param dBUser 
 	 */
@@ -350,7 +350,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *»ñÈ¡Êı¾İ¿âÃÜÂë
+	 *è·å–æ•°æ®åº“å¯†ç 
 	 * @author Comdex
 	 * @return String 
 	 */
@@ -359,7 +359,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÊı¾İ¿âÃÜÂë
+	 *è®¾ç½®æ•°æ®åº“å¯†ç 
 	 * @author Comdex
 	 * @param dBPassword 
 	 */
@@ -368,7 +368,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÊÇ·ñ¿ªÆôDebugÄ£Ê½£¬¿ªÆôºó»áÊä³öÖ´ĞĞµÄSQLÓï¾ä
+	 *è®¾ç½®æ˜¯å¦å¼€å¯Debugæ¨¡å¼ï¼Œå¼€å¯åä¼šè¾“å‡ºæ‰§è¡Œçš„SQLè¯­å¥
 	 * @author Comdex
 	 * @param debug 
 	 */
@@ -377,9 +377,9 @@ public class OrmManager {
 	}
 	
 	/**
-	 *ÉèÖÃÊÇ·ñÏÔÊ¾CozyÖ´ĞĞµÄ½¨±íSQLÓï¾ä
+	 *è®¾ç½®æ˜¯å¦æ˜¾ç¤ºCozyæ‰§è¡Œçš„å»ºè¡¨SQLè¯­å¥
 	 * @author Comdex
-	 * @param verbose trueÎªÏÔÊ¾
+	 * @param verbose trueä¸ºæ˜¾ç¤º
 	 */
 	public void Verbose(boolean verbose){
 		Verbose = verbose;
@@ -391,7 +391,7 @@ public class OrmManager {
 
 	
 	/**
-	 *Í¬²½½¨±í
+	 *åŒæ­¥å»ºè¡¨
 	 * @author Comdex 
 	 */
 	public void runSyncDB(){
@@ -405,7 +405,7 @@ public class OrmManager {
 					TableInfo tbinfo = cache.get(key);
 					String sql = ormUtil.generateTableCreateSql(tbinfo);
 					if(!sql.equals("")){
-						//É¾³ı±íÔÙ½¨±í
+						//åˆ é™¤è¡¨å†å»ºè¡¨
 						if(Force){
 							String strSql = "DROP TABLE IF EXISTS " + tbinfo.getTableName() + ";";
 							stmt.addBatch(strSql);
@@ -430,7 +430,7 @@ public class OrmManager {
 					}
 				}
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				deBugInfo(e.getMessage());
 			} finally{
 				connPool.freeConnection(conn);
@@ -438,7 +438,7 @@ public class OrmManager {
 	}
 	
 	/**
-	 *»ñÈ¡ÊÇ·ñ¿ªÆôDebugÄ£Ê½µÄ±íÊ¾
+	 *è·å–æ˜¯å¦å¼€å¯Debugæ¨¡å¼çš„è¡¨ç¤º
 	 * @author Comdex
 	 * @return boolean 
 	 */
@@ -446,29 +446,29 @@ public class OrmManager {
 		return Debug;
 	}
 	
-	//°üÄÚÊä³öDEBUGĞÅÏ¢
+	//åŒ…å†…è¾“å‡ºDEBUGä¿¡æ¯
     public void deBugInfo(String info){
 		Date now = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		System.out.println(sdf.format(now) + "  " + info);
 	}
     
-    //¹Ø±ÕResultSet
+    //å…³é—­ResultSet
     public void closeRs(ResultSet rs){
     	try {
 			rs.close();
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		}
     }
     
-    //¹Ø±ÕConnection
+    //å…³é—­Connection
     public void closeStmt(Statement stmt){
     	try {
 			stmt.close();
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			deBugInfo(e.getMessage());
 		}
     }

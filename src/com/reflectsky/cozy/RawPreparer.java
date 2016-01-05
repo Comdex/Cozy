@@ -4,23 +4,23 @@ import java.sql.ResultSet;
 
 
 /**
- * Ô­ÉúSQLÔ¤²éÑ¯½Ó¿Ú
+ * åŸç”ŸSQLé¢„æŸ¥è¯¢æ¥å£
  * @author Comdex
  */
 public interface RawPreparer {
 	
 	/**
-	 *¸ù¾İ´«ÈëµÄSQLÕ¼Î»·û²ÎÊıÖ´ĞĞÔ¤±àÒëSQLÓï¾ä
+	 *æ ¹æ®ä¼ å…¥çš„SQLå ä½ç¬¦å‚æ•°æ‰§è¡Œé¢„ç¼–è¯‘SQLè¯­å¥
 	 * @author Comdex
 	 * @param objs
-	 * @return int ·µ»ØÊÕÓ°Ïì¼ÇÂ¼ÌõÊı£¬·µ»Ø-1´ú±íÖ´ĞĞÊ§°Ü
+	 * @return int è¿”å›æ”¶å½±å“è®°å½•æ¡æ•°ï¼Œè¿”å›-1ä»£è¡¨æ‰§è¡Œå¤±è´¥
 	 */
 	public int exec(Object... objs);
 	
 	/**
-	 *ÊÍ·ÅÔ­ÉúSQLÔ¤²éÑ¯¶ÔÏóµÄ×ÊÔ´
+	 *é‡Šæ”¾åŸç”ŸSQLé¢„æŸ¥è¯¢å¯¹è±¡çš„èµ„æº
 	 * @author Comdex
-	 * @return boolean trueÎªÖ´ĞĞ³É¹¦,falseÎªÖ´ĞĞÊ§°Ü
+	 * @return boolean trueä¸ºæ‰§è¡ŒæˆåŠŸ,falseä¸ºæ‰§è¡Œå¤±è´¥
 	 */
 	public boolean close();
 }

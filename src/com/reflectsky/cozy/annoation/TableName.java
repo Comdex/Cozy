@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ÉèÖÃÀà¶ÔÓ¦µÄ±íÃûµÄ×¢½â
+ * è®¾ç½®ç±»å¯¹åº”çš„è¡¨åçš„æ³¨è§£
  * @author Comdex
  */
 @Target(ElementType.TYPE)

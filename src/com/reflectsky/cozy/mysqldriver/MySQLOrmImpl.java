@@ -1,3 +1,4 @@
+//intè®¾å€¼nullå‡ºé”™,nullä¸ºæ•°æ®åº“ä¸­çš„null,
 package com.reflectsky.cozy.mysqldriver;
 
 import java.lang.reflect.Field;
@@ -24,13 +25,13 @@ import com.reflectsky.cozy.core.TableInfo;
 
 
 /**
- * MySQLµÄORMÊµÏÖ
+ * MySQLçš„ORMå®ç°
  * @author Comdex
  */
 public class MySQLOrmImpl implements Ormer{
 	private Connection conn = null;
 	private OrmManager oManager = null;
-	//Ä¬ÈÏ²»´æÔÚ»Øµ÷¶ÔÏó
+	//é»˜è®¤ä¸å­˜åœ¨å›è°ƒå¯¹è±¡
 	private Object callbackobj = null;
 		
 	public MySQLOrmImpl(){
@@ -41,7 +42,7 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public boolean read(Object obj, String... fieldnames)  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		OperateSet oSet = generateReadOperateSet(obj, fieldnames);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -55,7 +56,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 			ormDebug(oSet);
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -68,7 +69,7 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					
 				}
@@ -83,21 +84,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -109,7 +110,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 			try {
 				rs = pstmt.executeQuery();
-				//»ñÈ¡²éÑ¯½á¹ûµÄÖµ
+				//è·å–æŸ¥è¯¢ç»“æœçš„å€¼
 				Vector<Object> values = new Vector<Object>();
 				if(fieldnames.length !=0 ){
 					if(rs != null){
@@ -119,7 +120,7 @@ public class MySQLOrmImpl implements Ormer{
 							}
 						}
 					}
-					//»ñÈ¡fieldname¶ÔÓ¦µÄ×Ö¶ÎÃû
+					//è·å–fieldnameå¯¹åº”çš„å­—æ®µå
 					Vector<String> fields = new Vector<String>();
 					Vector<FieldInfo> fins = oSet.getTbinfo().getAllFieldInfos();
 					for(String s : fieldnames){
@@ -130,18 +131,18 @@ public class MySQLOrmImpl implements Ormer{
 						}
 					}
 					
-					//Îª¶ÔÓ¦µÄfieldÉèÖµ
+					//ä¸ºå¯¹åº”çš„fieldè®¾å€¼
 					for(int i=0 ; i<fields.size() ; i++){
 						try {
 							Field field = obj.getClass().getDeclaredField(fields.get(i));
 							field.setAccessible(true);
 							field.set(obj, values.get(i));
 						} catch (NoSuchFieldException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (SecurityException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (Exception e) {
@@ -154,7 +155,7 @@ public class MySQLOrmImpl implements Ormer{
 					this.oManager.closeStmt(pstmt);
 					return isOk;
 				}else {
-					//»ñÈ¡¸Ã¶ÔÏóËùÓĞ×Ö¶ÎÃû
+					//è·å–è¯¥å¯¹è±¡æ‰€æœ‰å­—æ®µå
 					Vector<String> fields = new Vector<String>();
 					Vector<FieldInfo> fins = oSet.getTbinfo().getAllFieldInfos();
 					if(rs != null){
@@ -166,17 +167,17 @@ public class MySQLOrmImpl implements Ormer{
 					}
 					
 					
-					//Îª¶ÔÓ¦µÄFieldÉèÖµ
+					//ä¸ºå¯¹åº”çš„Fieldè®¾å€¼
 					for(int i=0 ; i<fins.size() ; i++){
 						Field field = null;
 						try {
 							field = obj.getClass().getDeclaredField(fins.get(i).getFieldName());
 						} catch (NoSuchFieldException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (SecurityException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -185,11 +186,11 @@ public class MySQLOrmImpl implements Ormer{
 							field.set(obj, values.get(i));
 							
 						} catch (IllegalArgumentException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (IllegalAccessException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -205,21 +206,21 @@ public class MySQLOrmImpl implements Ormer{
 								Class<?>[] params = mtd.getParameterTypes();
 								if(params.length == 2){
 									if(params[0]==obj.getClass() && params[1]==Ormer.class){
-										//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+										//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 										Ormer ormer = this.oManager.NewOrm();
 										mtd.setAccessible(true);
 										try {
 											mtd.invoke(callbackobj, obj, ormer);
 										} catch (IllegalAccessException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										} catch (IllegalArgumentException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										} catch (InvocationTargetException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										}
@@ -234,7 +235,7 @@ public class MySQLOrmImpl implements Ormer{
 					return isOk;
 				}
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}
@@ -252,13 +253,13 @@ public class MySQLOrmImpl implements Ormer{
 	}
 	
 	
-	/* ·µ»Ø×ÔÔö³¤µÄid,Ã»ÓĞ×ÔÔö³¤Ê±¶¼ÊÇ·µ»Ø-1
+	/* è¿”å›è‡ªå¢é•¿çš„id,æ²¡æœ‰è‡ªå¢é•¿æ—¶éƒ½æ˜¯è¿”å›-1
 	 * @author Comdex
 	 * @see com.reflectsky.cozy.Ormer#insert(java.lang.Object)
 	 */
 	@Override
 	public boolean insert(Object obj)  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		OperateSet oSet = generateInsertOperateSet(obj);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -276,7 +277,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 		
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -289,14 +290,14 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					
 				}
 				
 			}
 			
-			//Èç¹û¿ªÆô·½·¨»Øµ÷Ö§³Ö¹¦ÄÜ
+			//å¦‚æœå¼€å¯æ–¹æ³•å›è°ƒæ”¯æŒåŠŸèƒ½
 			if(callbackobj != null){
 				Class<?> clazz = callbackobj.getClass();
 				Method[] mtds = clazz.getDeclaredMethods();
@@ -305,21 +306,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -335,7 +336,7 @@ public class MySQLOrmImpl implements Ormer{
 				pstmt.executeUpdate();
 				isOk = true;
 			} catch (SQLException e1) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e1.getMessage());
 
 			}
@@ -350,11 +351,11 @@ public class MySQLOrmImpl implements Ormer{
 						try {
 							field = obj.getClass().getDeclaredField(oSet.getAutoKeyName());
 						} catch (NoSuchFieldException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (SecurityException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -379,21 +380,21 @@ public class MySQLOrmImpl implements Ormer{
 										Class<?>[] params = mtd.getParameterTypes();
 										if(params.length == 2){
 											if(params[0]==obj.getClass() && params[1]==Ormer.class){
-												//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+												//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 												Ormer ormer = this.oManager.NewOrm();
 												mtd.setAccessible(true);
 												try {
 													mtd.invoke(callbackobj, obj, ormer);
 												} catch (IllegalAccessException e) {
-													// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+													// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 													this.oManager.deBugInfo(e.getMessage());
 													
 												} catch (IllegalArgumentException e) {
-													// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+													// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 													this.oManager.deBugInfo(e.getMessage());
 													
 												} catch (InvocationTargetException e) {
-													// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+													// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 													this.oManager.deBugInfo(e.getMessage());
 													
 												}
@@ -407,11 +408,11 @@ public class MySQLOrmImpl implements Ormer{
 							this.oManager.closeStmt(pstmt);
 							return isOk;
 						} catch (IllegalArgumentException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (IllegalAccessException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -426,7 +427,7 @@ public class MySQLOrmImpl implements Ormer{
 				
 				
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}
@@ -441,7 +442,7 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public int update(Object obj, String... fieldnames)  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		OperateSet oSet = generateUpdateOperateSet(obj, fieldnames);
 		PreparedStatement pstmt = null;
 		int count = 0;
@@ -454,7 +455,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 			ormDebug(oSet);
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -467,7 +468,7 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					
 				}
@@ -482,21 +483,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -509,7 +510,7 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				count = pstmt.executeUpdate();
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}
@@ -522,21 +523,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -559,7 +560,7 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public int delete(Object obj)  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		OperateSet oSet = generateDeleteOperateSet(obj);
 		PreparedStatement pstmt = null;
 		int count = 0;
@@ -573,7 +574,7 @@ public class MySQLOrmImpl implements Ormer{
 			ormDebug(oSet);
 			
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -586,7 +587,7 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					pstmt.setObject(i+1, object);
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					
 				}
@@ -601,21 +602,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -629,7 +630,7 @@ public class MySQLOrmImpl implements Ormer{
 				count = pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}
@@ -642,21 +643,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==obj.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, obj, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -677,12 +678,12 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public void begin()  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
-		//¹Ø±Õ×Ô¶¯Ìá½»£¬¿ªÆôÊÂÎñ
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
+		//å…³é—­è‡ªåŠ¨æäº¤ï¼Œå¼€å¯äº‹åŠ¡
 		try {
 			conn.setAutoCommit(false);
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 		}
 		
@@ -693,13 +694,13 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public boolean commit()  {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		try {
 			conn.commit();
 			conn.setAutoCommit(true);
 			return true;
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			return false;
 		}
@@ -710,7 +711,7 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public void rollback() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		try {
 			boolean auto = conn.getAutoCommit();
 			if(auto){
@@ -721,7 +722,7 @@ public class MySQLOrmImpl implements Ormer{
 			}
 			
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 		}
 	}
@@ -731,7 +732,7 @@ public class MySQLOrmImpl implements Ormer{
 	 */
 	@Override
 	public void close() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		if(conn != null){
 			oManager.getConnectionPool().freeConnection(conn);
 		}
@@ -762,7 +763,7 @@ public class MySQLOrmImpl implements Ormer{
 	
 	private OperateSet generateDeleteOperateSet(Object obj){
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		String autoKeyName = ""; 
@@ -772,7 +773,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateDeleteOperateSet error]-Model<"+typeName+"> has not registered!");
 			return null;
 		}
@@ -782,7 +783,7 @@ public class MySQLOrmImpl implements Ormer{
 		Vector<Object> param = new Vector<Object>();
 		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 		for(FieldInfo fin : fins){
-			//ÒÔÖ÷¼üÎªÉ¾³ıÌõ¼ş£¬Èç¹û²»ÊÇÖ÷¼üµÄ¼ÌĞø,ÔİÊ±²»Ö§³ÖÁªºÏÖ÷¼ü
+			//ä»¥ä¸»é”®ä¸ºåˆ é™¤æ¡ä»¶ï¼Œå¦‚æœä¸æ˜¯ä¸»é”®çš„ç»§ç»­,æš‚æ—¶ä¸æ”¯æŒè”åˆä¸»é”®
 			if(!fin.isPrimaryKey()){
 				continue;
 			}
@@ -793,11 +794,11 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				field = obj.getClass().getDeclaredField(fin.getFieldName());
 			} catch (NoSuchFieldException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -806,18 +807,18 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (IllegalAccessException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
 		}
 		
 		if(strWhere.equals("")){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateDeleteOperateSet error]-Model<"+typeName+"> has not set PrimaryKey to achieve this delete operate!");
 			return null;
 		}
@@ -828,10 +829,10 @@ public class MySQLOrmImpl implements Ormer{
 		return oSet;
 	}
 	
-	//Éú³É²éÑ¯Sql,ÒÔÖ÷¼üÎª²éÑ¯Ìõ¼ş,Èç¹ûÓĞÖ¸¶¨¶ÁÈëµÄ¼üÄÇÖ»¶Á¸Ã¼ü
+	//ç”ŸæˆæŸ¥è¯¢Sql,ä»¥ä¸»é”®ä¸ºæŸ¥è¯¢æ¡ä»¶,å¦‚æœæœ‰æŒ‡å®šè¯»å…¥çš„é”®é‚£åªè¯»è¯¥é”®
 	private OperateSet generateReadOperateSet(Object obj , String... fieldnames){
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞµÄ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­çš„å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		String autoKeyName = "";
@@ -841,7 +842,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateReadOperateSet error]-Model<"+typeName+"> has not registered!");
 			return null;
 		}
@@ -864,7 +865,7 @@ public class MySQLOrmImpl implements Ormer{
 			strSql += strField + " from " + tbinfo.getTableName();
 			Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 			for(FieldInfo fin : fins){
-				//ÒÔÖ÷¼üÎª²éÑ¯Ìõ¼ş£¬Èç¹û²»ÊÇÖ÷¼üµÄ¼ÌĞø,ÔİÊ±²»Ö§³ÖÁªºÏÖ÷¼ü
+				//ä»¥ä¸»é”®ä¸ºæŸ¥è¯¢æ¡ä»¶ï¼Œå¦‚æœä¸æ˜¯ä¸»é”®çš„ç»§ç»­,æš‚æ—¶ä¸æ”¯æŒè”åˆä¸»é”®
 				if(!fin.isPrimaryKey()){
 					continue;
 				}
@@ -874,11 +875,11 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					field = obj.getClass().getDeclaredField(fin.getFieldName());
 				} catch (NoSuchFieldException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (SecurityException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
@@ -887,18 +888,18 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					param.add(field.get(obj));
 				} catch (IllegalArgumentException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (IllegalAccessException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
 			}
 			
 			if(strWhere.equals("")){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				System.out.println("[generateReadOperateSet error]-Model<"+typeName+"> has not set PrimaryKey to achieve this query!");
 				return null;
 			}
@@ -911,7 +912,7 @@ public class MySQLOrmImpl implements Ormer{
 			strSql += "* from " + tbinfo.getTableName();
 			Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 			for(FieldInfo fin : fins){
-				//ÒÔÖ÷¼üÎª²éÑ¯Ìõ¼ş£¬Èç¹û²»ÊÇÖ÷¼üµÄ¼ÌĞø,ÔİÊ±²»Ö§³ÖÁªºÏÖ÷¼ü
+				//ä»¥ä¸»é”®ä¸ºæŸ¥è¯¢æ¡ä»¶ï¼Œå¦‚æœä¸æ˜¯ä¸»é”®çš„ç»§ç»­,æš‚æ—¶ä¸æ”¯æŒè”åˆä¸»é”®
 				if(!fin.isPrimaryKey()){
 					continue;
 				}
@@ -921,11 +922,11 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					field = obj.getClass().getDeclaredField(fin.getFieldName());
 				} catch (NoSuchFieldException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (SecurityException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
@@ -934,18 +935,18 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					param.add(field.get(obj));
 				} catch (IllegalArgumentException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (IllegalAccessException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
 			}
 			
 			if(strWhere.equals("")){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				System.out.println("[generateReadOperateSet error]-Model<"+typeName+"> has not set PrimaryKey to achieve this query!");
 				return null;
 			}
@@ -959,7 +960,7 @@ public class MySQLOrmImpl implements Ormer{
 	
 	private OperateSet generateInsertOperateSet(Object obj){
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞµÄ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­çš„å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		String autoKeyName = "";
@@ -969,7 +970,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateInsertOperateSet error]-Model<"+typeName+"> has not registered!");
 			return null;
 		}
@@ -980,24 +981,24 @@ public class MySQLOrmImpl implements Ormer{
 		Vector<Object> param = new Vector<Object>();
 		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 		for(FieldInfo fin : fins){
-			//Ìø¹ı×Ô¶¯Ôö³¤µÄ×Ö¶Î
+			//è·³è¿‡è‡ªåŠ¨å¢é•¿çš„å­—æ®µ
 			if(fin.isAutoGenerate()){
 				autoKeyName = fin.getColumnName();
 				continue;
 			}
 			strField += fin.getColumnName() + ",";
 			strValue += "?,";
-			//»ñÈ¡Öµ
+			//è·å–å€¼
 			Field fie = null;
 			try {
 				 fie = clazz.getDeclaredField(fin.getFieldName());
 				 fie.setAccessible(true);
 			} catch (NoSuchFieldException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1005,11 +1006,11 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					param.add(fie.get(obj));
 				} catch (IllegalArgumentException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (IllegalAccessException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
@@ -1017,12 +1018,12 @@ public class MySQLOrmImpl implements Ormer{
 			
 		}
 		
-		//Ö»ÓĞ×ÔÔö×Ö¶Î´íÎóÍË³ö
+		//åªæœ‰è‡ªå¢å­—æ®µé”™è¯¯é€€å‡º
 		if(strField.equals("")){
 			System.out.println("[generateInsertOperateSet error]-Model<"+typeName+"> only have autogenerate field!");
 			return null;
 		}
-		//È¥³ıÎ²²¿µÄ£¬ºÅ
+		//å»é™¤å°¾éƒ¨çš„ï¼Œå·
 		strField = strField.substring(0, strField.length()-1);
 		strValue = strValue.substring(0,strValue.length()-1);
 		strSql += " (" + strField + ") values(" + strValue + ")";
@@ -1038,7 +1039,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		Object obj = objects.get(0);
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞµÄ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­çš„å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		String autoKeyName = "";
@@ -1048,7 +1049,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateInsertMultiOperateSet error]-Model<"+typeName+"> has not registered!");
 			return null;
 		}
@@ -1057,30 +1058,30 @@ public class MySQLOrmImpl implements Ormer{
 		String strField = "";
 		String strValue = "";
 		Vector<Object> param = new Vector<Object>();
-		// ³õÊ¼»¯Vector<Vector>
+		// åˆå§‹åŒ–Vector<Vector>
 		for(int i=0;i<objects.size();i++){
 			param.add(new Vector<Object>());
 		}
 		Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 		for(FieldInfo fin : fins){
-			//Ìø¹ı×Ô¶¯Ôö³¤µÄ×Ö¶Î
+			//è·³è¿‡è‡ªåŠ¨å¢é•¿çš„å­—æ®µ
 			if(fin.isAutoGenerate()){
 				autoKeyName = fin.getColumnName();
 				continue;
 			}
 			strField += fin.getColumnName() + ",";
 			strValue += "?,";
-			//»ñÈ¡Öµ
+			//è·å–å€¼
 			Field fie = null;
 			try {
 				 fie = clazz.getDeclaredField(fin.getFieldName());
 				 fie.setAccessible(true);
 			} catch (NoSuchFieldException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1091,11 +1092,11 @@ public class MySQLOrmImpl implements Ormer{
 					}
 					
 				} catch (IllegalArgumentException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				} catch (IllegalAccessException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					this.oManager.deBugInfo(e.getMessage());
 					return null;
 				}
@@ -1103,12 +1104,12 @@ public class MySQLOrmImpl implements Ormer{
 			
 		}
 		
-		//Ö»ÓĞ×ÔÔö×Ö¶Î´íÎóÍË³ö
+		//åªæœ‰è‡ªå¢å­—æ®µé”™è¯¯é€€å‡º
 		if(strField.equals("")){
 			System.out.println("[generateInsertOperateSet error]-Model<"+typeName+"> only have autogenerate field!");
 			return null;
 		}
-		//È¥³ıÎ²²¿µÄ£¬ºÅ
+		//å»é™¤å°¾éƒ¨çš„ï¼Œå·
 		strField = strField.substring(0, strField.length()-1);
 		strValue = strValue.substring(0,strValue.length()-1);
 		strSql += " (" + strField + ") values(" + strValue + ")";
@@ -1117,10 +1118,10 @@ public class MySQLOrmImpl implements Ormer{
 		return os;	
 	}
 	
-	//Éú³É¸üĞÂSql,ÒÔÖ÷¼üÎª¸üĞÂÌõ¼ş,Èç¹ûÓĞÖ¸¶¨¸üĞÂµÄ¼üÄÇÖ»¸üĞÂ¸Ã¼ü
+	//ç”Ÿæˆæ›´æ–°Sql,ä»¥ä¸»é”®ä¸ºæ›´æ–°æ¡ä»¶,å¦‚æœæœ‰æŒ‡å®šæ›´æ–°çš„é”®é‚£åªæ›´æ–°è¯¥é”®
 	private OperateSet generateUpdateOperateSet(Object obj , String... fieldnames){
 		Class<? extends Object> clazz = obj.getClass();
-		//»ñÈ¡tablecacheÖĞµÄ¶ÔÓ¦µÄinfo
+		//è·å–tablecacheä¸­çš„å¯¹åº”çš„info
 		String typeName = clazz.getName();
 		TableInfo tbinfo = null;
 		String autoKeyName = "";
@@ -1130,7 +1131,7 @@ public class MySQLOrmImpl implements Ormer{
 		}
 		
 		if(tbinfo == null){
-			//ÌáÊ¾´íÎó
+			//æç¤ºé”™è¯¯
 			System.out.println("[generateUpdateOperateSet error]-Model<"+typeName+"> has not registered!");
 			return null;
 		}
@@ -1161,11 +1162,11 @@ public class MySQLOrmImpl implements Ormer{
 						try {
 							field = obj.getClass().getDeclaredField(fin.getFieldName());
 						} catch (NoSuchFieldException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							return null;
 						} catch (SecurityException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							return null;
 						}
@@ -1174,11 +1175,11 @@ public class MySQLOrmImpl implements Ormer{
 						try {
 							param.add(field.get(obj));
 						} catch (IllegalArgumentException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							return null;
 						} catch (IllegalAccessException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							return null;
 						}
@@ -1186,7 +1187,7 @@ public class MySQLOrmImpl implements Ormer{
 				}
 				
 				
-				//ÒÔÖ÷¼üÎª¸üĞÂÌõ¼ş£¬Èç¹û²»ÊÇÖ÷¼üµÄ¼ÌĞø,ÔİÊ±²»Ö§³ÖÁªºÏÖ÷¼ü
+				//ä»¥ä¸»é”®ä¸ºæ›´æ–°æ¡ä»¶ï¼Œå¦‚æœä¸æ˜¯ä¸»é”®çš„ç»§ç»­,æš‚æ—¶ä¸æ”¯æŒè”åˆä¸»é”®
 				if(!fin.isPrimaryKey()){
 					continue;
 				}
@@ -1199,11 +1200,11 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				field = obj.getClass().getDeclaredField(autoKeyName);
 			} catch (NoSuchFieldException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1212,17 +1213,17 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (IllegalAccessException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
 			
 			if(strWhere.equals("")){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				System.out.println("[generateUpdateOperateSet error]-Model<"+typeName+"> has not set PrimaryKey to achieve this update operate!");
 				return null;
 			}
@@ -1237,7 +1238,7 @@ public class MySQLOrmImpl implements Ormer{
 			
 			for(FieldInfo fin : fins){
                 
-				//ÒÔÖ÷¼üÎª²éÑ¯Ìõ¼ş£¬Èç¹û²»ÊÇÖ÷¼üµÄ¼ÌĞø,ÔİÊ±²»Ö§³ÖÁªºÏÖ÷¼ü
+				//ä»¥ä¸»é”®ä¸ºæŸ¥è¯¢æ¡ä»¶ï¼Œå¦‚æœä¸æ˜¯ä¸»é”®çš„ç»§ç»­,æš‚æ—¶ä¸æ”¯æŒè”åˆä¸»é”®
 				if(!fin.isPrimaryKey()){
 					strField += fin.getColumnName() + "=?,";
 	                
@@ -1245,11 +1246,11 @@ public class MySQLOrmImpl implements Ormer{
 					try {
 						field = obj.getClass().getDeclaredField(fin.getFieldName());
 					} catch (NoSuchFieldException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 						return null;
 					} catch (SecurityException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 						return null;
 					}
@@ -1258,11 +1259,11 @@ public class MySQLOrmImpl implements Ormer{
 					try {
 						param.add(field.get(obj));
 					} catch (IllegalArgumentException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 						return null;
 					} catch (IllegalAccessException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						this.oManager.deBugInfo(e.getMessage());
 						return null;
 					}
@@ -1276,11 +1277,11 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				field = obj.getClass().getDeclaredField(autoKeyName);
 			} catch (NoSuchFieldException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (SecurityException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1289,11 +1290,11 @@ public class MySQLOrmImpl implements Ormer{
 			try {
 				param.add(field.get(obj));
 			} catch (IllegalArgumentException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			} catch (IllegalAccessException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1301,7 +1302,7 @@ public class MySQLOrmImpl implements Ormer{
             strField = strField.substring(0, strField.length()-1);
 			
 			if(strWhere.equals("")){
-				//ÌáÊ¾´íÎó
+				//æç¤ºé”™è¯¯
 				System.out.println("[generateUpdateOperateSet error]-Model<"+typeName+"> has not set PrimaryKey to achieve this update operate!");
 				return null;
 			}
@@ -1315,7 +1316,7 @@ public class MySQLOrmImpl implements Ormer{
 
 	@Override
 	public RawSet raw(String sql, Object... params) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		if(params.length == 0){
 			try {
 				Statement stmt = conn.createStatement();
@@ -1324,7 +1325,7 @@ public class MySQLOrmImpl implements Ormer{
 				this.debug(sql, params);
 				return rawSet;
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1339,7 +1340,7 @@ public class MySQLOrmImpl implements Ormer{
 				RawSet rawSet = new RawSetImpl(this.oManager, pstmt, pas);
 				return rawSet;
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				return null;
 			}
@@ -1361,31 +1362,31 @@ public class MySQLOrmImpl implements Ormer{
 		
 	}
 
-	/* £¨·Ç Javadoc£©
+	/* ï¼ˆé Javadocï¼‰
 	 * @see com.reflectsky.cozy.Ormer#createStatement()
 	 */
 	@Override
 	public Statement createStatement() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		try {
 			return conn.createStatement();
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			return null;
 		}
 	}
 
-	/* £¨·Ç Javadoc£©
+	/* ï¼ˆé Javadocï¼‰
 	 * @see com.reflectsky.cozy.Ormer#createPreparedStatement(java.lang.String)
 	 */
 	@Override
 	public PreparedStatement createPreparedStatement(String sql) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		try {
 			return conn.prepareStatement(sql);
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			return null;
 		}
@@ -1393,19 +1394,19 @@ public class MySQLOrmImpl implements Ormer{
 
 	@Override
 	public void addCallback(Object obj) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		this.callbackobj = obj;
 	}
 
 	@Override
 	public void setConnection(Object conn) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		this.conn = (Connection) conn;
 	}
 
 	@Override
 	public void setOrmManager(OrmManager omanager) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		this.oManager = omanager;
 	}
 
@@ -1433,7 +1434,7 @@ public class MySQLOrmImpl implements Ormer{
 
 	@Override
 	public int insertMulti(List objects) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		if (objects == null || objects.isEmpty()) {
 			return 0;
 		}
@@ -1454,7 +1455,7 @@ public class MySQLOrmImpl implements Ormer{
 			ormDebug(oSet);
 
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 		}
 		
@@ -1470,7 +1471,7 @@ public class MySQLOrmImpl implements Ormer{
 					try {
 						pstmt.setObject(j+1, object);
 					} catch (SQLException e) {
-						// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+						// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 						e.printStackTrace();
 						
 					}
@@ -1479,14 +1480,14 @@ public class MySQLOrmImpl implements Ormer{
 				try {
 					pstmt.addBatch();
 				} catch (SQLException e) {
-					// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+					// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 					e.printStackTrace();
 				}
 			}
 			
 			
 			
-			//Èç¹û¿ªÆô·½·¨»Øµ÷Ö§³Ö¹¦ÄÜ
+			//å¦‚æœå¼€å¯æ–¹æ³•å›è°ƒæ”¯æŒåŠŸèƒ½
 			if(callbackobj != null){
 				Class<?> clazz = callbackobj.getClass();
 				Method[] mtds = clazz.getDeclaredMethods();
@@ -1495,21 +1496,21 @@ public class MySQLOrmImpl implements Ormer{
 						Class<?>[] params = mtd.getParameterTypes();
 						if(params.length == 2){
 							if(params[0]==objects.getClass() && params[1]==Ormer.class){
-								//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+								//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 								Ormer ormer = this.oManager.NewOrm();
 								mtd.setAccessible(true);
 								try {
 									mtd.invoke(callbackobj, objects, ormer);
 								} catch (IllegalAccessException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (IllegalArgumentException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (InvocationTargetException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -1525,7 +1526,7 @@ public class MySQLOrmImpl implements Ormer{
 				int[] execute = pstmt.executeBatch();
 				rows = execute.length;
 			} catch (SQLException e1) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				e1.printStackTrace();
 
 			}
@@ -1542,11 +1543,11 @@ public class MySQLOrmImpl implements Ormer{
 						try {
 							field = obj.getClass().getDeclaredField(oSet.getAutoKeyName());
 						} catch (NoSuchFieldException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (SecurityException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -1563,11 +1564,11 @@ public class MySQLOrmImpl implements Ormer{
 							index++;
 						
 						} catch (IllegalArgumentException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						} catch (IllegalAccessException e) {
-							// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+							// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 							this.oManager.deBugInfo(e.getMessage());
 							
 						}
@@ -1582,21 +1583,21 @@ public class MySQLOrmImpl implements Ormer{
 								Class<?>[] params = mtd.getParameterTypes();
 								if(params.length == 2){
 									if(params[0]==objects.getClass() && params[1]==Ormer.class){
-										//ÓÃÓÚ»Øµ÷µÄ×¢Èë²ÎÊıOrmer
+										//ç”¨äºå›è°ƒçš„æ³¨å…¥å‚æ•°Ormer
 										Ormer ormer = this.oManager.NewOrm();
 										mtd.setAccessible(true);
 										try {
 											mtd.invoke(callbackobj, objects, ormer);
 										} catch (IllegalAccessException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										} catch (IllegalArgumentException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										} catch (InvocationTargetException e) {
-											// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+											// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 											this.oManager.deBugInfo(e.getMessage());
 											
 										}
@@ -1619,7 +1620,7 @@ public class MySQLOrmImpl implements Ormer{
 				
 				
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}

@@ -6,70 +6,70 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Cozy ORM ÅäÖÃ×¢½â
+ * Cozy ORM é…ç½®æ³¨è§£
  * @author Comdex
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Orm {
 	/**
-	 *ÉèÖÃÀàÊôĞÔ¶ÔÓ¦µÄÊı¾İ¿â±íÁĞÃû
+	 *è®¾ç½®ç±»å±æ€§å¯¹åº”çš„æ•°æ®åº“è¡¨åˆ—å
 	 * @author Comdex
 	 * @return String
 	 */
 	String column() default "";
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔÊÇ·ñ×÷ÎªÖ÷¼ü,trueÎªÖ÷¼ü
+	 *è®¾ç½®ç±»å±æ€§æ˜¯å¦ä½œä¸ºä¸»é”®,trueä¸ºä¸»é”®
 	 * @author Comdex
 	 * @return boolean
 	 */
 	boolean pk() default false;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔÊÇ·ñ×÷Îª×ÔÔö³¤£¬trueÎª×ÔÔö³¤
+	 *è®¾ç½®ç±»å±æ€§æ˜¯å¦ä½œä¸ºè‡ªå¢é•¿ï¼Œtrueä¸ºè‡ªå¢é•¿
 	 * @author Comdex
 	 * @return boolean
 	 */
 	boolean auto() default false;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔÊÇ·ñ±»ºöÂÔ,²»±»ORM¼ÇÂ¼
+	 *è®¾ç½®ç±»å±æ€§æ˜¯å¦è¢«å¿½ç•¥,ä¸è¢«ORMè®°å½•
 	 * @author Comdex
 	 * @return boolean
 	 */
 	boolean ignore() default false;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔ¶ÔÓ¦µÄÊı¾İ¿âÀàĞÍ
+	 *è®¾ç½®ç±»å±æ€§å¯¹åº”çš„æ•°æ®åº“ç±»å‹
 	 * @author Comdex
 	 * @return 
 	 */
 	String type() default "";
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔ¶ÔÓ¦µÄÊı¾İ¿âÀàĞÍµÄdigits¾«¶È
+	 *è®¾ç½®ç±»å±æ€§å¯¹åº”çš„æ•°æ®åº“ç±»å‹çš„digitsç²¾åº¦
 	 * @author Comdex
 	 * @return int
 	 */
 	int digits() default 0;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔ¶ÔÓ¦µÄÊı¾İ¿âÀàĞÍµÄdecimals¾«¶È
+	 *è®¾ç½®ç±»å±æ€§å¯¹åº”çš„æ•°æ®åº“ç±»å‹çš„decimalsç²¾åº¦
 	 * @author Comdex
 	 * @return int
 	 */
 	int decimals() default 0;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔ¶ÔÓ¦µÄÊı¾İ¿âÀàĞÍµÄ³¤¶È
+	 *è®¾ç½®ç±»å±æ€§å¯¹åº”çš„æ•°æ®åº“ç±»å‹çš„é•¿åº¦
 	 * @author Comdex
 	 * @return int
 	 */
 	int size() default 0;
 	
 	/**
-	 *ÉèÖÃÀàÊôĞÔµÄÆäËûÊı¾İ¿âÅäÖÃ
+	 *è®¾ç½®ç±»å±æ€§çš„å…¶ä»–æ•°æ®åº“é…ç½®
 	 * @author Comdex
 	 * @return String
 	 */

@@ -3,7 +3,7 @@ package com.reflectsky.cozy;
 import com.reflectsky.cozy.core.TableInfo;
 
 /**
- * ORM实用接口
+ * ORM瀹炵敤鎺ュ彛
  * @author Comdex
  */
 public interface OrmUtil {

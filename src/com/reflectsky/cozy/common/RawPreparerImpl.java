@@ -8,7 +8,7 @@ import com.reflectsky.cozy.RawPreparer;
 import com.reflectsky.cozy.core.OrmManager;
 
 /**
- * Ô­ÉúSQLÔ¤²éÑ¯½Ó¿ÚÊµÏÖ
+ * åŸç”ŸSQLé¢„æŸ¥è¯¢æ¥å£å®ç°
  * @author Comdex
  */
 public class RawPreparerImpl implements RawPreparer{
@@ -25,7 +25,7 @@ public class RawPreparerImpl implements RawPreparer{
 	 */
 	@Override
 	public int exec(Object... objs) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		int count = 0;
 		if(pstmt == null){
 			return count;
@@ -34,7 +34,7 @@ public class RawPreparerImpl implements RawPreparer{
 			try {
 				pstmt.setObject(i+1, objs[i]);
 			} catch (SQLException e) {
-				// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+				// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 				this.oManager.deBugInfo(e.getMessage());
 				
 			}
@@ -43,7 +43,7 @@ public class RawPreparerImpl implements RawPreparer{
 			count = pstmt.executeUpdate();
 
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 		
 		}
@@ -56,7 +56,7 @@ public class RawPreparerImpl implements RawPreparer{
 	 */
 	@Override
 	public boolean close() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		if(pstmt == null){
 			return false;
 		}
@@ -64,7 +64,7 @@ public class RawPreparerImpl implements RawPreparer{
 			pstmt.close();
 			return true;
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			return false;
 		}

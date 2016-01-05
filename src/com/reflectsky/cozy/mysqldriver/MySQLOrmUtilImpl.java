@@ -19,32 +19,32 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 
 	@Override
 	public TableInfo getTableInfo(Class clazz)throws Exception{
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		TableInfo tbinfo = new TableInfo();
 		String fullName = clazz.getName();
 		String simpleName = clazz.getSimpleName();
 
-			//Ä¬ÈÏÀàÃûÎª±íÃû
+			//é»˜è®¤ç±»åä¸ºè¡¨å
 		tbinfo.setTableName(simpleName);
 		tbinfo.setTypeName(fullName);
-		//ÅĞ¶ÏÊÇ·ñÓĞTableName×¢½â
+		//åˆ¤æ–­æ˜¯å¦æœ‰TableNameæ³¨è§£
 		TableName tn = (TableName) clazz.getAnnotation(TableName.class);
 		if(tn != null){
 			tbinfo.setTableName(tn.value());
 		}
 		
-		//ÎŞ×¢½âÇÒ×Ö¶ÎÃûÎªidÀàĞÍÎªshort,int,longµÄ×Ö¶Î¸öÊı
+		//æ— æ³¨è§£ä¸”å­—æ®µåä¸ºidç±»å‹ä¸ºshort,int,longçš„å­—æ®µä¸ªæ•°
 		int specialNum = 0;
 		Field[] fields = clazz.getDeclaredFields();
 		for(Field f : fields){
-			//»ñÈ¡×Ö¶Î×¢½â
+			//è·å–å­—æ®µæ³¨è§£
 			Orm or = f.getAnnotation(Orm.class);
 			String fieldType = f.getType().getName();
 			FieldInfo fin = null;
-			//Èç¹û×Ö¶ÎÃ»ÓĞ×¢½â
+			//å¦‚æœå­—æ®µæ²¡æœ‰æ³¨è§£
 			if(or == null){
-				//Êı¾İ¿â×Ö¶ÎÄ¬ÈÏnot null
-				//Èç¹û¸Ã×Ö¶ÎÃûÎªId,id»òID,iDÇÒÆäÀàĞÍÎªshort,int,longÔòÄ¬ÈÏÎªµİÔöµÄÖ÷¼ü
+				//æ•°æ®åº“å­—æ®µé»˜è®¤not null
+				//å¦‚æœè¯¥å­—æ®µåä¸ºId,idæˆ–ID,iDä¸”å…¶ç±»å‹ä¸ºshort,int,longåˆ™é»˜è®¤ä¸ºé€’å¢çš„ä¸»é”®
 				if(f.getName().equalsIgnoreCase("id")){
 					if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("short")
 							||fieldType.equalsIgnoreCase("java.lang.Integer")||fieldType.equalsIgnoreCase("java.lang.Long")
@@ -52,11 +52,11 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 							specialNum++;
 					}	
 				}
-				//×Ö¶ÎÀàĞÍÎªint»òInteger
+				//å­—æ®µç±»å‹ä¸ºintæˆ–Integer
 				if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("java.lang.Integer")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "integer", 0, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("java.lang.String")){
-					//Èç¹û¸Ã×Ö¶ÎÀàĞÍÎªStringÄ¬ÈÏfieldinfoµÄtypeÎªvarchar(255)
+					//å¦‚æœè¯¥å­—æ®µç±»å‹ä¸ºStringé»˜è®¤fieldinfoçš„typeä¸ºvarchar(255)
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "varchar", 255, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("long")||fieldType.equalsIgnoreCase("java.lang.Long")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "bigint", 0, 0, 0, "", fieldType, null);
@@ -66,7 +66,7 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 						||fieldType.equalsIgnoreCase("java.lang.Float")||fieldType.equalsIgnoreCase("java.lang.Double")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "double", 0, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("java.util.Date")){
-					//Èç¹û¸Ã×Ö¶ÎÀàĞÍÎªDateÄ¬ÈÏÆätypeÎªdatetime
+					//å¦‚æœè¯¥å­—æ®µç±»å‹ä¸ºDateé»˜è®¤å…¶typeä¸ºdatetime
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "datetime", 0, 0, 0, "", fieldType, null);
 				}else if(fieldType.equalsIgnoreCase("boolean")||fieldType.equalsIgnoreCase("java.lang.Boolean")){
 					fin = new FieldInfo(f.getName(),f.getName(), false, false, "bool", 0, 0, 0, "", fieldType, null);
@@ -78,7 +78,7 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					continue;
 				}else{
 					fin = new FieldInfo();
-					//»ñÈ¡×Ö¶ÎÃû,Èç¹ûÎªÄ¬ÈÏ
+					//è·å–å­—æ®µå,å¦‚æœä¸ºé»˜è®¤
 					if(or.column().equals("")){
 						fin.setColumnName(f.getName());
 					}else{
@@ -88,7 +88,7 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					fin.setFieldName(f.getName());
 					fin.setTypeName(f.getClass().getName());
 					
-					//ÊÇ·ñÖ÷¼ü
+					//æ˜¯å¦ä¸»é”®
 					if(or.pk()){
 						fin.setPrimaryKey(true);
 					}else{
@@ -96,19 +96,19 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					}
 					
 					
-					//´¦ÀíotherµÄtag
+					//å¤„ç†otherçš„tag
 					if(!or.other().equals("")){
 						fin.setOther(or.other());
 					}
 					
-					//ÊÇ·ñ×ÔÔö³¤
+					//æ˜¯å¦è‡ªå¢é•¿
 					if(or.auto()){
 						fin.setAutoGenerate(true);
 					}else{
 						fin.setAutoGenerate(false);
 					}
 					
-					//ÅĞ¶Ï×Ö¶ÎÀàĞÍ½øĞĞºóĞø×¢½âµÄ²Ù×÷
+					//åˆ¤æ–­å­—æ®µç±»å‹è¿›è¡Œåç»­æ³¨è§£çš„æ“ä½œ
 					if(fieldType.equalsIgnoreCase("int")||fieldType.equalsIgnoreCase("java.lang.Integer")){
 						
 						if(!or.type().equals("") && !or.type().equals("integer")){
@@ -121,7 +121,7 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 							throw new Exception("[Register model err]-class<"+clazz.getSimpleName()+">-field<"+f.getName()+">-The int/Integer type can not have digits/decimals!");
 						}
 					}else if(fieldType.equalsIgnoreCase("java.lang.String")){
-						//Èç¹ûtypeÉèÖÃÁËtext
+						//å¦‚æœtypeè®¾ç½®äº†text
 						if(or.type().equals("text")){
 							fin.setType("longtext");
 						}else if(or.type().equals("varchar")){
@@ -234,14 +234,14 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 				tbinfo.addFieldInfo(fin);	
 			}	
 		}
-		//ÅĞ¶ÏÊÇ·ñÓĞÖØ¸´µÄÖ÷¼ü»ò×ÔÔö³¤¼ü
+		//åˆ¤æ–­æ˜¯å¦æœ‰é‡å¤çš„ä¸»é”®æˆ–è‡ªå¢é•¿é”®
 		if(tbinfo != null){
 			Vector<FieldInfo> fins = tbinfo.getAllFieldInfos();
 			if(fins.size() == 0){
 				throw new Exception("[Register model error]-Registered entity class <"+tbinfo.getTypeName()+"> does not exist field!");
 			}else{
-				int pkNumber = 0;//Ö÷¼ü¸öÊı
-				int autoNumber = 0;//×ÔÔö¼ü¸öÊı
+				int pkNumber = 0;//ä¸»é”®ä¸ªæ•°
+				int autoNumber = 0;//è‡ªå¢é”®ä¸ªæ•°
 				for(FieldInfo fin : fins){
 					if(fin.isPrimaryKey()){
 						pkNumber++;
@@ -251,7 +251,7 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					}
 				}
 				
-				//´Ë´¦Ã»ÓĞ¿¼ÂÇµ½ÊÇ·ñ´æÔÚÀàĞÍºÍÃû¶¼·ûºÏµÄµ«ÓĞ×¢½âµÄ"id"
+				//æ­¤å¤„æ²¡æœ‰è€ƒè™‘åˆ°æ˜¯å¦å­˜åœ¨ç±»å‹å’Œåéƒ½ç¬¦åˆçš„ä½†æœ‰æ³¨è§£çš„"id"
 				if(pkNumber == 0 && autoNumber == 0 && specialNum == 1){
 					for(FieldInfo fin : fins){
 						String typeName = fin.getTypeName();
@@ -278,10 +278,10 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 
 	@Override
 	public String generateTableCreateSql(TableInfo tbinfo) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String strSql = "";
 		if(tbinfo != null){
-			/*//É¾³ı±íÔÙ½¨±í
+			/*//åˆ é™¤è¡¨å†å»ºè¡¨
 			if(Force){
 				strSql += "DROP TABLE IF EXISTS " + tbinfo.getTableName() + "; ";
 			}*/
@@ -302,14 +302,14 @@ public class MySQLOrmUtilImpl implements OrmUtil{
 					strSql += f.getColumnName() + " " + f.getType() + " " ;
 				}
 
-				//´¦ÀífieldinfoµÄotherÊôĞÔ
+				//å¤„ç†fieldinfoçš„otherå±æ€§
 				if(f.getOther() != null){
 					if(!f.getOther().equals("")){
 						String[] tags = f.getOther().split(";");
 						for(String tag : tags){
 							if(oManager.getSupportTag().get(tag) == 1){
 								strSql += tag + " ";
-							}else if(oManager.getSupportTag().get(tag) == 2){//Îªindex
+							}else if(oManager.getSupportTag().get(tag) == 2){//ä¸ºindex
 								endstr += " , " + tag + "(" + f.getColumnName() + ") ";
 							}
 						}

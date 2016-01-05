@@ -25,7 +25,7 @@ import com.reflectsky.cozy.core.OrmManager;
 import com.reflectsky.cozy.core.TableInfo;
 
 /**
- * ORM²éÑ¯½Ó¿ÚÊµÏÖ
+ * ORMæŸ¥è¯¢æ¥å£å®ç°
  * @author Comdex
  */
 public class MySQLQuerySetImpl implements QuerySet {
@@ -59,12 +59,12 @@ public class MySQLQuerySetImpl implements QuerySet {
 		this.params = params;
 	}
 	
-	// Éî¸´ÖÆ²ÎÊıVector
+	// æ·±å¤åˆ¶å‚æ•°Vector
 	private Vector<Object> deepCloneVector(Vector<Object> params){
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		try{
 			ObjectOutputStream oo = new ObjectOutputStream(bo);
-			oo.writeObject(params);//´ÓÁ÷Àï¶Á³öÀ´
+			oo.writeObject(params);//ä»æµé‡Œè¯»å‡ºæ¥
 			ByteArrayInputStream bi = new ByteArrayInputStream(bo.toByteArray());
 			ObjectInputStream oi = new ObjectInputStream(bi);
 			return (Vector<Object>) (oi.readObject());
@@ -88,7 +88,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public QuerySet filter(String expression, Object... ps) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String[] expers = expression.split("__");//split with double underline
 		String strWhere = this.strWhere;
 		Vector<Object> params = deepCloneVector(this.params);
@@ -265,7 +265,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public QuerySet orderBy(String... expressions) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String strOrderBy = this.strOrderBy;
 		Vector<FieldInfo> fieldInfos = this.oManager.getTableCache().get(this.tableName).getAllFieldInfos();
 		for(int i=0 ; i<expressions.length ; i++){
@@ -297,7 +297,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public long count() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String sql = "select count(*) from " + tableName + " ";
 		long count = -1;
 		PreparedStatement pstmt1 = null;
@@ -330,7 +330,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 			}
 			
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 
 		}
@@ -353,7 +353,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public boolean exist() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String sql = "select * from " + tableName + " ";
 		boolean isExist = false;
 		PreparedStatement pstmt = null;
@@ -386,7 +386,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 			isExist = rs.next();
 			
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -405,7 +405,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public long delete() {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String sql = "delete from " + tableName + " ";
 		long count = 0;
 		PreparedStatement pstmt = null;
@@ -434,7 +434,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 			count = pstmt.executeUpdate();
 		
 		} catch (SQLException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 			
 		}
@@ -450,7 +450,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public boolean one(Object bean, String... ps) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String sql = "select * from " + tableName + " "; 
 		boolean isOk = false;
 		PreparedStatement pstmt = null;
@@ -494,11 +494,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 								try {
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (SecurityException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -514,11 +514,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 							try {
 								field = clazz.getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							} catch (SecurityException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							}
@@ -529,7 +529,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 				}
 			
 		} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e.getMessage());
 		}
 		
@@ -547,7 +547,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public long all(List list,Class clazz, String... ps) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		long count = 0;
 		String sql = "select * from " + tableName + " "; 
 		PreparedStatement pstmt = null;
@@ -592,11 +592,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 								try {
 									field = clazz.getDeclaredField(fin.getFieldName());
 								} catch (NoSuchFieldException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								} catch (SecurityException e) {
-									// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+									// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 									this.oManager.deBugInfo(e.getMessage());
 									
 								}
@@ -612,11 +612,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 							try {
 								field = clazz.getDeclaredField(fin.getFieldName());
 							} catch (NoSuchFieldException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							} catch (SecurityException e) {
-								// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+								// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 								this.oManager.deBugInfo(e.getMessage());
 								
 							}
@@ -630,11 +630,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 			count = list.size();
 			
 		} catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			e.printStackTrace();
 			
 		} catch (InstantiationException e1) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			this.oManager.deBugInfo(e1.getMessage());
 			
 		}
@@ -653,7 +653,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public QuerySet exclude(String expression, Object... ps) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String[] expers = expression.split("__");//split with double underline
 		String strExclude = this.strExclude;
 		Vector<Object> params = deepCloneVector(this.params);
@@ -830,11 +830,11 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public QuerySet limit(int count, long... offset) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String strLimit = "";
 		if(offset.length == 0){
 			int off = this.strLimit.indexOf(",");
-			// Èç¹û²»´æÔÚoffset
+			// å¦‚æœä¸å­˜åœ¨offset
 			if(off == -1){
 				strLimit = " LIMIT " + count;
 				this.qsDebug(strLimit, null);
@@ -859,7 +859,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 */
 	@Override
 	public QuerySet offset(long offset) {
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		String strLimit = "";
 		int off = this.strLimit.indexOf(",");
 		if(off == -1){
@@ -881,7 +881,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 	 * @see com.reflectsky.cozy.QuerySet#values
 	 */
 	public List<Map<String, String>> values(){
-		// TODO ×Ô¶¯Éú³ÉµÄ·½·¨´æ¸ù
+		// TODO è‡ªåŠ¨ç”Ÿæˆçš„æ–¹æ³•å­˜æ ¹
 		ArrayList<Map<String,String>> maps = new ArrayList<Map<String,String>>();
 		String sql = "select * from " + tableName + " "; 
 		PreparedStatement pstmt = null;
@@ -914,19 +914,19 @@ public class MySQLQuerySetImpl implements QuerySet {
 			rs = pstmt.executeQuery();
 	
 			int size = rs.getRow();
-			//³õÊ¼»¯mps
+			//åˆå§‹åŒ–mps
 			for(int i=0; i<size; i++){
 				maps.add(new HashMap<String, String>());
 			}
 			
 			int cursor = 0;
-			//»ñÈ¡Êı¾İ¿âÔªĞÅÏ¢
+			//è·å–æ•°æ®åº“å…ƒä¿¡æ¯
 			ResultSetMetaData metaData = rs.getMetaData();
-			//»ñÈ¡ÁĞÊı
+			//è·å–åˆ—æ•°
 			int columnCount = metaData.getColumnCount();
-			//»ñÈ¡tableName¶ÔÓ¦µÄTableInfo
+			//è·å–tableNameå¯¹åº”çš„TableInfo
 			TableInfo tbinfo = this.oManager.getTableCache().get(this.tableName);
-			//»ñÈ¡¶ÔÓ¦×Ö¶ÎĞÅÏ¢
+			//è·å–å¯¹åº”å­—æ®µä¿¡æ¯
 			Vector<FieldInfo> fields = tbinfo.getAllFieldInfos();
 			
 			while(rs.next()){
@@ -948,7 +948,7 @@ public class MySQLQuerySetImpl implements QuerySet {
 			}
 					
 		} catch (SQLException | IllegalArgumentException e) {
-			// TODO ×Ô¶¯Éú³ÉµÄ catch ¿é
+			// TODO è‡ªåŠ¨ç”Ÿæˆçš„ catch å—
 			e.printStackTrace();
 			
 		}

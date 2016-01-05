@@ -12,27 +12,27 @@ import java.util.Vector;
 
 
 /**
- * ¼òÒ×µÄÊı¾İ¿âÁ¬½Ó³Ø
+ * ç®€æ˜“çš„æ•°æ®åº“è¿æ¥æ± 
  */
 public class ConnectionPool {
 
-	private String jdbcDriver = ""; // Êı¾İ¿âÇı¶¯
+	private String jdbcDriver = ""; // æ•°æ®åº“é©±åŠ¨
 
-	private String dbUrl = ""; // Êı¾İ URL
+	private String dbUrl = ""; // æ•°æ® URL
 
-	private String dbUsername = ""; // Êı¾İ¿âÓÃ»§Ãû
+	private String dbUsername = ""; // æ•°æ®åº“ç”¨æˆ·å
 
-	private String dbPassword = ""; // Êı¾İ¿âÓÃ»§ÃÜÂë
+	private String dbPassword = ""; // æ•°æ®åº“ç”¨æˆ·å¯†ç 
 
-	private String testTable = ""; // ²âÊÔÁ¬½ÓÊÇ·ñ¿ÉÓÃµÄ²âÊÔ±íÃû£¬Ä¬ÈÏÃ»ÓĞ²âÊÔ±í
+	private String testTable = ""; // æµ‹è¯•è¿æ¥æ˜¯å¦å¯ç”¨çš„æµ‹è¯•è¡¨åï¼Œé»˜è®¤æ²¡æœ‰æµ‹è¯•è¡¨
 
-	private int initialConnections = 10; // Á¬½Ó³ØµÄ³õÊ¼´óĞ¡
+	private int initialConnections = 10; // è¿æ¥æ± çš„åˆå§‹å¤§å°
 
-	private int incrementalConnections = 5;// Á¬½Ó³Ø×Ô¶¯Ôö¼ÓµÄ´óĞ¡
+	private int incrementalConnections = 5;// è¿æ¥æ± è‡ªåŠ¨å¢åŠ çš„å¤§å°
 
-	private int maxConnections = 50; // Á¬½Ó³Ø×î´óµÄ´óĞ¡
+	private int maxConnections = 50; // è¿æ¥æ± æœ€å¤§çš„å¤§å°
 
-	private Vector connections = null; // ´æ·ÅÁ¬½Ó³ØÖĞÊı¾İ¿âÁ¬½ÓµÄÏòÁ¿ , ³õÊ¼Ê±Îª null,´æ·ÅµÄ¶ÔÏóÎª PooledConnection ĞÍ
+	private Vector connections = null; // å­˜æ”¾è¿æ¥æ± ä¸­æ•°æ®åº“è¿æ¥çš„å‘é‡ , åˆå§‹æ—¶ä¸º null,å­˜æ”¾çš„å¯¹è±¡ä¸º PooledConnection å‹
 
 	private OrmManager oManager = null;
 	
@@ -51,20 +51,20 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ´´½¨Ò»¸öÊı¾İ¿âÁ¬½Ó³Ø£¬Á¬½Ó³ØÖĞµÄ¿ÉÓÃÁ¬½ÓµÄÊıÁ¿²ÉÓÃÀà³ÉÔ± initialConnections ÖĞÉèÖÃµÄÖµ
+	 * åˆ›å»ºä¸€ä¸ªæ•°æ®åº“è¿æ¥æ± ï¼Œè¿æ¥æ± ä¸­çš„å¯ç”¨è¿æ¥çš„æ•°é‡é‡‡ç”¨ç±»æˆå‘˜ initialConnections ä¸­è®¾ç½®çš„å€¼
 	 */
 	public synchronized void createPool() throws Exception {
 		if (connections != null) {
-			return; // Èç¹û¼º¾­´´½¨£¬Ôò·µ»Ø
+			return; // å¦‚æœå·±ç»åˆ›å»ºï¼Œåˆ™è¿”å›
 		}
 		
-		// ÊµÀı»¯ JDBC Driver ÖĞÖ¸¶¨µÄÇı¶¯ÀàÊµÀı
+		// å®ä¾‹åŒ– JDBC Driver ä¸­æŒ‡å®šçš„é©±åŠ¨ç±»å®ä¾‹
 		Driver driver = (Driver) (Class.forName(this.jdbcDriver).newInstance());
-		//×¢²áJDBCÇı¶¯³ÌĞò
+		//æ³¨å†ŒJDBCé©±åŠ¨ç¨‹åº
 		DriverManager.registerDriver(driver); 
-		// ´´½¨±£´æÁ¬½ÓµÄÏòÁ¿ , ³õÊ¼Ê±ÓĞ 0 ¸öÔªËØ
+		// åˆ›å»ºä¿å­˜è¿æ¥çš„å‘é‡ , åˆå§‹æ—¶æœ‰ 0 ä¸ªå…ƒç´ 
 		connections = new Vector();
-		// ¸ù¾İ initialConnections ÖĞÉèÖÃµÄÖµ£¬´´½¨Á¬½Ó¡£
+		// æ ¹æ® initialConnections ä¸­è®¾ç½®çš„å€¼ï¼Œåˆ›å»ºè¿æ¥ã€‚
 		createConnections(this.initialConnections);
 	    oManager.deBugInfo("Database Connection Pool has created successfully!");
 
@@ -72,26 +72,26 @@ public class ConnectionPool {
 
 	/**
 	 * 
-	 * ´´½¨ÓÉ numConnections Ö¸¶¨ÊıÄ¿µÄÊı¾İ¿âÁ¬½Ó , ²¢°ÑÕâĞ©Á¬½Ó
+	 * åˆ›å»ºç”± numConnections æŒ‡å®šæ•°ç›®çš„æ•°æ®åº“è¿æ¥ , å¹¶æŠŠè¿™äº›è¿æ¥
 	 * 
-	 * ·ÅÈë connections ÏòÁ¿ÖĞ
+	 * æ”¾å…¥ connections å‘é‡ä¸­
 	 * @param numConnections
-	 *            Òª´´½¨µÄÊı¾İ¿âÁ¬½ÓµÄÊıÄ¿
+	 *            è¦åˆ›å»ºçš„æ•°æ®åº“è¿æ¥çš„æ•°ç›®
 	 */
 	@SuppressWarnings("unchecked")
 	private void createConnections(int numConnections) throws SQLException {
-		// Ñ­»·´´½¨Ö¸¶¨ÊıÄ¿µÄÊı¾İ¿âÁ¬½Ó
+		// å¾ªç¯åˆ›å»ºæŒ‡å®šæ•°ç›®çš„æ•°æ®åº“è¿æ¥
 		for (int x = 0; x < numConnections; x++) {
-			// ÊÇ·ñÁ¬½Ó³ØÖĞµÄÊı¾İ¿âÁ¬½ÓµÄÊıÁ¿¼º¾­´ïµ½×î´ó£¿×î´óÖµÓÉÀà³ÉÔ± maxConnections
-			// Ö¸³ö£¬Èç¹û maxConnections Îª 0 »ò¸ºÊı£¬±íÊ¾Á¬½ÓÊıÁ¿Ã»ÓĞÏŞÖÆ¡£
-			// Èç¹ûÁ¬½ÓÊı¼º¾­´ïµ½×î´ó£¬¼´ÍË³ö¡£
+			// æ˜¯å¦è¿æ¥æ± ä¸­çš„æ•°æ®åº“è¿æ¥çš„æ•°é‡å·±ç»è¾¾åˆ°æœ€å¤§ï¼Ÿæœ€å¤§å€¼ç”±ç±»æˆå‘˜ maxConnections
+			// æŒ‡å‡ºï¼Œå¦‚æœ maxConnections ä¸º 0 æˆ–è´Ÿæ•°ï¼Œè¡¨ç¤ºè¿æ¥æ•°é‡æ²¡æœ‰é™åˆ¶ã€‚
+			// å¦‚æœè¿æ¥æ•°å·±ç»è¾¾åˆ°æœ€å¤§ï¼Œå³é€€å‡ºã€‚
 			if (this.maxConnections > 0
 					&& this.connections.size() >= this.maxConnections) {
 				break;
 			}
 
 			// add a new PooledConnection object to connections vector
-			// Ôö¼ÓÒ»¸öÁ¬½Óµ½Á¬½Ó³ØÖĞ£¨ÏòÁ¿ connections ÖĞ£©
+			// å¢åŠ ä¸€ä¸ªè¿æ¥åˆ°è¿æ¥æ± ä¸­ï¼ˆå‘é‡ connections ä¸­ï¼‰
 			try {
 
 				connections.addElement(new PooledConnection(newConnection()));
@@ -107,25 +107,25 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ´´½¨Ò»¸öĞÂµÄÊı¾İ¿âÁ¬½Ó²¢·µ»ØËü 
-	 * @return ·µ»ØÒ»¸öĞÂ´´½¨µÄÊı¾İ¿âÁ¬½Ó
+	 * åˆ›å»ºä¸€ä¸ªæ–°çš„æ•°æ®åº“è¿æ¥å¹¶è¿”å›å®ƒ 
+	 * @return è¿”å›ä¸€ä¸ªæ–°åˆ›å»ºçš„æ•°æ®åº“è¿æ¥
 	 * 
 	 */
 	private Connection newConnection() throws SQLException {
-		// ´´½¨Ò»¸öÊı¾İ¿âÁ¬½Ó
+		// åˆ›å»ºä¸€ä¸ªæ•°æ®åº“è¿æ¥
 		Connection conn = DriverManager.getConnection(dbUrl, dbUsername,
 				dbPassword);
-		// Èç¹ûÕâÊÇµÚÒ»´Î´´½¨Êı¾İ¿âÁ¬½Ó£¬¼´¼ì²éÊı¾İ¿â£¬»ñµÃ´ËÊı¾İ¿âÔÊĞíÖ§³ÖµÄ
-		// ×î´ó¿Í»§Á¬½ÓÊıÄ¿
-		// connections.size()==0 ±íÊ¾Ä¿Ç°Ã»ÓĞÁ¬½Ó¼º±»´´½¨
+		// å¦‚æœè¿™æ˜¯ç¬¬ä¸€æ¬¡åˆ›å»ºæ•°æ®åº“è¿æ¥ï¼Œå³æ£€æŸ¥æ•°æ®åº“ï¼Œè·å¾—æ­¤æ•°æ®åº“å…è®¸æ”¯æŒçš„
+		// æœ€å¤§å®¢æˆ·è¿æ¥æ•°ç›®
+		// connections.size()==0 è¡¨ç¤ºç›®å‰æ²¡æœ‰è¿æ¥å·±è¢«åˆ›å»º
 		if (connections.size() == 0) {
 			DatabaseMetaData metaData = conn.getMetaData();
 			int driverMaxConnections = metaData.getMaxConnections();
-			// Êı¾İ¿â·µ»ØµÄ driverMaxConnections ÈôÎª 0 £¬±íÊ¾´ËÊı¾İ¿âÃ»ÓĞ×î´ó
-			// Á¬½ÓÏŞÖÆ£¬»òÊı¾İ¿âµÄ×î´óÁ¬½ÓÏŞÖÆ²»ÖªµÀ
-			// driverMaxConnections Îª·µ»ØµÄÒ»¸öÕûÊı£¬±íÊ¾´ËÊı¾İ¿âÔÊĞí¿Í»§Á¬½ÓµÄÊıÄ¿
-			// Èç¹ûÁ¬½Ó³ØÖĞÉèÖÃµÄ×î´óÁ¬½ÓÊıÁ¿´óÓÚÊı¾İ¿âÔÊĞíµÄÁ¬½ÓÊıÄ¿ , ÔòÖÃÁ¬½Ó³ØµÄ×î´ó
-			// Á¬½ÓÊıÄ¿ÎªÊı¾İ¿âÔÊĞíµÄ×î´óÊıÄ¿
+			// æ•°æ®åº“è¿”å›çš„ driverMaxConnections è‹¥ä¸º 0 ï¼Œè¡¨ç¤ºæ­¤æ•°æ®åº“æ²¡æœ‰æœ€å¤§
+			// è¿æ¥é™åˆ¶ï¼Œæˆ–æ•°æ®åº“çš„æœ€å¤§è¿æ¥é™åˆ¶ä¸çŸ¥é“
+			// driverMaxConnections ä¸ºè¿”å›çš„ä¸€ä¸ªæ•´æ•°ï¼Œè¡¨ç¤ºæ­¤æ•°æ®åº“å…è®¸å®¢æˆ·è¿æ¥çš„æ•°ç›®
+			// å¦‚æœè¿æ¥æ± ä¸­è®¾ç½®çš„æœ€å¤§è¿æ¥æ•°é‡å¤§äºæ•°æ®åº“å…è®¸çš„è¿æ¥æ•°ç›® , åˆ™ç½®è¿æ¥æ± çš„æœ€å¤§
+			// è¿æ¥æ•°ç›®ä¸ºæ•°æ®åº“å…è®¸çš„æœ€å¤§æ•°ç›®
 			if (driverMaxConnections > 0
 					&& this.maxConnections > driverMaxConnections) {
 
@@ -134,72 +134,72 @@ public class ConnectionPool {
 			}
 
 		}
-		return conn; // ·µ»Ø´´½¨µÄĞÂµÄÊı¾İ¿âÁ¬½Ó
+		return conn; // è¿”å›åˆ›å»ºçš„æ–°çš„æ•°æ®åº“è¿æ¥
 
 	}
 
 	/**
 	 * 
-	 * Í¨¹ıµ÷ÓÃ getFreeConnection() º¯Êı·µ»ØÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó ,
+	 * é€šè¿‡è°ƒç”¨ getFreeConnection() å‡½æ•°è¿”å›ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥ ,
 	 * 
-	 * Èç¹ûµ±Ç°Ã»ÓĞ¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó£¬²¢ÇÒ¸ü¶àµÄÊı¾İ¿âÁ¬½Ó²»ÄÜ´´½¨£¨ÈçÁ¬½Ó³Ø´óĞ¡µÄÏŞÖÆ£©£¬´Ëº¯ÊıµÈ´ıÒ»»áÔÙ³¢ÊÔ»ñÈ¡¡£
+	 * å¦‚æœå½“å‰æ²¡æœ‰å¯ç”¨çš„æ•°æ®åº“è¿æ¥ï¼Œå¹¶ä¸”æ›´å¤šçš„æ•°æ®åº“è¿æ¥ä¸èƒ½åˆ›å»ºï¼ˆå¦‚è¿æ¥æ± å¤§å°çš„é™åˆ¶ï¼‰ï¼Œæ­¤å‡½æ•°ç­‰å¾…ä¸€ä¼šå†å°è¯•è·å–ã€‚
 	 * 
-	 * @return ·µ»ØÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó¶ÔÏó	 * 
+	 * @return è¿”å›ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥å¯¹è±¡	 * 
 	 */
 	public synchronized Connection getConnection() throws SQLException {
 
-		// È·±£Á¬½Ó³Ø¼º±»´´½¨
+		// ç¡®ä¿è¿æ¥æ± å·±è¢«åˆ›å»º
 
 		if (connections == null) {
 
-			return null; // Á¬½Ó³Ø»¹Ã»´´½¨£¬Ôò·µ»Ø null
+			return null; // è¿æ¥æ± è¿˜æ²¡åˆ›å»ºï¼Œåˆ™è¿”å› null
 
 		}
 
-		Connection conn = getFreeConnection(); // »ñµÃÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó
+		Connection conn = getFreeConnection(); // è·å¾—ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥
 
-		// Èç¹ûÄ¿Ç°Ã»ÓĞ¿ÉÒÔÊ¹ÓÃµÄÁ¬½Ó£¬¼´ËùÓĞµÄÁ¬½Ó¶¼ÔÚÊ¹ÓÃÖĞ
+		// å¦‚æœç›®å‰æ²¡æœ‰å¯ä»¥ä½¿ç”¨çš„è¿æ¥ï¼Œå³æ‰€æœ‰çš„è¿æ¥éƒ½åœ¨ä½¿ç”¨ä¸­
 		while (conn == null) {
 
-			// µÈÒ»»áÔÙÊÔ
+			// ç­‰ä¸€ä¼šå†è¯•
 			wait(250);
-			conn = getFreeConnection(); // ÖØĞÂÔÙÊÔ£¬Ö±µ½»ñµÃ¿ÉÓÃµÄÁ¬½Ó£¬Èç¹û
-			// getFreeConnection() ·µ»ØµÄÎª null
-			// Ôò±íÃ÷´´½¨Ò»ÅúÁ¬½ÓºóÒ²²»¿É»ñµÃ¿ÉÓÃÁ¬½Ó
+			conn = getFreeConnection(); // é‡æ–°å†è¯•ï¼Œç›´åˆ°è·å¾—å¯ç”¨çš„è¿æ¥ï¼Œå¦‚æœ
+			// getFreeConnection() è¿”å›çš„ä¸º null
+			// åˆ™è¡¨æ˜åˆ›å»ºä¸€æ‰¹è¿æ¥åä¹Ÿä¸å¯è·å¾—å¯ç”¨è¿æ¥
 
 		}
 
-		return conn;// ·µ»Ø»ñµÃµÄ¿ÉÓÃµÄÁ¬½Ó
+		return conn;// è¿”å›è·å¾—çš„å¯ç”¨çš„è¿æ¥
 
 	}
 
 	/**
 	 * 
-	 * ±¾º¯Êı´ÓÁ¬½Ó³ØÏòÁ¿ connections ÖĞ·µ»ØÒ»¸ö¿ÉÓÃµÄµÄÊı¾İ¿âÁ¬½Ó£¬Èç¹û
+	 * æœ¬å‡½æ•°ä»è¿æ¥æ± å‘é‡ connections ä¸­è¿”å›ä¸€ä¸ªå¯ç”¨çš„çš„æ•°æ®åº“è¿æ¥ï¼Œå¦‚æœ
 	 * 
-	 * µ±Ç°Ã»ÓĞ¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó£¬±¾º¯ÊıÔò¸ù¾İ incrementalConnections ÉèÖÃ
+	 * å½“å‰æ²¡æœ‰å¯ç”¨çš„æ•°æ®åº“è¿æ¥ï¼Œæœ¬å‡½æ•°åˆ™æ ¹æ® incrementalConnections è®¾ç½®
 	 * 
-	 * µÄÖµ´´½¨¼¸¸öÊı¾İ¿âÁ¬½Ó£¬²¢·ÅÈëÁ¬½Ó³ØÖĞ¡£
+	 * çš„å€¼åˆ›å»ºå‡ ä¸ªæ•°æ®åº“è¿æ¥ï¼Œå¹¶æ”¾å…¥è¿æ¥æ± ä¸­ã€‚
 	 * 
-	 * Èç¹û´´½¨ºó£¬ËùÓĞµÄÁ¬½ÓÈÔ¶¼ÔÚÊ¹ÓÃÖĞ£¬Ôò·µ»Ø null
+	 * å¦‚æœåˆ›å»ºåï¼Œæ‰€æœ‰çš„è¿æ¥ä»éƒ½åœ¨ä½¿ç”¨ä¸­ï¼Œåˆ™è¿”å› null
 	 * 
-	 * @return ·µ»ØÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó
+	 * @return è¿”å›ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥
 	 * 
 	 */
 
 	private Connection getFreeConnection() throws SQLException {
-		// ´ÓÁ¬½Ó³ØÖĞ»ñµÃÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó
+		// ä»è¿æ¥æ± ä¸­è·å¾—ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥
 		Connection conn = findFreeConnection();
 		if (conn == null) {
-			// Èç¹ûÄ¿Ç°Á¬½Ó³ØÖĞÃ»ÓĞ¿ÉÓÃµÄÁ¬½Ó
-			// ´´½¨Ò»Ğ©Á¬½Ó
+			// å¦‚æœç›®å‰è¿æ¥æ± ä¸­æ²¡æœ‰å¯ç”¨çš„è¿æ¥
+			// åˆ›å»ºä¸€äº›è¿æ¥
 			createConnections(incrementalConnections);
 			
-			// ÖØĞÂ´Ó³ØÖĞ²éÕÒÊÇ·ñÓĞ¿ÉÓÃÁ¬½Ó
+			// é‡æ–°ä»æ± ä¸­æŸ¥æ‰¾æ˜¯å¦æœ‰å¯ç”¨è¿æ¥
 			conn = findFreeConnection();
 
 			if (conn == null) {
-				// Èç¹û´´½¨Á¬½ÓºóÈÔ»ñµÃ²»µ½¿ÉÓÃµÄÁ¬½Ó£¬Ôò·µ»Ø null
+				// å¦‚æœåˆ›å»ºè¿æ¥åä»è·å¾—ä¸åˆ°å¯ç”¨çš„è¿æ¥ï¼Œåˆ™è¿”å› null
 				return null;
 			}
 		}
@@ -207,34 +207,34 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ²éÕÒÁ¬½Ó³ØÖĞËùÓĞµÄÁ¬½Ó£¬²éÕÒÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó£¬
-	 * Èç¹ûÃ»ÓĞ¿ÉÓÃµÄÁ¬½Ó£¬·µ»Ø null
+	 * æŸ¥æ‰¾è¿æ¥æ± ä¸­æ‰€æœ‰çš„è¿æ¥ï¼ŒæŸ¥æ‰¾ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥ï¼Œ
+	 * å¦‚æœæ²¡æœ‰å¯ç”¨çš„è¿æ¥ï¼Œè¿”å› null
 	 * 
-	 * @return ·µ»ØÒ»¸ö¿ÉÓÃµÄÊı¾İ¿âÁ¬½Ó
+	 * @return è¿”å›ä¸€ä¸ªå¯ç”¨çš„æ•°æ®åº“è¿æ¥
 	 */
 	private Connection findFreeConnection() throws SQLException {
 
 		Connection conn = null;
 		PooledConnection pConn = null;
 
-		// »ñµÃÁ¬½Ó³ØÏòÁ¿ÖĞËùÓĞµÄ¶ÔÏó
+		// è·å¾—è¿æ¥æ± å‘é‡ä¸­æ‰€æœ‰çš„å¯¹è±¡
 		Enumeration enumerate = connections.elements();
 
-		// ±éÀúËùÓĞµÄ¶ÔÏó£¬¿´ÊÇ·ñÓĞ¿ÉÓÃµÄÁ¬½Ó
+		// éå†æ‰€æœ‰çš„å¯¹è±¡ï¼Œçœ‹æ˜¯å¦æœ‰å¯ç”¨çš„è¿æ¥
 		while (enumerate.hasMoreElements()) {
 
 			pConn = (PooledConnection) enumerate.nextElement();
 
 			if (!pConn.isBusy()) {
 
-				// Èç¹û´Ë¶ÔÏó²»Ã¦£¬Ôò»ñµÃËüµÄÊı¾İ¿âÁ¬½Ó²¢°ÑËüÉèÎªÃ¦
+				// å¦‚æœæ­¤å¯¹è±¡ä¸å¿™ï¼Œåˆ™è·å¾—å®ƒçš„æ•°æ®åº“è¿æ¥å¹¶æŠŠå®ƒè®¾ä¸ºå¿™
 				conn = pConn.getConnection();
 				pConn.setBusy(true);
 
-				// ²âÊÔ´ËÁ¬½ÓÊÇ·ñ¿ÉÓÃ
+				// æµ‹è¯•æ­¤è¿æ¥æ˜¯å¦å¯ç”¨
 				if (!testConnection(conn)) {
-					// Èç¹û´ËÁ¬½Ó²»¿ÉÔÙÓÃÁË£¬Ôò´´½¨Ò»¸öĞÂµÄÁ¬½Ó£¬
-					// ²¢Ìæ»»´Ë²»¿ÉÓÃµÄÁ¬½Ó¶ÔÏó£¬Èç¹û´´½¨Ê§°Ü£¬·µ»Ø null
+					// å¦‚æœæ­¤è¿æ¥ä¸å¯å†ç”¨äº†ï¼Œåˆ™åˆ›å»ºä¸€ä¸ªæ–°çš„è¿æ¥ï¼Œ
+					// å¹¶æ›¿æ¢æ­¤ä¸å¯ç”¨çš„è¿æ¥å¯¹è±¡ï¼Œå¦‚æœåˆ›å»ºå¤±è´¥ï¼Œè¿”å› null
 					try {
 
 						conn = newConnection();
@@ -251,31 +251,31 @@ public class ConnectionPool {
 
 				}
 
-				break; // ¼º¾­ÕÒµ½Ò»¸ö¿ÉÓÃµÄÁ¬½Ó£¬ÍË³ö
+				break; // å·±ç»æ‰¾åˆ°ä¸€ä¸ªå¯ç”¨çš„è¿æ¥ï¼Œé€€å‡º
 			}
 		}
-		return conn;// ·µ»ØÕÒµ½µ½µÄ¿ÉÓÃÁ¬½Ó
+		return conn;// è¿”å›æ‰¾åˆ°åˆ°çš„å¯ç”¨è¿æ¥
 	}
 
 	/**
-	 * ²âÊÔÒ»¸öÁ¬½ÓÊÇ·ñ¿ÉÓÃ£¬Èç¹û²»¿ÉÓÃ£¬¹ØµôËü²¢·µ»Ø false ·ñÔò¿ÉÓÃ·µ»Ø true
+	 * æµ‹è¯•ä¸€ä¸ªè¿æ¥æ˜¯å¦å¯ç”¨ï¼Œå¦‚æœä¸å¯ç”¨ï¼Œå…³æ‰å®ƒå¹¶è¿”å› false å¦åˆ™å¯ç”¨è¿”å› true
 	 * @param conn
-	 *            ĞèÒª²âÊÔµÄÊı¾İ¿âÁ¬½Ó
-	 * @return ·µ»Ø true ±íÊ¾´ËÁ¬½Ó¿ÉÓÃ£¬ false ±íÊ¾²»¿ÉÓÃ
+	 *            éœ€è¦æµ‹è¯•çš„æ•°æ®åº“è¿æ¥
+	 * @return è¿”å› true è¡¨ç¤ºæ­¤è¿æ¥å¯ç”¨ï¼Œ false è¡¨ç¤ºä¸å¯ç”¨
 	 */
 	private boolean testConnection(Connection conn) {
 
 		try {
-			// ÅĞ¶Ï²âÊÔ±íÊÇ·ñ´æÔÚ
+			// åˆ¤æ–­æµ‹è¯•è¡¨æ˜¯å¦å­˜åœ¨
 			if (testTable.equals("")) {
 
-				// Èç¹û²âÊÔ±íÎª¿Õ£¬ÊÔ×ÅÊ¹ÓÃ´ËÁ¬½ÓµÄ setAutoCommit() ·½·¨
-				// À´ÅĞ¶ÏÁ¬½Ó·ñ¿ÉÓÃ£¨´Ë·½·¨Ö»ÔÚ²¿·ÖÊı¾İ¿â¿ÉÓÃ£¬Èç¹û²»¿ÉÓÃ ,
-				// Å×³öÒì³££©¡£×¢Òâ£ºÊ¹ÓÃ²âÊÔ±íµÄ·½·¨¸ü¿É¿¿
+				// å¦‚æœæµ‹è¯•è¡¨ä¸ºç©ºï¼Œè¯•ç€ä½¿ç”¨æ­¤è¿æ¥çš„ setAutoCommit() æ–¹æ³•
+				// æ¥åˆ¤æ–­è¿æ¥å¦å¯ç”¨ï¼ˆæ­¤æ–¹æ³•åªåœ¨éƒ¨åˆ†æ•°æ®åº“å¯ç”¨ï¼Œå¦‚æœä¸å¯ç”¨ ,
+				// æŠ›å‡ºå¼‚å¸¸ï¼‰ã€‚æ³¨æ„ï¼šä½¿ç”¨æµ‹è¯•è¡¨çš„æ–¹æ³•æ›´å¯é 
 				conn.setAutoCommit(true);
 
 			} else {
-				// ÓĞ²âÊÔ±íµÄÊ±ºòÊ¹ÓÃ²âÊÔ±í²âÊÔ
+				// æœ‰æµ‹è¯•è¡¨çš„æ—¶å€™ä½¿ç”¨æµ‹è¯•è¡¨æµ‹è¯•
 				// check if this connection is valid
 				Statement stmt = conn.createStatement();
 
@@ -284,30 +284,30 @@ public class ConnectionPool {
 
 				rs.next();
 
-				oManager.deBugInfo(testTable + "£º±íµÄ¼ÇÂ¼ÊıÎª£º" + rs.getInt(1));
+				oManager.deBugInfo(testTable + "ï¼šè¡¨çš„è®°å½•æ•°ä¸ºï¼š" + rs.getInt(1));
 
 			}
 
 		} catch (SQLException e) {
 
-			// ÉÏÃæÅ×³öÒì³££¬´ËÁ¬½Ó¼º²»¿ÉÓÃ£¬¹Ø±ÕËü£¬²¢·µ»Ø false;
+			// ä¸Šé¢æŠ›å‡ºå¼‚å¸¸ï¼Œæ­¤è¿æ¥å·±ä¸å¯ç”¨ï¼Œå…³é—­å®ƒï¼Œå¹¶è¿”å› false;
 			oManager.deBugInfo(e.getMessage());
 			closeConnection(conn);
 			return false;
 		}
 
-		// Á¬½Ó¿ÉÓÃ£¬·µ»Ø true
+		// è¿æ¥å¯ç”¨ï¼Œè¿”å› true
 		return true;
 	}
 
 	/**
-	 * ´Ëº¯Êı·µ»ØÒ»¸öÊı¾İ¿âÁ¬½Óµ½Á¬½Ó³ØÖĞ£¬²¢°Ñ´ËÁ¬½ÓÖÃÎª¿ÕÏĞ¡£
-	 * ËùÓĞÊ¹ÓÃÁ¬½Ó³Ø»ñµÃµÄÊı¾İ¿âÁ¬½Ó¾ùÓ¦ÔÚ²»Ê¹ÓÃ´ËÁ¬½ÓÊ±·µ»ØËü¡£
-	 * @param Ğè·µ»Øµ½Á¬½Ó³ØÖĞµÄÁ¬½Ó¶ÔÏó
+	 * æ­¤å‡½æ•°è¿”å›ä¸€ä¸ªæ•°æ®åº“è¿æ¥åˆ°è¿æ¥æ± ä¸­ï¼Œå¹¶æŠŠæ­¤è¿æ¥ç½®ä¸ºç©ºé—²ã€‚
+	 * æ‰€æœ‰ä½¿ç”¨è¿æ¥æ± è·å¾—çš„æ•°æ®åº“è¿æ¥å‡åº”åœ¨ä¸ä½¿ç”¨æ­¤è¿æ¥æ—¶è¿”å›å®ƒã€‚
+	 * @param éœ€è¿”å›åˆ°è¿æ¥æ± ä¸­çš„è¿æ¥å¯¹è±¡
 	 */
 	public void freeConnection(Connection conn) {
 
-		// È·±£Á¬½Ó³Ø´æÔÚ£¬Èç¹ûÁ¬½ÓÃ»ÓĞ´´½¨£¨²»´æÔÚ£©£¬Ö±½Ó·µ»Ø
+		// ç¡®ä¿è¿æ¥æ± å­˜åœ¨ï¼Œå¦‚æœè¿æ¥æ²¡æœ‰åˆ›å»ºï¼ˆä¸å­˜åœ¨ï¼‰ï¼Œç›´æ¥è¿”å›
 		if (connections == null) {
 
 			oManager.deBugInfo("Connection Pool has not exist,connetion can not free!");
@@ -319,14 +319,14 @@ public class ConnectionPool {
 		PooledConnection pConn = null;
 		Enumeration enumerate = connections.elements();
 
-		// ±éÀúÁ¬½Ó³ØÖĞµÄËùÓĞÁ¬½Ó£¬ÕÒµ½Õâ¸öÒª·µ»ØµÄÁ¬½Ó¶ÔÏó
+		// éå†è¿æ¥æ± ä¸­çš„æ‰€æœ‰è¿æ¥ï¼Œæ‰¾åˆ°è¿™ä¸ªè¦è¿”å›çš„è¿æ¥å¯¹è±¡
 		while (enumerate.hasMoreElements()) {
 
 			pConn = (PooledConnection) enumerate.nextElement();
 
-			// ÏÈÕÒµ½Á¬½Ó³ØÖĞµÄÒª·µ»ØµÄÁ¬½Ó¶ÔÏó
+			// å…ˆæ‰¾åˆ°è¿æ¥æ± ä¸­çš„è¦è¿”å›çš„è¿æ¥å¯¹è±¡
 			if (conn == pConn.getConnection()) {
-				// ÕÒµ½ÁË , ÉèÖÃ´ËÁ¬½ÓÎª¿ÕÏĞ×´Ì¬
+				// æ‰¾åˆ°äº† , è®¾ç½®æ­¤è¿æ¥ä¸ºç©ºé—²çŠ¶æ€
 				pConn.setBusy(false);
 
 				break;
@@ -335,14 +335,14 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * Ë¢ĞÂÁ¬½Ó³ØÖĞËùÓĞµÄÁ¬½Ó¶ÔÏó
+	 * åˆ·æ–°è¿æ¥æ± ä¸­æ‰€æœ‰çš„è¿æ¥å¯¹è±¡
 	 */
 	public synchronized void refreshConnections() throws SQLException {
 
-		// È·±£Á¬½Ó³Ø¼º´´ĞÂ´æÔÚ
+		// ç¡®ä¿è¿æ¥æ± å·±åˆ›æ–°å­˜åœ¨
 		if (connections == null) {
 
-			oManager.deBugInfo(" Á¬½Ó³Ø²»´æÔÚ£¬ÎŞ·¨Ë¢ĞÂ !");
+			oManager.deBugInfo(" è¿æ¥æ± ä¸å­˜åœ¨ï¼Œæ— æ³•åˆ·æ–° !");
 
 			return;
 
@@ -354,15 +354,15 @@ public class ConnectionPool {
 
 		while (enumerate.hasMoreElements()) {
 
-			// »ñµÃÒ»¸öÁ¬½Ó¶ÔÏó
+			// è·å¾—ä¸€ä¸ªè¿æ¥å¯¹è±¡
 			pConn = (PooledConnection) enumerate.nextElement();
 
-			// Èç¹û¶ÔÏóÃ¦ÔòµÈ 5 Ãë ,5 ÃëºóÖ±½ÓË¢ĞÂ
+			// å¦‚æœå¯¹è±¡å¿™åˆ™ç­‰ 5 ç§’ ,5 ç§’åç›´æ¥åˆ·æ–°
 			if (pConn.isBusy()) {
-				wait(5000); // µÈ 5 Ãë
+				wait(5000); // ç­‰ 5 ç§’
 			}
 
-			// ¹Ø±Õ´ËÁ¬½Ó£¬ÓÃÒ»¸öĞÂµÄÁ¬½Ó´úÌæËü¡£
+			// å…³é—­æ­¤è¿æ¥ï¼Œç”¨ä¸€ä¸ªæ–°çš„è¿æ¥ä»£æ›¿å®ƒã€‚
 			closeConnection(pConn.getConnection());
 
 			pConn.setConnection(newConnection());
@@ -374,11 +374,11 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ¹Ø±ÕÁ¬½Ó³ØÖĞËùÓĞµÄÁ¬½Ó£¬²¢Çå¿ÕÁ¬½Ó³Ø¡£
+	 * å…³é—­è¿æ¥æ± ä¸­æ‰€æœ‰çš„è¿æ¥ï¼Œå¹¶æ¸…ç©ºè¿æ¥æ± ã€‚
 	 */
 	public synchronized void closeConnectionPool() throws SQLException {
 
-		// È·±£Á¬½Ó³Ø´æÔÚ£¬Èç¹û²»´æÔÚ£¬·µ»Ø
+		// ç¡®ä¿è¿æ¥æ± å­˜åœ¨ï¼Œå¦‚æœä¸å­˜åœ¨ï¼Œè¿”å›
 		if (connections == null) {
 
 			oManager.deBugInfo(" Connection Pool has not exists,connection can not close!");
@@ -395,29 +395,29 @@ public class ConnectionPool {
 
 			pConn = (PooledConnection) enumerate.nextElement();
 
-			// Èç¹ûÃ¦£¬µÈ 5 Ãë
+			// å¦‚æœå¿™ï¼Œç­‰ 5 ç§’
 			if (pConn.isBusy()) {
 
-				wait(5000); // µÈ 5 Ãë
+				wait(5000); // ç­‰ 5 ç§’
 
 			}
 
-			// 5 ÃëºóÖ±½Ó¹Ø±ÕËü
+			// 5 ç§’åç›´æ¥å…³é—­å®ƒ
 			closeConnection(pConn.getConnection());
 
-			// ´ÓÁ¬½Ó³ØÏòÁ¿ÖĞÉ¾³ıËü
+			// ä»è¿æ¥æ± å‘é‡ä¸­åˆ é™¤å®ƒ
 			connections.removeElement(pConn);
 
 		}
 
-		// ÖÃÁ¬½Ó³ØÎª¿Õ
+		// ç½®è¿æ¥æ± ä¸ºç©º
 		connections = null;
 
 	}
 
 	/**
-	 * ¹Ø±ÕÒ»¸öÊı¾İ¿âÁ¬½Ó
-	 * @param ĞèÒª¹Ø±ÕµÄÊı¾İ¿âÁ¬½Ó
+	 * å…³é—­ä¸€ä¸ªæ•°æ®åº“è¿æ¥
+	 * @param éœ€è¦å…³é—­çš„æ•°æ®åº“è¿æ¥
 	 */
 	private void closeConnection(Connection conn) {
 
@@ -433,8 +433,8 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * Ê¹³ÌĞòµÈ´ı¸ø¶¨µÄºÁÃëÊı
-	 * @param ¸ø¶¨µÄºÁÃëÊı
+	 * ä½¿ç¨‹åºç­‰å¾…ç»™å®šçš„æ¯«ç§’æ•°
+	 * @param ç»™å®šçš„æ¯«ç§’æ•°
 	 */
 	private void wait(int mSeconds) {
 
@@ -449,9 +449,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ·µ»ØÁ¬½Ó³ØµÄ³õÊ¼´óĞ¡
+	 * è¿”å›è¿æ¥æ± çš„åˆå§‹å¤§å°
 	 * 
-	 * @return ³õÊ¼Á¬½Ó³ØÖĞ¿É»ñµÃµÄÁ¬½ÓÊıÁ¿
+	 * @return åˆå§‹è¿æ¥æ± ä¸­å¯è·å¾—çš„è¿æ¥æ•°é‡
 	 */
 	public int getInitialConnections() {
 
@@ -460,9 +460,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ÉèÖÃÁ¬½Ó³ØµÄ³õÊ¼´óĞ¡
+	 * è®¾ç½®è¿æ¥æ± çš„åˆå§‹å¤§å°
 	 * 
-	 * @param ÓÃÓÚÉèÖÃ³õÊ¼Á¬½Ó³ØÖĞÁ¬½ÓµÄÊıÁ¿
+	 * @param ç”¨äºè®¾ç½®åˆå§‹è¿æ¥æ± ä¸­è¿æ¥çš„æ•°é‡
 	 */
 	public void setInitialConnections(int initialConnections) {
 
@@ -471,9 +471,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ·µ»ØÁ¬½Ó³Ø×Ô¶¯Ôö¼ÓµÄ´óĞ¡ ¡¢
+	 * è¿”å›è¿æ¥æ± è‡ªåŠ¨å¢åŠ çš„å¤§å° ã€
 	 * 
-	 * @return Á¬½Ó³Ø×Ô¶¯Ôö¼ÓµÄ´óĞ¡
+	 * @return è¿æ¥æ± è‡ªåŠ¨å¢åŠ çš„å¤§å°
 	 */
 	public int getIncrementalConnections() {
 
@@ -482,9 +482,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ÉèÖÃÁ¬½Ó³Ø×Ô¶¯Ôö¼ÓµÄ´óĞ¡
+	 * è®¾ç½®è¿æ¥æ± è‡ªåŠ¨å¢åŠ çš„å¤§å°
 	 * 
-	 * @param Á¬½Ó³Ø×Ô¶¯Ôö¼ÓµÄ´óĞ¡
+	 * @param è¿æ¥æ± è‡ªåŠ¨å¢åŠ çš„å¤§å°
 	 */
 
 	public void setIncrementalConnections(int incrementalConnections) {
@@ -494,9 +494,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ·µ»ØÁ¬½Ó³ØÖĞ×î´óµÄ¿ÉÓÃÁ¬½ÓÊıÁ¿
+	 * è¿”å›è¿æ¥æ± ä¸­æœ€å¤§çš„å¯ç”¨è¿æ¥æ•°é‡
 	 * 
-	 * @return Á¬½Ó³ØÖĞ×î´óµÄ¿ÉÓÃÁ¬½ÓÊıÁ¿
+	 * @return è¿æ¥æ± ä¸­æœ€å¤§çš„å¯ç”¨è¿æ¥æ•°é‡
 	 */
 
 	public int getMaxConnections() {
@@ -506,9 +506,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ÉèÖÃÁ¬½Ó³ØÖĞ×î´ó¿ÉÓÃµÄÁ¬½ÓÊıÁ¿
+	 * è®¾ç½®è¿æ¥æ± ä¸­æœ€å¤§å¯ç”¨çš„è¿æ¥æ•°é‡
 	 * 
-	 * @param ÉèÖÃÁ¬½Ó³ØÖĞ×î´ó¿ÉÓÃµÄÁ¬½ÓÊıÁ¿Öµ
+	 * @param è®¾ç½®è¿æ¥æ± ä¸­æœ€å¤§å¯ç”¨çš„è¿æ¥æ•°é‡å€¼
 	 */
 
 	public void setMaxConnections(int maxConnections) {
@@ -518,9 +518,9 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * »ñÈ¡²âÊÔÊı¾İ¿â±íµÄÃû×Ö
+	 * è·å–æµ‹è¯•æ•°æ®åº“è¡¨çš„åå­—
 	 * 
-	 * @return ²âÊÔÊı¾İ¿â±íµÄÃû×Ö
+	 * @return æµ‹è¯•æ•°æ®åº“è¡¨çš„åå­—
 	 */
 
 	public String getTestTable() {
@@ -530,10 +530,10 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ÉèÖÃ²âÊÔ±íµÄÃû×Ö
+	 * è®¾ç½®æµ‹è¯•è¡¨çš„åå­—
 	 * 
 	 * @param testTable
-	 *            String ²âÊÔ±íµÄÃû×Ö
+	 *            String æµ‹è¯•è¡¨çš„åå­—
 	 */
 
 	public void setTestTable(String testTable) {
@@ -543,27 +543,27 @@ public class ConnectionPool {
 	}
 
 	/**
-	 * ÄÚ²¿Ê¹ÓÃµÄÓÃÓÚ±£´æÁ¬½Ó³ØÖĞÁ¬½Ó¶ÔÏóµÄÀà
+	 * å†…éƒ¨ä½¿ç”¨çš„ç”¨äºä¿å­˜è¿æ¥æ± ä¸­è¿æ¥å¯¹è±¡çš„ç±»
 	 * 
-	 * ´ËÀàÖĞÓĞÁ½¸ö³ÉÔ±£¬Ò»¸öÊÇÊı¾İ¿âµÄÁ¬½Ó£¬ÁíÒ»¸öÊÇÖ¸Ê¾´ËÁ¬½ÓÊÇ·ñ
+	 * æ­¤ç±»ä¸­æœ‰ä¸¤ä¸ªæˆå‘˜ï¼Œä¸€ä¸ªæ˜¯æ•°æ®åº“çš„è¿æ¥ï¼Œå¦ä¸€ä¸ªæ˜¯æŒ‡ç¤ºæ­¤è¿æ¥æ˜¯å¦
 	 * 
-	 * ÕıÔÚÊ¹ÓÃµÄ±êÖ¾¡£
+	 * æ­£åœ¨ä½¿ç”¨çš„æ ‡å¿—ã€‚
 	 */
 
 	class PooledConnection {
 
-		Connection connection = null;// Êı¾İ¿âÁ¬½Ó
+		Connection connection = null;// æ•°æ®åº“è¿æ¥
 
-		boolean busy = false; // ´ËÁ¬½ÓÊÇ·ñÕıÔÚÊ¹ÓÃµÄ±êÖ¾£¬Ä¬ÈÏÃ»ÓĞÕıÔÚÊ¹ÓÃ
+		boolean busy = false; // æ­¤è¿æ¥æ˜¯å¦æ­£åœ¨ä½¿ç”¨çš„æ ‡å¿—ï¼Œé»˜è®¤æ²¡æœ‰æ­£åœ¨ä½¿ç”¨
 
-		// ¹¹Ôìº¯Êı£¬¸ù¾İÒ»¸ö Connection ¹¹¸æÒ»¸ö PooledConnection ¶ÔÏó
+		// æ„é€ å‡½æ•°ï¼Œæ ¹æ®ä¸€ä¸ª Connection æ„å‘Šä¸€ä¸ª PooledConnection å¯¹è±¡
 		public PooledConnection(Connection connection) {
 
 			this.connection = connection;
 
 		}
 
-		// ·µ»Ø´Ë¶ÔÏóÖĞµÄÁ¬½Ó
+		// è¿”å›æ­¤å¯¹è±¡ä¸­çš„è¿æ¥
 
 		public Connection getConnection() {
 
@@ -571,7 +571,7 @@ public class ConnectionPool {
 
 		}
 
-		// ÉèÖÃ´Ë¶ÔÏóµÄ£¬Á¬½Ó
+		// è®¾ç½®æ­¤å¯¹è±¡çš„ï¼Œè¿æ¥
 
 		public void setConnection(Connection connection) {
 
@@ -579,7 +579,7 @@ public class ConnectionPool {
 
 		}
 
-		// »ñµÃ¶ÔÏóÁ¬½ÓÊÇ·ñÃ¦
+		// è·å¾—å¯¹è±¡è¿æ¥æ˜¯å¦å¿™
 
 		public boolean isBusy() {
 
@@ -587,7 +587,7 @@ public class ConnectionPool {
 
 		}
 
-		// ÉèÖÃ¶ÔÏóµÄÁ¬½ÓÕıÔÚÃ¦
+		// è®¾ç½®å¯¹è±¡çš„è¿æ¥æ­£åœ¨å¿™
 
 		public void setBusy(boolean busy) {
 

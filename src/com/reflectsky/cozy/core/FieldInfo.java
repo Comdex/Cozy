@@ -1,23 +1,23 @@
  package com.reflectsky.cozy.core;
 
 /**
- *¶ÔÏóÓ³ÉäÊı¾İ¿â×Ö¶ÎĞÅÏ¢±£´æÀà 
+ *å¯¹è±¡æ˜ å°„æ•°æ®åº“å­—æ®µä¿¡æ¯ä¿å­˜ç±» 
  * @author Comdex
  */
 public class FieldInfo {
-	//¶ÔÓ¦Êı¾İÁĞÃû
+	//å¯¹åº”æ•°æ®åˆ—å
 	private String columnName;
-	//¶ÔÓ¦ÀàÖĞ³ÉÔ±Ãû
+	//å¯¹åº”ç±»ä¸­æˆå‘˜å
 	private String fieldName;
 	private boolean isPrimaryKey;
 	private boolean isAutoGenerate;
-	//¶ÔÓ¦Êı¾İ¿âÀàĞÍ
+	//å¯¹åº”æ•°æ®åº“ç±»å‹
 	private String type;
 	private int size;
 	private int digits;
 	private int decimals;
 	private String other;
-	//¶ÔÓ¦javaÊı¾İÀàĞÍÃû
+	//å¯¹åº”javaæ•°æ®ç±»å‹å
 	private String typeName;
 	private Object value;
 	

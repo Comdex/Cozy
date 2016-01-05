@@ -28,6 +28,6 @@ public class Teacher {
 	}
 	private void beforeInsert2(Ormer orm){
 		System.out.println(orm);
-		System.out.println("ִ�гɹ�");
+		System.out.println("执行成功");
 	}
 }
