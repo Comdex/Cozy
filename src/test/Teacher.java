@@ -8,6 +8,7 @@ public class Teacher {
 	private int Id;
 	private String tname;
 	private Date now;
+	//long bb;
 	public int getId() {
 		return Id;
 	}

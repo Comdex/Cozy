@@ -153,7 +153,8 @@ public class MySQLOrmImpl implements Ormer{
 					}
 					this.oManager.closeRs(rs);
 					this.oManager.closeStmt(pstmt);
-					return isOk;
+					isOk = true;
+					
 				}else {
 					//获取该对象所有字段名
 					Vector<String> fields = new Vector<String>();
@@ -232,7 +233,8 @@ public class MySQLOrmImpl implements Ormer{
 	
 					this.oManager.closeRs(rs);
 					this.oManager.closeStmt(pstmt);
-					return isOk;
+					isOk = true;
+					
 				}
 			} catch (SQLException e) {
 				// TODO 自动生成的 catch 块
@@ -361,9 +363,10 @@ public class MySQLOrmImpl implements Ormer{
 						}
 						field.setAccessible(true);
 						try {
-							if(field.getClass().getName().equals("java.lang.Integer")||field.getClass().getName().equals("int")){
+							String fieldClassName = field.get(obj).getClass().getName();
+							if(fieldClassName.equals("java.lang.Integer")||field.getClass().getName().equals("int")){
 								field.set(obj, (int)autoId);
-							}else if(field.getClass().getName().equals("java.lang.Short")||field.getClass().getName().equals("short")){
+							}else if(fieldClassName.equals("java.lang.Short")||field.getClass().getName().equals("short")){
 								field.set(obj, (short)autoId);
 							}else{
 								field.set(obj, autoId);

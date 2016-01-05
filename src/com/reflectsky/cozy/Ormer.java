@@ -49,7 +49,7 @@ public interface Ormer {
 	public int delete(Object obj);
 	
 	/**
-	 *根据传入的回调方法所在的对象开启回调支持
+	 *根据传入的回调方法所在的对象开启回调支持,必须在执行各种数据库操作方法之前执行
 	 * @author Comdex
 	 * @param obj 传入的对象
 	 */

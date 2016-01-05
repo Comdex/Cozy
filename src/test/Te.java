@@ -57,18 +57,19 @@ public class Te {
 		}
 		*/
 		Teacher t = new Teacher();
-		t.setTname("eng");
-		t.setNow(new Date());
-		System.out.println(orm.insert(t));
-		System.out.println("kankan:"+t.getId());
+		t.setId(6);
+		//t.setNow(new Date());
+		//t.bb = 88;
+		System.out.println(orm.read(t));
+		System.out.println("kankan:"+t.getTname());
 		
-		ArrayList<Teacher> a = new ArrayList<Teacher>();
+		/*ArrayList<Teacher> a = new ArrayList<Teacher>();
 		a.add(t);
 		a.add(t);
 		a.add(t);
 		a.add(t);
 		System.out.println(orm.insertMulti(a));
-		System.out.println(a.get(1).getId());
+		System.out.println(a.get(1).getId());*/
 		
 		//Teacher teacher = new Teacher();
 		//List<Teacher> list = new ArrayList<Teacher>();

@@ -9,6 +9,10 @@ v0.3——2016/01/05 update:
 
 项目编码由gbk转为utf-8
 
+修正Ormer insert和read方法的bug
+
+QuerySet添加方法valuesFlat(String field),只返回特定的Field值，将结果集以String类型读取展开到单个list里
+
 v0.3——2015/10/25 update:
 
 QuerySet添加values()方法返回结果集的 key => value值,key为 Model 里的 Field name，value 的值以 string 保存,以List<Map>类型返回

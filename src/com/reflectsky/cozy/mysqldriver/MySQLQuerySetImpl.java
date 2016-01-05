@@ -984,4 +984,61 @@ public class MySQLQuerySetImpl implements QuerySet {
 			this.oManager.deBugInfo(sql);	
 		}
 	}
+	
+	public List<String> valuesFlat(String field){
+		// TODO 自动生成的方法存根
+		ArrayList<String> maps = new ArrayList<String>();
+		String sql = "select "+field+" from " + tableName + " "; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		if(strWhere.startsWith(" and ")){
+			strWhere = strWhere.substring(5);
+			strWhere = " where " + strWhere;
+		}
+		
+		sql = sql + strWhere;
+		sql = sql + strExclude;
+		if(!strOrderBy.equals("")){
+			strOrderBy = strOrderBy.substring(3);
+			strOrderBy = "order by " + strOrderBy;
+			sql = sql + " " + strOrderBy;
+		}
+		sql += strLimit;
+		sql += " ;";
+		
+	    try {
+			pstmt = conn.prepareStatement(sql);
+			for(int i=0 ; i<params.size() ; i++){
+				
+				pstmt.setObject(i+1, params.get(i));
+			}
+			
+			this.qsDebug(sql, null);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()){
+				
+				maps.add(rs.getString(1));
+
+			}
+					
+		} catch (SQLException | IllegalArgumentException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+			
+		}
+		
+		if(rs != null){
+			this.oManager.closeRs(rs);
+		}
+		if(pstmt != null){
+			this.oManager.closeStmt(pstmt);
+		}
+
+		return maps;
+	}
+	
+	
 }

@@ -100,4 +100,11 @@ public interface QuerySet {
 	 * @return List<Map<String,String>>
 	 */
 	public List<Map<String,String>> values();
+	
+	/**
+	 * 只返回特定的Field值，将结果集以String类型读取展开到单个list里
+	 * @author Comdex
+	 * @return List<String>
+	 */
+	public List<String> valuesFlat(String field);
 }
