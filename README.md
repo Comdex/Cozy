@@ -5,7 +5,7 @@ Cozy是一个简单的轻量级的Java ORM类库，设计灵感来源于go语言
 
 目前仍处于开发阶段，但api已基本稳定(目前所有更新基于cozy mysqldriver)
 
-v0.3——2016/01/05 update:
+v0.3.1——2016/01/05 update:
 
 项目编码由gbk转为utf-8
 
